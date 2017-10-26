@@ -1206,7 +1206,7 @@ function add_row() {
         });
         var pt = prod_tax ? prod_tax : DT;
         var newTr = $('<tr id="row_' + count + last + '"></tr>');
-        newTr.html('<td id="satu" style="text-align:center; width: 27px;"><button type="button" class="del_row" id="del-' + count + last + '" value="' + item_price + '"><i class="icon-trash"></i></button></td><td><input type="hidden" name="product' + count + '" value="' + prod_code + '" id="product-' + count + last + '"><input type="hidden" name="getbuy' + count + '" value="' + promo_get + '" id="getbuy-' + count + last + '"><input type="hidden" name="serial' + count + '" value="" id="serial-' + count + last + '"><input type="hidden" name="tax_rate' + count + '" value="' + pt + '" id="tax_rate-' + count + last + '"><input type="hidden" name="discount' + count + '" value="' + new_dis_type_ok_pro + '" id="discount-' + count + last + '"><a href="#" id="model-' + count + last + '" class="code">' + prod_name + '</a><input type="hidden" name="price' + count + '" value="' + parseFloat(item_price).toFixed(2) + '" id="oprice-' + count + last + '"></td><td style="text-align:center;"><input class="keyboard" onClick="this.select();" name="quantity' + count + '" type="text" value="1" autocomplete="off" id="quantity-' + count + last + '"></td><td style="padding-right: 10px; text-align:right;"><input type="text" class="price" name="unit_price' + count + '" value="' + parseFloat(item_price).toFixed(2) + '" id="price-' + count + last + '"></td>');
+        newTr.html('<td id="satu" style="text-align:center; width: 27px;"><button type="button" class="del_row" id="del-' + count + last + '" value="' + item_price + '"><i class="icon-trash"></i></button></td><td><input type="hidden" name="product' + count + '" value="' + prod_code + '" id="product-' + count + last + '"><input type="hidden" name="getbuy' + count + '" value="' + promo_get + '" id="getbuy-' + count + last + '"><input type="hidden" name="serial' + count + '" value="" id="serial-' + count + last + '"><input type="hidden" name="tax_rate' + count + '" value="' + pt + '" id="tax_rate-' + count + last + '"><input type="hidden" name="discount' + count + '" value="' + new_dis_type_ok_pro + '" id="discount-' + count + last + '"><a href="#" id="model-' + count + last + '" class="code">' + prod_name + '</a><input type="hidden" name="price' + count + '" value="' + parseFloat(item_price).toFixed(2) + '" id="oprice-' + count + last + '"></td><td style="text-align:center;"><input class="keyboard" onClick="this.select();" onchange="setDefaultPriceVal(this);" name="quantity' + count + '" type="text" value="1" autocomplete="off" id="quantity-' + count + last + '"></td><td style="padding-right: 10px; text-align:right;"><input type="text" class="price" name="unit_price' + count + '" value="' + parseFloat(item_price).toFixed(2) + '" id="price-' + count + last + '"></td>');
 
         newTr.prependTo("#saletbl");
 
@@ -1351,21 +1351,24 @@ function key_pad() {
         customLayout: {
             'default': [
                 '1 2 3 {b}',
-                '4 5 6 {clear}',
-                '7 8 9 0',
+                '4 5 6 7',
+                '8 9 0 .',
                 '{accept} {cancel} '
 
             ]
         },
         beforeClose: function (e, keyboard, el, accepted) {
-            var before_qty = parseInt(keyboard.originalContent);
-            var after_qty = parseInt(el.value);
+            var before_qty = parseFloat(keyboard.originalContent);
+            var after_qty = parseFloat(el.value);
             var row_id = $(this).attr('id');
             var sp_id = row_id.split("-");
             var id_no = sp_id[1];
             var p = '#price-' + id_no;
             var getbuy = '#getbuy-' + id_no;
             var row_price = parseFloat($.trim($(p).val()));
+            if (after_qty < 1) {
+                product_price = row_price;
+            }
             if (before_qty == 1) {
                 product_price = row_price;
             }
@@ -1374,7 +1377,7 @@ function key_pad() {
             }
             if ($(getbuy).val() == '1') {
                 var buyGet = document.getElementById('buy_1_get_1').innerHTML;
-                document.getElementById('buy_1_get_1').innerHTML = parseInt(buyGet) * after_qty;
+                document.getElementById('buy_1_get_1').innerHTML = parseFloat(buyGet) * after_qty;
 
             }
             var gross_total = after_qty * product_price;
@@ -1792,7 +1795,6 @@ $('#paymentModal').on('change', '#cheque_no', function () {
 
 $("#payment").click(function () {
 
-
     document.getElementById("twt_return").innerHTML = $('#items_return_val').val();
 
     var r_amount = parseFloat($('#items_return_val').val());
@@ -1813,14 +1815,8 @@ $("#payment").click(function () {
     $('#ptclick').trigger('click');
     count = count + 1;
 
-
-    //a.kader
-    clearModalData();
-    //a.kader
-
-
     $('#paymentModal').modal();
-
+    clearModalData();
     $("#paid_by").change(function () {
 
         //a.kader
@@ -1866,6 +1862,14 @@ $("#payment").click(function () {
             $('.pcash').hide();
             $('.pcheque').hide();
             $('.pcc_chash').show();
+
+            console.log($('#pcc_holder').val() + "test");
+            $('#paid-amount').val(0);
+            $('#pcc_holder').val("");
+            $('#pcc_holder').text();
+            $('#pcc_holder').html();
+            $('#pcc').val("");
+
         } else {
             $('.pcheque').hide();
             $('.pcc').hide();
@@ -2104,8 +2108,7 @@ $('#cats').carouFredSel({
     }
 });
 
-})
-;
+});
 
 
 $(function () {
@@ -2250,6 +2253,24 @@ window.onload = sivamtime;
         $('#pcc_holder').val("");
         $('#pcc').val("");
         $("#balance").empty();
+    }
+
+
+
+    // @todo
+    function setDefaultPriceVal(obj) {
+        var productObj = obj.id;
+        var priceId = '#price-' + productObj.toString().substring(9);
+        var quantityId = '#quantity-' + productObj.toString().substring(9);
+        var priceVal = $(priceId).val();
+        var qty = $(quantityId).val();
+        console.log(qty);
+        console.log(priceId);
+        console.log(priceVal);
+        if (isNaN(qty) || qty.toString().trim() == "") {
+            console.log("go...");
+            $(priceId).val(priceVal);
+        }
     }
     //a.kader
 
