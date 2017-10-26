@@ -1171,7 +1171,6 @@ function add_row() {
             data: {code: v, customer: cus},
             dataType: "json",
             success: function (data) {
-                console.log(data);
                 item_price = parseFloat(data.price);
                 prod_name = data.name.replace(/"/g, "&#034;").replace(/'/g, "&#039;");
                 prod_code = data.code;
@@ -1863,7 +1862,6 @@ $("#payment").click(function () {
             $('.pcheque').hide();
             $('.pcc_chash').show();
 
-            console.log($('#pcc_holder').val() + "test");
             $('#paid-amount').val(0);
             $('#pcc_holder').val("");
             $('#pcc_holder').text();
@@ -2264,11 +2262,7 @@ window.onload = sivamtime;
         var quantityId = '#quantity-' + productObj.toString().substring(9);
         var priceVal = $(priceId).val();
         var qty = $(quantityId).val();
-        console.log(qty);
-        console.log(priceId);
-        console.log(priceVal);
         if (isNaN(qty) || qty.toString().trim() == "") {
-            console.log("go...");
             $(priceId).val(priceVal);
         }
     }
