@@ -154,7 +154,7 @@
                                 </table>
                             </div>
                             <div id="protbldiv" overflow:auto;>
-                                <table border="0" cellpadding="0" cellspacing="0" class="protable" id="saletbl" >
+                                <table border="0" cellpadding="0" cellspacing="0" class="protable" id="saletbl">
                                     <tbody>
                                     </tbody>
                                 </table>
@@ -454,7 +454,8 @@
                     <select name="paid_by" id="paid_by">
                         <option value="cash"><?php echo $this->lang->line("cash"); ?></option>
                         <option value="CC"><?php echo $this->lang->line("cc"); ?></option>
-                        <option value="CC_cash">Card & Cash</option>
+                        <option value="CC_cash"><?php echo $this->lang->line("Card & Cash"); ?></option>
+                        <!--                        <option value="CC_cash">Card & Cash</option>-->
                         <option value="Cheque"><?php echo $this->lang->line("cheque"); ?></option>
                     </select>
                 </div>
@@ -517,7 +518,8 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true"><?php echo $this->lang->line('close'); ?></button>
+        <button class="btn" data-dismiss="modal" id="close-payment"
+                aria-hidden="true"><?php echo $this->lang->line('close'); ?></button>
         <button class="btn btn-primary" id="submit-sale"><?php echo $this->lang->line('submit'); ?></button>
     </div>
 </div>
@@ -621,6 +623,7 @@
 
 <script type="text/javascript">
 $(document).ready(function () {
+
 
     var count = 1;
     var total = 0;
@@ -1355,10 +1358,6 @@ function key_pad() {
             ]
         },
         beforeClose: function (e, keyboard, el, accepted) {
-           debugger;
-            console.log(e);
-            console.log(el);
-            console.log(accepted);
             var before_qty = parseInt(keyboard.originalContent);
             var after_qty = parseInt(el.value);
             var row_id = $(this).attr('id');
@@ -1816,13 +1815,19 @@ $("#payment").click(function () {
 
 
     //a.kader
-    $('#paid-amount').val(0);
-    $("#balance").empty();
+    clearModalData();
+    //a.kader
 
 
     $('#paymentModal').modal();
 
     $("#paid_by").change(function () {
+
+        //a.kader
+        clearModalData();
+        //a.kader
+
+
         var p_val = $(this).val();
         $('#rpaidby').val(p_val);
         if (p_val == 'cash') {
@@ -1857,13 +1862,10 @@ $("#payment").click(function () {
             $('.pcc_chash').hide();
             $('.pcheque').show();
         } else if (p_val == 'CC_cash') {
-
             $('.pcc').hide();
             $('.pcash').hide();
             $('.pcheque').hide();
             $('.pcc_chash').show();
-
-
         } else {
             $('.pcheque').hide();
             $('.pcc').hide();
@@ -1923,9 +1925,12 @@ $("#payment").click(function () {
 });
 
 $("#return").click(function () {
-
     $('#returnModal').modal();
+});
 
+
+$("#close-payment").click(function () {
+    clearModalData();
 });
 
 $("#paymentModal").on("click", '#submit-sale', function () {
@@ -2236,6 +2241,17 @@ window.onload = sivamtime;
         return false;
         //console.log( $( this ).serialize() );
     });
+
+
+    //a.kader
+    function clearModalData() {
+        $('#paid-amount').val(0);
+        $('#cheque_no').val("");
+        $('#pcc_holder').val("");
+        $('#pcc').val("");
+        $("#balance").empty();
+    }
+    //a.kader
 
 
 </script>
