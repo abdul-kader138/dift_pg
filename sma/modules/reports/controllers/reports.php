@@ -383,7 +383,7 @@ class Reports extends MX_Controller {
                     $end_date = $this->ion_auth->fsd($end_date);
                     
                 $pp =    "( SELECT pi.product_id, SUM( pi.quantity ) purchasedQty from purchases p JOIN purchase_items pi on p.id = pi.purchase_id where
-                         p.date >= '{$start_date}' and p.date < '{$end_date}'
+                         p.date >= '{$start_date}' and p.date < '{$end_date}' and p.mr_approve_by=1
                          group by pi.product_id ) PCosts";
                 
                 $sp = "( SELECT si.product_id, SUM( si.quantity ) soldQty, SUM( si.gross_total ) totalSale from sales s JOIN sale_items si on s.id = si.sale_id where
