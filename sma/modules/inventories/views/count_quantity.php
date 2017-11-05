@@ -256,7 +256,7 @@ echo form_open("module=inventories&view=add_quantity", $attrib);
 
 <div class="control-group">
     <label class="control-label" for="current_quantity">Theoretical Quantity</label>
-    <div class="controls"> <?php echo form_input('current_quantity', (isset($_POST['current_quantity']) ? $_POST['current_quantity'] : $current_quantity), 'class="span4 tip" id="current_quantity" required="required" data-error="' . $this->lang->line("current_quantity") . ' ' . $this->lang->line("is_required") . '"'); ?> </div>
+    <div class="controls"> <?php echo form_input('current_quantity', (isset($_POST['current_quantity']) ? $_POST['current_quantity'] : $current_quantity), 'class="span4 tip"  readonly = "readonly" id="current_quantity" required="required" data-error="' . $this->lang->line("current_quantity") . ' ' . $this->lang->line("is_required") . '"'); ?> </div>
 </div>
 
 <div class="control-group">
