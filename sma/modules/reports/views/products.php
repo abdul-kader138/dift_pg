@@ -68,7 +68,7 @@ span.date { display: none; }
 					},
 
 					"fnFooterCallback": function ( nRow, aaData, iStart, iEnd, aiDisplay ) {
-						var income = 0; profit = 0;
+						var income = 0; var profit = 0;
 						for ( var i=0 ; i<aaData.length ; i++ )
 						{
 							income += parseFloat(aaData[ aiDisplay[i] ][5]);
@@ -77,8 +77,8 @@ span.date { display: none; }
 						}
 						
 						var nCells = nRow.getElementsByTagName('th');
-						nCells[5].innerHTML = parseFloat(income).toFixed(2);
-						nCells[6].innerHTML = parseFloat(profit).toFixed(2);
+//						nCells[4].innerHTML = parseFloat(income).toFixed(2);
+//						nCells[5].innerHTML = parseFloat(profit).toFixed(2);
 					}
 					
                 } ).columnFilter({ aoColumns: [
@@ -155,7 +155,7 @@ span.date { display: none; }
 	<table id="fileData" class="table table-striped table-bordered table-condensed table-hover" style="margin-bottom:5px;">
 		<thead>
         <tr class="active">
-            <th><?php echo $this->lang->line("product_code"); ?></th>
+<!--            <th>--><?php //echo $this->lang->line("product_code"); ?><!--</th>-->
             <th><?php echo $this->lang->line("product_name"); ?></th>
             <th>Total Purchased Quantity</th>
             <th> Total Sold Quantity</th>
@@ -171,7 +171,7 @@ span.date { display: none; }
         </tbody>
         <tfoot>
         <tr>
-            <th><?php echo $this->lang->line("product_code"); ?></th>
+<!--            <th>--><?php //echo $this->lang->line("product_code"); ?><!--</th>-->
             <th><?php echo $this->lang->line("product_name"); ?></th>
             <th>Total Purchased Quantity</th>
             <th> Total Sold Quantity</th>

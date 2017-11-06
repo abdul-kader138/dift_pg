@@ -298,7 +298,8 @@ class Products_model extends CI_Model
 		    }
 		 
 			// Product data
-		$productData = array('adjust_qnt' => $data['adjust_qnt'], 'quantity'=>$qnt);
+        $date = date('Y-m-d H:i:s');
+		$productData = array('adjust_qnt' => $data['adjust_qnt'], 'quantity'=>$qnt,'adjustment_date'=>$date);
 
 	 	$this->db->where('id', $id);
 	 	

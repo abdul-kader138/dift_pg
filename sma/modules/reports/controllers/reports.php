@@ -612,7 +612,7 @@ class Reports extends MX_Controller
         }
         $this->load->library('datatables');
         $this->datatables
-            ->select("p.code, p.name, p.unit, count_products.quantity as cun_quantity, p.quantity as quantity,
+            ->select("p.code, p.name,count_products.created_at as count_date, p.unit, count_products.quantity as cun_quantity, p.quantity as quantity,
                 COALESCE(count_products.quantity - p.quantity, 0 ) as variance", FALSE)
             ->from('products p', FALSE)
             ->join("count_products", 'p.id = count_products.product_id', 'inner');
@@ -623,9 +623,9 @@ class Reports extends MX_Controller
         if ($product) {
             $date = $start_date;
             $new_date = date("Y-m-d", strtotime($date));
-            $sDate=$new_date.' 00:00:00';
+//            $sDate=$new_date.' 00:00:00';
             $eDate=$new_date.' 23:59:59';
-//            $this->datatables->where('count_products.created_at >', $sDate);
+//            $this->datatables->where('count_products.created_at <=', $eDate);
 //            $this->datatables->where('count_products.created_at <', $eDate);
 //            $this->datatables->where('count_products.created_at',$new_date);
 //            $this->datatables->where('count_products.created_at', $new_date);

@@ -68,7 +68,7 @@ span.date { display: none; }
 					},
 
 					"fnFooterCallback": function ( nRow, aaData, iStart, iEnd, aiDisplay ) {
-						var income = 0; profit = 0;
+						var income = 0; var profit = 0;
 						for ( var i=0 ; i<aaData.length ; i++ )
 						{
 							income += parseFloat(aaData[ aiDisplay[i] ][5]);

@@ -66,19 +66,22 @@ span.date { display: none; }
 					},
 
 					"fnFooterCallback": function ( nRow, aaData, iStart, iEnd, aiDisplay ) {
-						var QC = 0; TQ = 0; QV = 0;
+						var QC = 0; TQ = 0; QV = 0; var date=new Date();
 						for ( var i=0 ; i<aaData.length ; i++ )
 						{
+                            console.log(aaData);
+//                            date += parseFloat(aaData[ aiDisplay[i] ][5]);
 							QC += parseFloat(aaData[ aiDisplay[i] ][3]);
 							TQ += parseFloat(aaData[ aiDisplay[i] ][4]);
-							QV += parseFloat(aaData[ aiDisplay[i] ][5]);
+							QV += parseFloat(aaData[ aiDisplay[i] ][6]);
 
 						}
 						
 						var nCells = nRow.getElementsByTagName('th');
-						nCells[3].innerHTML = parseFloat(QC).toFixed(2);
-						nCells[4].innerHTML = parseFloat(TQ).toFixed(2);
-						nCells[5].innerHTML = parseFloat(QV).toFixed(2);
+//						nCells[2].innerHTML = date;
+//						nCells[3].innerHTML = parseFloat(QC).toFixed(2);
+//						nCells[4].innerHTML = parseFloat(TQ).toFixed(2);
+//						nCells[5].innerHTML = parseFloat(QV).toFixed(2);
 					}
 					
                 } ).columnFilter({ aoColumns: [
@@ -149,6 +152,7 @@ span.date { display: none; }
         <tr class="active">
             <th><?php echo $this->lang->line("product_code"); ?></th>
             <th><?php echo $this->lang->line("product_name"); ?></th>
+            <th>Count Date</th>
             <th>UOM</th>
             <th> Quantity Counted</th>
             <th>Theoretical Stock Quantity</th>
@@ -165,6 +169,7 @@ span.date { display: none; }
         <tr>
             <th><?php echo $this->lang->line("product_code"); ?></th>
             <th><?php echo $this->lang->line("product_name"); ?></th>
+            <th>CountDate</th>
             <th>UOM</th>
             <th> Quantity Counted</th>
             <th>Theoretical Stock Quantity</th>

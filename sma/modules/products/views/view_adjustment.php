@@ -48,8 +48,8 @@
 								"print"
 						]
 					},
-					"aoColumns": [ 
-					  null, null, null, null,
+					"aoColumns": [
+					  null, null, null, null,null,
 					  { "bSortable": false }
 					]
 					
@@ -89,28 +89,31 @@
 	<table id="prData" class="table table-bordered table-hover table-striped table-condensed" style="margin-bottom: 5px;">
 		<thead>
         <tr>
+            <th style="min-width:80px;">Date</th>
 			<th><?php echo $this->lang->line("product_code"); ?></th>
             <th><?php echo $this->lang->line("product_name"); ?></th>
-            <th><?php echo $this->lang->line("quantity"); ?></th>
-            <th>Adjustment Quantity</th>
-            <th style="min-width:115px; text-align:center;"><?php echo $this->lang->line("actions"); ?></th> 
+            <th style="min-width:50px;"><?php echo $this->lang->line("quantity"); ?></th>
+            <th>Adjustment <br/>Quantity</th>
+            <th style="min-width:115px; text-align:center;"><?php echo $this->lang->line("actions"); ?></th>
 		</tr>
         </thead>
 		<tbody>
 	
 			<tr>
-            	<td colspan="9" class="dataTables_empty">Loading data from server</td>
+            	<td colspan="10" class="dataTables_empty">Loading data from server</td>
 			</tr>
 
         </tbody>
         
         <tfoot>
         <tr>
+            <th style="width:30px;">Date</th>
 			<th><?php echo $this->lang->line("product_code"); ?></th>
             <th><?php echo $this->lang->line("product_name"); ?></th>
-            <th><?php echo $this->lang->line("quantity"); ?></th>
-            <th>Adjustment Quantity</th>
-            <th style="min-width:115px; text-align:center;"><?php echo $this->lang->line("actions"); ?></th> 
+            <th style="min-width:50px;"><?php echo $this->lang->line("quantity"); ?></th>
+
+            <th>Adjustment <br/>Quantity</th>
+            <th style="min-width:115px; text-align:center;"><?php echo $this->lang->line("actions"); ?></th>
 		</tr>
         </tfoot>
 	</table>
