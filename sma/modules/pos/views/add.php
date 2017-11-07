@@ -659,6 +659,7 @@ $(document).ready(function () {
     var cat_id = <?php echo DCAT; ?>;
     var sproduct_name;
     var slast;
+    var item_price;
     var old_val;
     var new_val;
     var total_cp = <?php echo $total_cp; ?>;
@@ -1149,6 +1150,7 @@ $("#saletbl").on("focus", ".keyboard", function () {
 
 function add_row() {
     $('button[id^="product"]').click(function () {
+        var isNewDiv = true;
 
         if (count >= 1100) {
             bootbox.alert("<?php echo $this->lang->line('qty_limit'); ?>");
@@ -1171,6 +1173,26 @@ function add_row() {
             data: {code: v, customer: cus},
             dataType: "json",
             success: function (data) {
+
+
+                // Add quantity if item duplicate
+//
+                var tableRow = $("td").filter(function () {
+                    return $(this).text().trim() == data.name.trim();
+                }).closest("tr");
+                if (tableRow.length > 0) {
+                    isNewDiv = false;
+                    var Row = document.getElementById(tableRow[tableRow.length - 1].id);
+                    var Cells = Row.getElementsByTagName("td");
+                    var qtyId = Cells[2].firstChild.id;
+                    var valId = Cells[3].firstChild.id;
+                    var qtyVal = parseFloat(Cells[2].firstChild.value) + 1;
+                    var qtyValue = qtyVal * data.price;
+                    $('#' + qtyId).val(qtyVal);
+                    $('#' + valId).val(qtyValue);
+                }
+
+
                 item_price = parseFloat(data.price);
                 prod_name = data.name.replace(/"/g, "&#034;").replace(/'/g, "&#039;");
                 prod_code = data.code;
@@ -1205,10 +1227,11 @@ function add_row() {
         });
         var pt = prod_tax ? prod_tax : DT;
         var newTr = $('<tr id="row_' + count + last + '"></tr>');
-        newTr.html('<td id="satu" style="text-align:center; width: 27px;"><button type="button" class="del_row" id="del-' + count + last + '" value="' + item_price + '"><i class="icon-trash"></i></button></td><td><input type="hidden" name="product' + count + '" value="' + prod_code + '" id="product-' + count + last + '"><input type="hidden" name="getbuy' + count + '" value="' + promo_get + '" id="getbuy-' + count + last + '"><input type="hidden" name="serial' + count + '" value="" id="serial-' + count + last + '"><input type="hidden" name="tax_rate' + count + '" value="' + pt + '" id="tax_rate-' + count + last + '"><input type="hidden" name="discount' + count + '" value="' + new_dis_type_ok_pro + '" id="discount-' + count + last + '"><a href="#" id="model-' + count + last + '" class="code">' + prod_name + '</a><input type="hidden" name="price' + count + '" value="' + parseFloat(item_price).toFixed(2) + '" id="oprice-' + count + last + '"></td><td style="text-align:center;"><input class="keyboard" onClick="this.select();" onchange="setDefaultPriceVal(this);" name="quantity' + count + '" type="text" value="1" autocomplete="off" id="quantity-' + count + last + '"></td><td style="padding-right: 10px; text-align:right;"><input type="text" class="price" name="unit_price' + count + '" value="' + parseFloat(item_price).toFixed(2) + '" id="price-' + count + last + '"></td>');
+        if (isNewDiv == true) {
+            newTr.html('<td id="satu" style="text-align:center; width: 27px;"><button type="button" class="del_row" id="del-' + count + last + '" value="' + item_price + '"><i class="icon-trash"></i></button></td><td><input type="hidden" name="product' + count + '" value="' + prod_code + '" id="product-' + count + last + '"><input type="hidden" name="getbuy' + count + '" value="' + promo_get + '" id="getbuy-' + count + last + '"><input type="hidden" name="serial' + count + '" value="" id="serial-' + count + last + '"><input type="hidden" name="tax_rate' + count + '" value="' + pt + '" id="tax_rate-' + count + last + '"><input type="hidden" name="discount' + count + '" value="' + new_dis_type_ok_pro + '" id="discount-' + count + last + '"><a href="#" id="model-' + count + last + '" class="code">' + prod_name + '</a><input type="hidden" name="price' + count + '" value="' + parseFloat(item_price).toFixed(2) + '" id="oprice-' + count + last + '"></td><td style="text-align:center;"><input class="keyboard" onClick="this.select();" onchange="setDefaultPriceVal(this);" name="quantity' + count + '" type="text" value="1" autocomplete="off" id="quantity-' + count + last + '"></td><td style="padding-right: 10px; text-align:right;"><input type="text" class="price" name="unit_price' + count + '" value="' + parseFloat(item_price).toFixed(2) + '" id="price-' + count + last + '"></td>');
 
-        newTr.prependTo("#saletbl");
-
+            newTr.prependTo("#saletbl");
+        }
         total += item_price;
         current = parseFloat(total).toFixed(2);
         new_tax_value = 0;
@@ -1857,8 +1880,13 @@ $("#payment").click(function () {
             $('.pcc_chash').hide();
             $('.pcheque').show();
         } else if (p_val == 'CC_cash') {
+            $('#paid-amount').val(0);
+            $('#pcc_holder').val("");
+            $('#pcc_holder').text();
+            $('#pcc_holder').html();
+            $('#pcc').val("");
             $('.pcc').hide();
-            $('.pcash').hide();
+//            $('.pcash').hide();
             $('.pcheque').hide();
             $('.pcc_chash').show();
 
@@ -2106,7 +2134,8 @@ $('#cats').carouFredSel({
     }
 });
 
-});
+})
+;
 
 
 $(function () {
@@ -2252,7 +2281,6 @@ window.onload = sivamtime;
         $('#pcc').val("");
         $("#balance").empty();
     }
-
 
 
     // @todo
