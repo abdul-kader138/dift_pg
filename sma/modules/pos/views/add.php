@@ -460,21 +460,7 @@
                     </select>
                 </div>
             </div>
-            <div class="pcash">
-                <div class="control-group"><label class="control-label"
-                                                  for="paid-amount"><?php echo $this->lang->line("paid"); ?></label>
 
-                    <div class="controls"><input type="text" id="paid-amount" class="pa"/></div>
-                </div>
-                <div class="control-group" style="font-weight:bold;">
-                    <div class="control-label"
-                         style="padding-top:0;font-weight:bold;"><?php echo $this->lang->line("change"); ?>:
-                    </div>
-                    <div class="controls"><span
-                            style="background: #FFFF99; border-radius:5px; padding: 5px 10px; color: #000;"
-                            id="balance"></span></div>
-                </div>
-            </div>
             <div class="pcc" style="display:none;">
                 <div class="control-group"><label class="control-label"
                                                   for="paid-amount"><?php echo $this->lang->line("cc_no"); ?></label>
@@ -508,13 +494,28 @@
 
                     <div class="controls"><input type="text" id="pcc_holder"/></div>
                 </div>
-                <div class="control-group"><label class="control-label" for="paid-amount">Cash Amount</label>
+                <div class="control-group"><label class="control-label"
+                                                  for="paid-amount"><?php echo $this->lang->line("cc_amount"); ?></label>
 
-                    <div class="controls"><input type="text" id="paid-amount" class="pa"/></div>
+                    <div class="controls"><input type="text" id="cc_amount" class="pa"/></div>
                 </div>
             </div>
 
+            <div class="pcash">
+                <div class="control-group"><label class="control-label"
+                                                  for="paid-amount"><?php echo $this->lang->line("cash_amount"); ?></label>
 
+                    <div class="controls"><input type="text" id="paid-amount" class="pa"/></div>
+                </div>
+                <div class="control-group" style="font-weight:bold;">
+                    <div class="control-label"
+                         style="padding-top:0;font-weight:bold;"><?php echo $this->lang->line("change"); ?>:
+                    </div>
+                    <div class="controls"><span
+                            style="background: #FFFF99; border-radius:5px; padding: 5px 10px; color: #000;"
+                            id="balance"></span></div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="modal-footer">
@@ -1849,6 +1850,7 @@ $("#payment").click(function () {
         var p_val = $(this).val();
         $('#rpaidby').val(p_val);
         if (p_val == 'cash') {
+            $('#paid-amount').val(0);
             $('.pcheque').hide();
             $('.pcc').hide();
             $('.pcc_chash').hide();
@@ -1882,19 +1884,41 @@ $("#payment").click(function () {
         } else if (p_val == 'CC_cash') {
             $('#paid-amount').val(0);
             $('#pcc_holder').val("");
-            $('#pcc_holder').text();
-            $('#pcc_holder').html();
+            $('#cc_amount').val("");
             $('#pcc').val("");
             $('.pcc').hide();
-//            $('.pcash').hide();
+            $('.pcash').hide();
             $('.pcheque').hide();
             $('.pcc_chash').show();
+            $('.pcash').show();
+
 
             $('#paid-amount').val(0);
+            $('#cc_amount').val(0);
             $('#pcc_holder').val("");
             $('#pcc_holder').text();
             $('#pcc_holder').html();
             $('#pcc').val("");
+
+
+            $('input[id^="paid-amount"]').keydown(function (e) {
+                var cardVal = $('#cc_amount').val();
+                if (cardVal == undefined || cardVal == '') cardVal = 0;
+                paid = $(this).val();
+                if (e.keyCode == 13) {
+                    if ((paid + cardVal) < total) {
+                        bootbox.alert('<?php echo $this->lang->line('paid_l_t_payable'); ?>');
+                        return false;
+                    }
+                    $("#balance").empty();
+                    var balance = (paid + cardVal) - twt;
+                    balance = parseFloat(balance).toFixed(2);
+                    $("#balance").append(balance);
+
+                    e.preventDefault();
+                    return false;
+                }
+            });
 
         } else {
             $('.pcheque').hide();
@@ -1936,8 +1960,14 @@ $("#payment").click(function () {
             ]
         },
         beforeClose: function (e, keyboard, el, accepted) {
-
-            var paid = parseFloat(el.value);
+            var paid = 0;
+            var selectedVal = $('#paid_by').find(":selected").val();
+            if (selectedVal == 'CC_cash') {
+                var cardVal = $('#cc_amount').val();
+                var cashVal = $('#paid-amount').val();
+                if (cardVal == undefined || cardVal == '') cardVal = 0;
+                paid = parseFloat(cashVal) + parseFloat(cardVal);
+            }
             if (paid < twt) {
                 bootbox.alert('<?php echo $this->lang->line('paid_l_t_payable'); ?>');
                 $(this).val('');
@@ -1954,6 +1984,52 @@ $("#payment").click(function () {
 
 });
 
+
+$('#cc_amount').keyboard({
+    restrictInput: true,
+    preventPaste: true,
+    autoAccept: true,
+    alwaysOpen: false,
+    openOn: 'click',
+    layout: 'costom',
+    display: {
+        'a': '\u2714:Accept (Shift-Enter)',
+        'accept': 'Accept:Accept (Shift-Enter)',
+        'b': '\u2190:Backspace',
+        'bksp': 'Bksp:Backspace',
+        'c': '\u2716:Cancel (Esc)',
+        'cancel': 'Cancel:Cancel (Esc)',
+        'clear': 'C:Clear'
+    },
+    position: {
+        of: null,
+        my: 'center top',
+        at: 'center top',
+        at2: 'center bottom'
+    },
+    usePreview: false,
+    customLayout: {
+        'default': [
+            '1 2 3 {clear}',
+            '4 5 6 .',
+            '7 8 9 0',
+            '{accept} {cancel}'
+        ]
+    },
+    beforeClose: function (e, keyboard, el, accepted) {
+        var paid = 0;
+        var cardVal = $('#cc_amount').val();
+        if (cardVal == undefined || cardVal == '') cardVal = 0;
+        cardVal = parseFloat(cardVal);
+        if (cardVal < 1) {
+            bootbox.alert('<?php echo $this->lang->line('paid_C_t_payable'); ?>');
+            $(this).val('');
+            return false;
+        }
+    }
+});
+
+
 $("#return").click(function () {
     $('#returnModal').modal();
 });
@@ -1969,7 +2045,38 @@ $("#paymentModal").on("click", '#submit-sale', function () {
     suspend.html('<input type="hidden" name="delete_id" value="<?php echo $sid; ?>" />');
     suspend.appendTo("#hidesuspend");
     <?php } ?>
+
+    var selectedVal = $('#paid_by').find(":selected").val();
+    var twt=parseFloat($('#twt').text());
+    console.log(twt);
+    var paid=0;
+    if (selectedVal == 'CC_cash') {
+        var cardVal = $('#cc_amount').val();
+        var cashVal = $('#paid-amount').val();
+        if (cardVal == undefined || cardVal == '') cardVal = 0;
+        paid = parseFloat(cashVal) + parseFloat(cardVal);
+
+        if (paid < twt) {
+            bootbox.alert('<?php echo $this->lang->line('paid_l_t_payable'); ?>');
+            $(this).val('');
+            return false;
+        }
+    }
+
+    if (selectedVal == 'cash') {
+        var cashVal = $('#paid-amount').val();
+        paid = parseFloat(cashVal);
+
+        if (paid < twt) {
+            bootbox.alert('<?php echo $this->lang->line('paid_l_t_payable'); ?>');
+            $(this).val('');
+            return false;
+        }
+    }
+
     $('#total_item').val(count);
+
+
     bootbox.confirm("<?php echo $this->lang->line('sure_to_submit_sale'); ?>", function (gotit) {
         if (gotit) {
             $('#submit').trigger('click');
@@ -2275,13 +2382,17 @@ window.onload = sivamtime;
 
     //a.kader
     function clearModalData() {
+        $('#cc_amount').val(0);
+        $('#pcc_holder').attr('value', '');
+        $('#pcc').attr('value', '');
         $('#paid-amount').val(0);
         $('#cheque_no').val("");
-        $('#pcc_holder').val("");
-        $('#pcc').val("");
         $("#balance").empty();
     }
 
+    $('#paymentModal').on('hidden', function () {
+        clearModalData();
+    });
 
     // @todo
     function setDefaultPriceVal(obj) {

@@ -121,11 +121,12 @@ h3 { margin: 5px 0; }
     </tr>
    <?php } if($inv->paid_by == 'CC_cash' && $inv->cc_no) { ?>
     <tr>    
-    <td colspan="2" style="text-align:left; font-weight:bold; padding-top:5px;">Cash Payment</td><td colspan="2" style="padding-top:5px; text-align:right; font-weight:bold;"><?php echo $inv->paid; ?></td>
+    <td colspan="2" style="text-align:left; font-weight:bold; padding-top:5px;">Card Payment</td><td colspan="2" style="padding-top:5px; text-align:right; font-weight:bold;"><?php echo $inv->paid; ?></td>
     </tr>
     <tr>    
-    <td colspan="2" style="text-align:left; font-weight:bold; padding-top:5px;">Card Payment</td><td colspan="2" style="padding-top:5px; text-align:right; font-weight:bold;"><?php echo ($inv->total - $inv->paid); ?></td>
+    <td colspan="2" style="text-align:left; font-weight:bold; padding-top:5px;">Cash Payment</td><td colspan="2" style="padding-top:5px; text-align:right; font-weight:bold;"><?php echo ($inv->total - $inv->paid); ?></td>
     </tr>
+
 
     <tr>      
     <td colspan="2" style="text-align:left; font-weight:bold; padding-top:5px;"><?php echo $this->lang->line("cc_no"); ?></td><td colspan="2" style="text-align:right; font-weight:bold;"><?php echo 'xxxx xxxx xxxx '.substr($inv->cc_no, -4); ?></td>
