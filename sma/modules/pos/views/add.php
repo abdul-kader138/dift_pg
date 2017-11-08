@@ -1968,6 +1968,11 @@ $("#payment").click(function () {
                 if (cardVal == undefined || cardVal == '') cardVal = 0;
                 paid = parseFloat(cashVal) + parseFloat(cardVal);
             }
+            if (selectedVal == 'cash') {
+                var cashVal = $('#paid-amount').val();
+                if (cashVal == undefined || cashVal == '') cashVal = 0;
+                paid = parseFloat(cashVal);
+            }
             if (paid < twt) {
                 bootbox.alert('<?php echo $this->lang->line('paid_l_t_payable'); ?>');
                 $(this).val('');
@@ -2048,7 +2053,6 @@ $("#paymentModal").on("click", '#submit-sale', function () {
 
     var selectedVal = $('#paid_by').find(":selected").val();
     var twt=parseFloat($('#twt').text());
-    console.log(twt);
     var paid=0;
     if (selectedVal == 'CC_cash') {
         var cardVal = $('#cc_amount').val();

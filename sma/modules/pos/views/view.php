@@ -58,10 +58,13 @@ h3 { margin: 5px 0; }
 	</tr> 
 	</thead> 
 	<tbody> 
-	<?php $r = 1; $getBuy = 0; foreach ($rows as $row):?>
+	<?php
+    $r = 1; $getBuy = 0; foreach ($rows as $row):?>
 			<tr>
             	<td style="text-align:center; width:30px;"><?php echo $r; ?></td>
-                <td style="text-align:left; width:180px;"><?php echo $row->product_name.$row->get_buy_qnt; ?></td>
+<!--                remove get buy quantity from product Description-->
+<!--                <td style="text-align:left; width:180px;">--><?php //echo $row->product_name.$row->get_buy_qnt; ?><!--</td>-->
+                <td style="text-align:left; width:180px;"><?php echo $row->product_name.''; ?></td>
                 <td style="text-align:center; width:50px;"><?php echo $row->quantity; ?></td>
                 <td style="text-align:right; width:55px; "><?php echo $this->ion_auth->formatMoney($row->unit_price); ?></td>
                 <td style="text-align:right; width:65px;"><?php echo $this->ion_auth->formatMoney($row->gross_total); ?></td> 
