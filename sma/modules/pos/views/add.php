@@ -354,6 +354,21 @@
 </div>
 
 
+<div id="saleModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="saleModalLabel"
+     aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="saleModalLabel"><?php echo $this->lang->line('today_sale'); ?></h3>
+    </div>
+    <div class="modal-body">
+        <div id="salediv"></div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true"><?php echo $this->lang->line('close'); ?></button>
+    </div>
+</div>
+
+
 <!--      Return Modal Start ----------->
 
 <div id="returnModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="ReturnModalLabel"
@@ -603,19 +618,7 @@
         <button class="btn btn-primary" id="add-customer"><?php echo $this->lang->line('add_customer'); ?></button>
     </div>
 </div>
-<div id="saleModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="saleModalLabel"
-     aria-hidden="true">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="saleModalLabel"><?php echo $this->lang->line('today_sale'); ?></h3>
-    </div>
-    <div class="modal-body">
-        <div id="salediv"></div>
-    </div>
-    <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true"><?php echo $this->lang->line('close'); ?></button>
-    </div>
-</div>
+
 <div id="gmail_loading" style="display: none;">
     <div class="blackbg"></div>
     <div class="gmailLoader"><img src="<?php echo $this->config->base_url(); ?>assets/pos/images/gmail-loader.gif"

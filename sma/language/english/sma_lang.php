@@ -187,6 +187,7 @@ $lang['csv_file_tip'] 					= "Only .csv file and Max. file size 200 KB.";
 $lang['total'] 							= "Total";
 $lang['inventory'] 						= "Inventory";
 $lang['view_inventory'] 				= "View Inventory";
+$lang['view_workOrder'] 				= "View PO";
 $lang['download_pdf'] 					= "Download as PDF";
 $lang['email_inventory'] 				= "Email Inventory";
 $lang['edit_inventory'] 				= "Edit Inventory";

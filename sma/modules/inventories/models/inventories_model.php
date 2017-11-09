@@ -410,8 +410,8 @@ class Inventories_model extends CI_Model
 			return $data;
 		}
 	}
-	
-		public function getAllpoInventoryItems($purchase_id) 
+
+		public function getAllpoInventoryItems($purchase_id)
 	{
 		$this->db->order_by('id', 'asc');
 		$q = $this->db->get_where('purchase_items', array('make_purchase_id' => $purchase_id));
@@ -437,16 +437,30 @@ class Inventories_model extends CI_Model
 		  return FALSE;
 
 	}
+
+
+    public function getPoInventoryByID($id)
+    {
+
+        $q = $this->db->get_where('make_purchases', array('id' => $id), 1);
+        if( $q->num_rows() > 0 )
+        {
+            return $q->row();
+        }
+
+        return FALSE;
+
+    }
 	
 		public function getmakePurchaseInventoryByID($id)
 	{
 
-		$q = $this->db->get_where('make_purchases', array('purchase_id' => $id), 1); 
+		$q = $this->db->get_where('make_purchases', array('purchase_id' => $id), 1);
 		  if( $q->num_rows() > 0 )
 		  {
 			return $q->row();
 		  } 
-		
+
 		  return FALSE;
 
 	}
@@ -807,12 +821,12 @@ if($this->db->insert('make_purchases', $purchseData)) {
 	    
 		$data = array('verify_status' => 1, 'verify_by' => USER_ID, 'verify_at' => date('Y-m-d H:i:s'));
 		
-	     $getInventory = $this->getmakePurchaseInventoryByID($id);
-	     
+	     $getInventory = $this->getmakePurchaseInventoryByID($purchase_id);
+
 		$this->db->where('id', $purchase_id);
 		if($this->db->update('make_purchases', $data)) {
 		  $this->db->update('purchases', $data, array('id' => $getInventory->purchase_id));
-		   
+
 			return true;
 		} else {
 			return false;

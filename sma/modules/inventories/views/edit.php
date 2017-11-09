@@ -495,7 +495,7 @@ if (TAX1) {
            <?php
 
 	 if($inv->checked == 0 && $inv->verify_status == 0 && $this->ion_auth->in_group(array('admin', 'owner', 'checker'))){
-	     
+
 		echo form_submit('submit', 'Check & Make PO', 'class="btn btn-primary" style="padding: 6px 15px;"');
 		  }
 		  
