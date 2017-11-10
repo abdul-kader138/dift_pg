@@ -163,7 +163,7 @@ class Inventories extends MX_Controller
         $this->datatables->add_column("Actions",
             "<center><a href='#' onClick=\"MyWindow=window.open('index.php?module=inventories&view=view_inventory_po&id=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=1000,height=600'); return false;\" title='" . $this->lang->line("view_workOrder") . "' class='tip'><i class='icon-fullscreen'></i></a>&nbsp; <a href='index.php?module=inventories&view=pdf_purchase&id=$1' title='Work Order' class='tip'><i class='icon-download'></i></a>
 			  &nbsp;<a href='index.php?module=inventories&amp;view=make_mrr&amp;id=$1' title='Make MRR' class='tip'><i class='icon-adjust'></i></a>&nbsp;
-			      <a href='index.php?module=inventories&amp;view=edit&amp;id=$1' title='" . $this->lang->line("edit_inventory") . "' class='tip'><i class='icon-edit'></i></a> <a href='index.php?module=inventories&amp;view=delete&amp;id=$1' onClick=\"return confirm('" . $this->lang->line('alert_x_inventory') . "')\" title='" . $this->lang->line("delete_inventory") . "' class='tip'><i class='icon-trash'></i></a>&nbsp; <input type='checkbox' name='chk[]' value='$1' /> </center>", "id")
+			      <a href='index.php?module=inventories&amp;view=edit&amp;id=$1' title='" . $this->lang->line("edit_order") . "' class='tip'><i class='icon-edit'></i></a> <a href='index.php?module=inventories&amp;view=delete&amp;id=$1' onClick=\"return confirm('" . $this->lang->line('alert_x_inventory') . "')\" title='" . $this->lang->line("delete_inventory") . "' class='tip'><i class='icon-trash'></i></a>&nbsp; <input type='checkbox' name='chk[]' value='$1' /> </center>", "id")
             ->unset_column('id');
 
 
@@ -222,7 +222,6 @@ class Inventories extends MX_Controller
 
             $v_data = $this->inventories_model->getmakePurchaseForVerifyInventoryByID($idvalue);
 
-            var_dump($v_data);
             if ($v_data->verify_status == 1) {
 
                 $this->inventories_model->updateApprove($idvalue);
@@ -1118,8 +1117,12 @@ class Inventories extends MX_Controller
 
         }
 
+        $checkedBy = $this->inventories_model->checkedByStatus($id);
 
-        if ($this->form_validation->run() == true && $this->inventories_model->makePurchaseOrder($id, $invDetails, $items, $warehouse_id)) {
+        if ($this->form_validation->run() == true && $checkedBy->checked == 0 && $this->inventories_model->makePurchaseOrder($id, $invDetails, $items, $warehouse_id)) {
+            $this->session->set_flashdata('success_message', $this->lang->line("purchase_updated"));
+            redirect("module=inventories&view=po_content", 'refresh');
+        } elseif ($this->form_validation->run() == true && $checkedBy->checked == 1 && $this->inventories_model->updatePurchaseOrder($id, $invDetails, $items, $warehouse_id, $checkedBy->purchase_id)) {
 
             $this->session->set_flashdata('success_message', $this->lang->line("purchase_updated"));
             redirect("module=inventories&view=po_content", 'refresh');
@@ -1135,37 +1138,23 @@ class Inventories extends MX_Controller
 
             $data['tax_rates'] = $this->inventories_model->getAllTaxRates();
             $data['warehouses'] = $this->inventories_model->getAllWarehouses();
-            $data['inv'] = $this->inventories_model->getPoInventoryByID($id);
-            $data['inv_products'] = $this->inventories_model->getAllpoInventoryItems($id);
 
-            /*
 
-                   $templevel=0;
-
-              $newkey=0;
-
-              $grouparr[$templevel]="";
-
-              foreach ($data['inv_products'] as $key => $val) {
-               if ($templevel==$val->supplier_id){
-                 $grouparr[$templevel][$newkey]=$val;
-               } else {
-                 $grouparr[$val->supplier_id][$newkey]=$val;
-               }
-                 $newkey++;
-              }
-
-            echo "<pre>";
-            print_r($grouparr);
-
-               exit();
-
-            */
-            if ($data['inv']->approved) {
-                $this->session->set_flashdata('message', "This Purchese Order Already Approved. ");
-                $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
-                redirect('module=inventories', 'refresh');
+            $poInfo=$this->inventories_model->getPoInventoryByID($id);
+            if($poInfo !=false) {
+                $data['inv'] = $poInfo;
+                $data['inv_products'] = $this->inventories_model->getAllpoInventoryItems($id);
             }
+            if($poInfo ==false){
+                $data['inv'] = $this->inventories_model->getInventoryByID($id);
+                $data['inv_products'] = $this->inventories_model->getAllInventoryItems($id);
+            }
+
+//            if ($data['inv']->approved) {
+//                $this->session->set_flashdata('message', "This Purchese Order Already Approved. ");
+//                $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
+//                redirect('module=inventories', 'refresh');
+//            }
 
 
             $data['id'] = $id;
