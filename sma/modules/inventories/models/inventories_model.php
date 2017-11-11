@@ -451,6 +451,18 @@ class Inventories_model extends CI_Model
         }
     }
 
+
+    public function getPurchaseId($id)
+    {
+
+        $data = null;
+        $p = $this->db->get_where('make_purchases', array('id' => $id), 1);
+        if ($p->num_rows() > 0) {
+            return $p->row();
+        }
+        return FALSE;
+    }
+
     public function getmakePurchaseInventoryByID($id)
     {
 
@@ -522,6 +534,22 @@ class Inventories_model extends CI_Model
 
         return FALSE;
 
+    }
+
+
+    public function getInventoryFromPOByMakePurchaseID($purchase_id)
+    {
+        $data = null;
+        $p = $this->db->get_where('make_purchases', array('id' => $purchase_id), 1);
+        if ($p->num_rows() > 0) {
+            $data = $p->row();
+            $q = $this->db->get_where('purchases', array('id' => $data->purchase_id));
+            if ($q->num_rows() > 0) {
+
+                return $q->row();
+            }
+        }
+        return FALSE;
     }
 
 
@@ -787,24 +815,17 @@ class Inventories_model extends CI_Model
         $condition = array('id' => $p_id);
         $this->db->where($condition);
         if ($this->db->update('purchases', $purchseData)) {
-//        if ($this->db->update('purchases', $purchseData) && $this->db->delete('purchase_items', array('purchase_id' => $p_id, 'make_purchase_id' => $id))) {
 
-            foreach ($items as $data) {
-                $this->npQTY($data['product_id'], $data['quantity']);
-                //$this->updateProductQuantity($data['product_id'], $data['quantity'], $warehouse_id, $data['unit_price']);
-            }
+//            foreach ($items as $data) {
+//                $this->npQTY($data['product_id'], $data['quantity']);
+//                //$this->updateProductQuantity($data['product_id'], $data['quantity'], $warehouse_id, $data['unit_price']);
+//            }
 
             $addOn = array('purchase_id' => $p_id);
             end($addOn);
 
-            $params = array(
-                "product_id" => $items['product_id'],
-                'purchase_id' => $p_id,
-                'make_purchase_id' => $id
-            );
             foreach ($items as &$var) {
                 $params = array(
-                    "product_id" => $items['product_id'],
                     'purchase_id' => $p_id,
                     'make_purchase_id' => $id
                 );
@@ -814,7 +835,7 @@ class Inventories_model extends CI_Model
                 unset($var['product_name']);
                 unset($var['product_id']);
                 unset($var['purchase_id']);
-               $this->db->update('purchase_items', $var,$params);
+                $this->db->update('purchase_items', $var, $params);
             }
             return true;
         }
@@ -871,6 +892,22 @@ class Inventories_model extends CI_Model
         }
     }
 
+    public function updateApprovePO($purchase_id)
+    {
+        $data = array('approved' => 1, 'approved_by' => USER_ID, 'approved_at' => date('Y-m-d H:i:s'));
+        $p_data = $this->getPurchaseId($purchase_id);
+
+        $this->db->where('id', $purchase_id);
+        if ($this->db->update('make_purchases', $data)) {
+//            $this->db->where('id', $p_data->purchase_id);
+//            $this->db->update('purchases', $data);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
     public function updateApprove($purchase_id)
     {
 
@@ -897,6 +934,23 @@ class Inventories_model extends CI_Model
             return false;
         }
     }
+
+    public function updateVerifyPO($purchase_id)
+    {
+
+        $data = array('verify_status' => 1, 'verify_by' => USER_ID, 'verify_at' => date('Y-m-d H:i:s'));
+//        $p_data = $this->inventories_model->getPurchaseId($purchase_id);
+
+        $this->db->where('id', $purchase_id);
+        if ($this->db->update('make_purchases', $data)) {
+//            $this->db->where('id', $p_data->purchase_id);
+//            $this->db->update('purchases', $data);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 
     public function updateVerify($purchase_id)
     {

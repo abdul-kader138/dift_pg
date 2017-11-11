@@ -215,23 +215,36 @@ class Inventories extends MX_Controller
             $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
             redirect('module=home', 'refresh');
         }
+
+
         $not_verify = [];
+        $All_ready_approved = [];
         $purchase_id = $this->input->post('chk');
 
         foreach ($purchase_id as $idvalue) {
-
-            $v_data = $this->inventories_model->getmakePurchaseForVerifyInventoryByID($idvalue);
-
-            if ($v_data->verify_status == 1) {
-
-                $this->inventories_model->updateApprove($idvalue);
-
+            $p_data = $this->inventories_model->getPurchaseId($idvalue);
+            if ($p_data->approved == 1) {
+                $All_ready_approved[] = $p_data->reference_no;
             } else {
+                if ($p_data->verify_status == 1) {
 
-                $not_verify[] = $v_data->reference_no;
+                    $this->inventories_model->updateApprovePO($idvalue);
+
+                } else {
+
+                    $not_verify[] = $p_data->reference_no;
+                }
+
             }
-
         }
+
+        if (count($All_ready_approved) > 0) {
+            $ready_approved = implode(',', $All_ready_approved);
+            $this->session->set_flashdata('message', "Following PO already are approved." . $ready_approved);
+            $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
+            redirect('module=inventories', 'refresh');
+        }
+
 
         if (count($not_verify) > 0) {
             $not_v_req = implode(',', $not_verify);
@@ -239,6 +252,7 @@ class Inventories extends MX_Controller
             $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
             redirect('module=inventories', 'refresh');
         }
+
 
         $this->session->set_flashdata('success_message', 'Order Approved Successful');
         redirect("module=inventories&view=po_content", 'refresh');
@@ -253,20 +267,35 @@ class Inventories extends MX_Controller
             redirect('module=home', 'refresh');
         }
         $not_verify = [];
+        $All_ready_approved = [];
         $purchase_id = $this->input->post('chk');
 
         foreach ($purchase_id as $idvalue) {
-            $v_data = $this->inventories_model->getmakePurchaseForVerifyInventoryByID($idvalue);
-            if ($v_data->checked == 1) {
+            $p_data = $this->inventories_model->getPurchaseId($idvalue);
 
-                $this->inventories_model->updateVerify($idvalue);
-
+            if ($p_data->approved == 1) {
+                $All_ready_approved[] = $p_data->reference_no;
             } else {
+                if ($p_data->checked == 1) {
 
-                $not_verify[] = $v_data->reference_no;
+                    $this->inventories_model->updateVerifyPO($idvalue);
+
+                } else {
+
+                    $not_verify[] = $p_data->reference_no;
+                }
+
             }
-
         }
+
+
+        if (count($All_ready_approved) > 0) {
+            $ready_approved = implode(',', $All_ready_approved);
+            $this->session->set_flashdata('message', "Following PO already are approved." . $ready_approved);
+            $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
+            redirect('module=inventories', 'refresh');
+        }
+
 
         if (count($not_verify) > 0) {
             $not_v_req = implode(',', $not_verify);
@@ -274,6 +303,7 @@ class Inventories extends MX_Controller
             $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
             redirect('module=inventories', 'refresh');
         }
+
 
         $this->session->set_flashdata('success_message', 'Order Verify Successful');
         redirect("module=inventories&view=po_content", 'refresh');
@@ -410,7 +440,9 @@ class Inventories extends MX_Controller
 
         $data['rows'] = $this->inventories_model->getAllpoInventoryItems($purchase_id);
 
-        $inv = $this->inventories_model->getInventoryFromPOByPurchaseID($purchase_id);
+        //pull info from purchase
+//        $inv = $this->inventories_model->getInventoryFromPOByPurchaseID($purchase_id);
+        $inv = $this->inventories_model->getInventoryFromPOByMakePurchaseID($purchase_id);
         $supplier_id = $inv->supplier_id;
         $data['supplier'] = $this->inventories_model->getSupplierByID($supplier_id);
 
@@ -493,7 +525,9 @@ class Inventories extends MX_Controller
 
         $data['rows'] = $this->inventories_model->getAllpoInventoryItems($purchase_id);
 
+        // pull from purchase table
         $inv = $this->inventories_model->getWorkorderByPurchaseID($purchase_id);
+//        $inv = $this->inventories_model->getInventoryFromPOByMakePurchaseID($purchase_id);
         $supplier_id = $inv->supplier_id;
         $data['supplier'] = $this->inventories_model->getSupplierByID($supplier_id);
 
@@ -1012,13 +1046,26 @@ class Inventories extends MX_Controller
             $id = $this->input->get('id');
         }
         $groups = array('salesman', 'viewer');
+        $editGroups = array('purchaser', 'verify','checker');
         if ($this->ion_auth->in_group($groups)) {
             $this->session->set_flashdata('message', $this->lang->line("access_denied"));
             $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
             redirect('module=home', 'refresh');
         }
 
-        //validate form input
+        $getPurchaseId = $this->inventories_model->getPurchaseId($id);
+        $All_ready_approved["id"] = null;
+        if ($getPurchaseId->approved === "1") $All_ready_approved["id"] = $getPurchaseId->reference_no;
+        if ($All_ready_approved["id"] != "" && $All_ready_approved["id"] !=null) {
+            $ready_approved = implode(',', $All_ready_approved);
+            $this->session->set_flashdata('message', "Following PO already are approved." . $ready_approved);
+            $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
+            redirect('module=inventories', 'refresh');
+        }
+
+
+//
+//     //   validate form input
         $this->form_validation->set_message('is_natural_no_zero', $this->lang->line("no_zero_required"));
         $this->form_validation->set_rules('reference_no', $this->lang->line("ref_no"), 'required|xss_clean');
         $this->form_validation->set_rules('date', $this->lang->line("date"), 'required|xss_clean');
@@ -1140,21 +1187,15 @@ class Inventories extends MX_Controller
             $data['warehouses'] = $this->inventories_model->getAllWarehouses();
 
 
-            $poInfo=$this->inventories_model->getPoInventoryByID($id);
-            if($poInfo !=false) {
+            $poInfo = $this->inventories_model->getPoInventoryByID($id);
+            if ($poInfo != false) {
                 $data['inv'] = $poInfo;
                 $data['inv_products'] = $this->inventories_model->getAllpoInventoryItems($id);
             }
-            if($poInfo ==false){
+            if ($poInfo == false) {
                 $data['inv'] = $this->inventories_model->getInventoryByID($id);
                 $data['inv_products'] = $this->inventories_model->getAllInventoryItems($id);
             }
-
-//            if ($data['inv']->approved) {
-//                $this->session->set_flashdata('message', "This Purchese Order Already Approved. ");
-//                $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
-//                redirect('module=inventories', 'refresh');
-//            }
 
 
             $data['id'] = $id;
@@ -1167,7 +1208,7 @@ class Inventories extends MX_Controller
         }
     }
 
-
+//
     function make_purchase_order($id = NULL)
     {
         if ($this->input->get('id')) {
