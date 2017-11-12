@@ -875,29 +875,52 @@ class Inventories_model extends CI_Model
         );
 
 
-        $this->db->where('id', $id);
-        if ($this->db->update('make_purchases', $purchseData) && $this->db->delete('purchase_items', array('purchase_id' => $id))) {
+//        var_dump($pdata);
+//        var_dump($items);
+//        var_dump(array("id"=>$id));
+//        $mrr_Data = array(
+//            'purchase_id' => $pdata['mr_reference_no'],
+//            'make_purchase_id' => $pdata['mr_reference_no'],
+//            'purchase_item_id' => $pdata['date'],
+//            'po_qty' => date("Y-m-d"),
+//            'remain_qty' => $pdata['status'],
+//            'received_qty' => USER_ID,
+//            'mrr_ref' => USER_ID,
+//            'mrr_date' => USER_ID,
+//            'approved_by' => USER_ID,
+//            'approved_date' => USER_ID,
+//            'price' => USER_ID,
+//            'inv_val' => USER_ID,
+//            'tax_val' => USER_ID,
+//            'tax_id' => USER_ID,
+//            'supplier_id' => USER_ID
+//        );
 
-            foreach ($items as $data) {
-                $this->npQTY($data['product_id'], $data['quantity']);
-                $this->updateProductQuantity($data['product_id'], $data['quantity'], $warehouse_id, $data['unit_price']);
-            }
-
-            $addOn = array('purchase_id' => $id);
-            end($addOn);
-            foreach ($items as &$var) {
-                $var = array_merge($addOn, $var);
-            }
 
 
-            if ($this->db->insert_batch('purchase_items', $items)) {
-                return true;
-            }
+//        $this->db->where('id', $id);
+//        if ($this->db->update('make_purchases', $purchseData) && $this->db->delete('purchase_items', array('purchase_id' => $id))) {
+//
+//            foreach ($items as $data) {
+//                $this->npQTY($data['product_id'], $data['quantity']);
+//                $this->updateProductQuantity($data['product_id'], $data['quantity'], $warehouse_id, $data['unit_price']);
+//            }
+//
+//            $addOn = array('purchase_id' => $id);
+//            end($addOn);
+//            foreach ($items as &$var) {
+//                $var = array_merge($addOn, $var);
+//            }
+//
+//
+//            if ($this->db->insert_batch('purchase_items', $items)) {
+//                return true;
+//            }
 
 
-        }
+     //   }
 
-        return false;
+//        return false;
     }
 
     public function updateCheck($purchase_id)

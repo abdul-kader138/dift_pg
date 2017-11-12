@@ -1046,7 +1046,7 @@ class Inventories extends MX_Controller
             $id = $this->input->get('id');
         }
         $groups = array('salesman', 'viewer');
-        $editGroups = array('purchaser', 'verify','checker');
+        $editGroups = array('purchaser', 'verify', 'checker');
         if ($this->ion_auth->in_group($groups)) {
             $this->session->set_flashdata('message', $this->lang->line("access_denied"));
             $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
@@ -1056,7 +1056,7 @@ class Inventories extends MX_Controller
         $getPurchaseId = $this->inventories_model->getPurchaseId($id);
         $All_ready_approved["id"] = null;
         if ($getPurchaseId->approved === "1") $All_ready_approved["id"] = $getPurchaseId->reference_no;
-        if ($All_ready_approved["id"] != "" && $All_ready_approved["id"] !=null) {
+        if ($All_ready_approved["id"] != "" && $All_ready_approved["id"] != null) {
             $ready_approved = implode(',', $All_ready_approved);
             $this->session->set_flashdata('message', "Following PO already are approved." . $ready_approved);
             $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
@@ -1381,6 +1381,17 @@ class Inventories extends MX_Controller
         $unit_cost = "unit_cost";
         $tax_rate = "tax_rate";
         $exp_date = "exp_date";
+        $mr_reference[] =null;
+        $getPurchaseId[] =null;
+        $getSupplierId[] =null;
+        $tax_rate_id[] =null;
+        $warehouse_id_no[] =null;
+        $supplier_id_no[] =null;
+        $product_qty[] =null;
+        $product_remain_qty[] =null;
+        $inv_quantity[] =null;
+        $product_remain_qty[] =null;
+        $inv_unit_cost[] =null;
 
 
         if ($this->form_validation->run() == true) {
@@ -1402,9 +1413,15 @@ class Inventories extends MX_Controller
                     if (TAX1) {
                         $tax_id = $this->input->post($tax_rate . $i);
                         $tax_details = $this->inventories_model->getTaxRateByID($tax_id);
+                        $getPurchase = $this->inventories_model->checkedByStatus($id);
+                        $getPurchaseId[]=$getPurchase->purchase_id;
+                        $getSupplierId[]=$supplier_details->id;
                         $taxRate = $tax_details->rate;
                         $taxType = $tax_details->type;
                         $tax_rate_id[] = $tax_id;
+                        $mr_reference[] = $mr_reference_no;
+                        $warehouse_id_no[] = $warehouse_id;
+                        $supplier_id_no[] = $supplier_id;
 
                         if ($taxType == 1 && $taxRate != 0) {
                             $item_tax = (($this->input->post($quantity . $i)) * ($this->input->post($unit_cost . $i)) * $taxRate / 100);
@@ -1430,9 +1447,12 @@ class Inventories extends MX_Controller
                     $product_id[] = $product_details->id;
                     $product_name[] = $product_details->name;
                     $product_code[] = $product_details->code;
+                    $product_qty[] = $product_details->quantity;
+                    $product_pqty[] = $this->input->post('rquantity1');
                     $mr_item_status[] = in_array($product_details->id, $this->input->post('check_product')) ? 1 : 0;
 
                     $inv_quantity[] = $this->input->post($quantity . $i);
+                    $product_remain_qty[] = ($this->input->post('rquantity1') - $this->input->post($quantity . $i));
                     //$inv_product_code[] = $this->input->post($product.$i);
                     $inv_unit_cost[] = $this->input->post($unit_cost . $i);
 
@@ -1449,10 +1469,14 @@ class Inventories extends MX_Controller
             $keys = array("product_id", "product_code", "product_name", "tax_rate_id", "tax", "quantity", "unit_price", "gross_total", "val_tax", "mr_item_status", "exp_date");
 
             $items = array();
+            $mrr_items = array();
             foreach (array_map(null, $product_id, $product_code, $product_name, $tax_rate_id, $tax, $inv_quantity, $inv_unit_cost, $inv_gross_total, $val_tax, $mr_item_status, $xp_date) as $key => $value) {
                 $items[] = array_combine($keys, $value);
             }
-
+            $mrr_keys = array("make_purchase_id", "purchase_id", "purchase_item_id", "po_qty", "remain_qty", "received_qty", "price", "tax_val", "tax_id", "inv_val", "mrr_date","mrr_ref","supplier_id","wh_id");
+            foreach (array_map(null, $id, $getPurchaseId, $product_id, $product_qty, $product_remain_qty, $inv_quantity, $inv_unit_cost, $val_tax, $tax_rate_id, $inv_gross_total, $xp_date,$mr_reference,$supplier_id_no,$warehouse_id_no) as $key => $value) {
+                $mrr_items[] = array_combine($mrr_keys, $value);
+            }
 
             $inv_total = $inv_total_no_tax + $total_tax;
 
@@ -1462,15 +1486,21 @@ class Inventories extends MX_Controller
                 'date' => $date,
                 'status' => 1
             );
-
+//            var_dump($items);
+            var_dump($product_id);
+            var_dump($product_pqty);
+            var_dump($product_remain_qty);
+            var_dump($inv_quantity);
 
         }
 
 
         if ($this->form_validation->run() == true && $this->inventories_model->updateMrr($id, $invDetails, $items, $warehouse_id)) {
 
-            $this->session->set_flashdata('success_message', "MRR create successfully!");
-            redirect("module=inventories&view=mrr_list", 'refresh');
+//            $this->session->set_flashdata('success_message', "MRR create successfully!");
+//            redirect("module=inventories&view=mrr_list", 'refresh');
+//            var_dump($this->input->post());
+//            var_dump($mrr_items);
 
         } else {
 

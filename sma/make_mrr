@@ -1,0 +1,20 @@
+CREATE TABLE `make_mrr` (
+ `id` int(11) NOT NULL AUTO_INCREMENT,
+ `make_purchase_id` int(11) NOT NULL,
+ `purchase_id` int(11) NOT NULL,
+ `purchase_item_id` int(11) NOT NULL,
+ `po_qty` float(11,2) NOT NULL,
+ `remain_qty` float(11,2) NOT NULL,
+ `received_qty` float(11,2) NOT NULL,
+ `price` float(9,2) NOT NULL,
+ `tax_val` float(9,2) NOT NULL,
+ `tax_id` int(11) NOT NULL,
+ `inv_val` float(11,2) NOT NULL,
+ `mrr_date` date NOT NULL,
+ `mrr_ref` varchar(20) NOT NULL,
+ `approved_by` tinyint(4) NOT NULL,
+ `approved_date` date NOT NULL,
+ `supplier_id` int(11) NOT NULL,
+ `wh_id` int(11) NOT NULL,
+ PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1
