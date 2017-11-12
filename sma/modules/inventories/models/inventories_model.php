@@ -799,11 +799,10 @@ class Inventories_model extends CI_Model
             $qty = $pr_qty - $item_qiantity;
         }
 
+
         $purchseData = array(
             'reference_no' => $p_data['reference_no'],
             'warehouse_id' => $warehouse_id,
-            'supplier_id' => $p_data['supplier_id'],
-            'supplier_name' => $p_data['supplier_name'],
             'date' => $p_data['date'],
             'note' => $p_data['note'],
             'total_tax' => $p_data['total_tax'],
@@ -812,18 +811,17 @@ class Inventories_model extends CI_Model
             'updated_by' => USER_NAME
         );
 
+
         $condition = array('id' => $p_id);
         $this->db->where($condition);
         if ($this->db->update('purchases', $purchseData)) {
 
-//            foreach ($items as $data) {
-//                $this->npQTY($data['product_id'], $data['quantity']);
-//                //$this->updateProductQuantity($data['product_id'], $data['quantity'], $warehouse_id, $data['unit_price']);
-//            }
 
             $addOn = array('purchase_id' => $p_id);
             end($addOn);
 
+
+            // update info to make_purchase
             foreach ($items as &$var) {
                 $params = array(
                     'purchase_id' => $p_id,
@@ -835,8 +833,30 @@ class Inventories_model extends CI_Model
                 unset($var['product_name']);
                 unset($var['product_id']);
                 unset($var['purchase_id']);
+
+                $supplierInfo = $this->getSupplierByID($var['supplier_id']);
+
+                $make_purchase_data = array(
+                    'warehouse_id' => $warehouse_id,
+                    'supplier_id' => $supplierInfo->id,
+                    'supplier_name' => $supplierInfo->company,
+                    'date' => $p_data['date'],
+                    'note' => $p_data['note'],
+                    'total_tax' => $p_data['total_tax'],
+                    'inv_total' => $p_data['inv_total'],
+                    'total' => $p_data['total'],
+                    'updated_by' => USER_NAME
+                );
+
+
                 $this->db->update('purchase_items', $var, $params);
+
+
+                // update info to make_purchase
+                $this->db->update('make_purchases', $make_purchase_data, array('id' => $id));
+
             }
+
             return true;
         }
         return false;

@@ -155,7 +155,7 @@ span.date { display: none; }
 	<table id="fileData" class="table table-striped table-bordered table-condensed table-hover" style="margin-bottom:5px;">
 		<thead>
         <tr class="active">
-<!--            <th>--><?php //echo $this->lang->line("product_code"); ?><!--</th>-->
+            <th><?php echo $this->lang->line("product_code"); ?></th>
             <th><?php echo $this->lang->line("product_name"); ?></th>
             <th>Total Purchased Quantity</th>
             <th> Total Sold Quantity</th>
@@ -171,7 +171,7 @@ span.date { display: none; }
         </tbody>
         <tfoot>
         <tr>
-<!--            <th>--><?php //echo $this->lang->line("product_code"); ?><!--</th>-->
+            <th><?php echo $this->lang->line("product_code"); ?></th>
             <th><?php echo $this->lang->line("product_name"); ?></th>
             <th>Total Purchased Quantity</th>
             <th> Total Sold Quantity</th>

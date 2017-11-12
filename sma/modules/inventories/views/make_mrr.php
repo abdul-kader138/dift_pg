@@ -471,8 +471,9 @@ if (TAX1) {
     echo '<th class="span2">' . $this->lang->line("tax_rate") . '</th>';
 }
 ?>
+            <th class="span2">Quantity Remain</th>
             <th class="span2"><?php echo $this->lang->line("quantity"); ?></th>
-             <th class="span2">Expire Date</th>
+            <th class="span2">Expire Date</th>
             <th class="span2"><?php echo $this->lang->line("unit_cost"); ?></th>
            
             <th style="width: 20px;"><input type="checkbox" name="all" id="checkall" value="all" /></i></th>
@@ -496,7 +497,8 @@ if (TAX1) {
                         }
                         echo '</select></td>';
                     }
-                    echo '<td><input class="input-block-level text-center" name="quantity' . $r . '" type="text" value="' . $prod->quantity . '"></td>
+                    echo '<td><input class="input-block-level text-center" readonly="readonly" name="rquantity' . $r . '" type="text" value="' . $prod->quantity . '"></td>
+                    <td><input class="input-block-level text-center" name="quantity' . $r . '" type="text" value=""></td>
                     <td><input class="input-block-level text-center datepicker" style="text-align:right;" name="exp_date' . $r . '" type="text" value="' . $prod->exp_date . '"></td>
                     <td><input class="span2 tran" style="text-align:right;" name="unit_cost' . $r . '" type="text" value="' . $prod->unit_price . '"></td><td><input class="span2 tran" style="text-align:right;" name="check_product[]" type="checkbox" value="' . $prod->product_id . '" '.$chec.' ></td></tr>';
                     $r++;
