@@ -825,15 +825,11 @@ class Inventories_model extends CI_Model
             foreach ($items as &$var) {
                 $params = array(
                     'purchase_id' => $p_id,
-                    'make_purchase_id' => $id
+                    'make_purchase_id' => $id,
+                    'product_id' => $var['product_id']
                 );
                 $var = array_merge($addOn, $var);
                 unset($var['p_item_id']);
-                unset($var['product_code']);
-                unset($var['product_name']);
-                unset($var['product_id']);
-                unset($var['purchase_id']);
-
                 $supplierInfo = $this->getSupplierByID($var['supplier_id']);
 
                 $make_purchase_data = array(
@@ -851,12 +847,10 @@ class Inventories_model extends CI_Model
 
                 $this->db->update('purchase_items', $var, $params);
 
-
                 // update info to make_purchase
                 $this->db->update('make_purchases', $make_purchase_data, array('id' => $id));
 
             }
-
             return true;
         }
         return false;
@@ -897,7 +891,6 @@ class Inventories_model extends CI_Model
 //        );
 
 
-
 //        $this->db->where('id', $id);
 //        if ($this->db->update('make_purchases', $purchseData) && $this->db->delete('purchase_items', array('purchase_id' => $id))) {
 //
@@ -918,7 +911,7 @@ class Inventories_model extends CI_Model
 //            }
 
 
-     //   }
+        //   }
 
 //        return false;
     }
