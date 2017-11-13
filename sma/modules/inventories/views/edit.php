@@ -473,7 +473,7 @@ echo form_open("module=inventories&view=edit&id=" . $id, $attrib);
                 echo '<td>'. form_dropdown('supplier_item'.$r, $sp, $prod->supplier_id > 0 ? $prod->supplier_id : "", 'id="supplier_s'.$r.'" data-placeholder="' . $this->lang->line("select") . ' ' . $this->lang->line("supplier") . '" required="required" data-error="' . $this->lang->line("supplier") . ' ' . $this->lang->line("is_required") . '"').'</td>';
 
 
-                echo '<td><input class="input-block-level text-center" name="quantity' . $r . '" id="qnt_' . $r . '" type="text" value="' . $prod->quantity . '" onkeyup="getSubtottal('. $r.')"></td><td><input class="span2 tran" style="text-align:right;" name="unit_cost' . $r . '" id="unit_cost' . $r . '" type="text" value="' . $prod->unit_price . '"></td><td id="sub_'.$r.'">'.$prod->unit_price * $prod->quantity.'</td><td><i class="icon-trash tip del" id="' . $r . '" title="Remove this Item" style="cursor:pointer;" data-placement="right"></i></td></tr>';
+                echo '<td><input class="input-block-level text-center"  name="quantity' . $r . '" id="quantity' . $r . '" type="text" value="' . $prod->quantity . '" onkeyup="getSubtottal('. $r.')"></td><td><input class="span2 tran" style="text-align:right;" name="unit_cost' . $r . '" id="unit_cost' . $r . '" type="text" value="' . $prod->unit_price . '"></td><td id="sub_'.$r.'">'.$prod->unit_price * $prod->quantity.'</td><td><i class="icon-trash tip del" id="' . $r . '" title="Remove this Item" style="cursor:pointer;" data-placement="right"></i></td></tr>';
                 $r++;
             }
             ?>
