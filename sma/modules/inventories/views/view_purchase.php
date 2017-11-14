@@ -22,7 +22,7 @@ html, body { height: 100%; /* font-family: "Segoe UI", Candara, "Bitstream Vera 
 </div>
 <div class="span6" style="text-align:right">
    
-    	<span>Date : </span><span><?php echo date(PHP_DATE, strtotime($inv->date)); ?></span>
+    	<span>Date : </span><span><?php echo date('d/m/y'); ?></span>
     </div>
 </div>
  <h3 style="text-align:center">Purchase Order</h3>
@@ -32,7 +32,7 @@ html, body { height: 100%; /* font-family: "Segoe UI", Candara, "Bitstream Vera 
 	<div><span>Address: </span><span><?php echo $supplier->address; ?></span></div>
 	    
 	    </td><td  align="right">
-	         <div><span>P.O No: </span><span><?php  echo $inv->id; ?></span></div>
+	         <div><span>P.O No: </span><span><?php  echo $inv->purchase_id; ?></span></div>
 
 	<div><span>Ref : </span><span><?php echo $inv->reference_no; ?></span></div>
 

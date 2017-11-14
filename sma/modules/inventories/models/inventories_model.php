@@ -139,7 +139,6 @@ class Inventories_model extends CI_Model
         $q = $this->db->get('purchases');
         if ($q->num_rows() > 0) {
             $row = $q->row();
-            //return QUOTE_REF."-".date('Y')."-".sprintf("%03s", $row->id+1);
             return "RQ" . "-" . sprintf("%04s", $row->id + 1);
         }
 
@@ -404,6 +403,22 @@ class Inventories_model extends CI_Model
         }
     }
 
+
+
+    public function getAllInventoryItemsFromMrr($purchase_id)
+    {
+        $this->db->order_by('id', 'asc');
+        $q = $this->db->get_where('purchase_items', array('make_purchase_id' => $purchase_id));
+        if ($q->num_rows() > 0) {
+            foreach (($q->result()) as $row) {
+                $data[] = $row;
+            }
+
+            return $data;
+        }
+    }
+
+
     public function getAllpoInventoryItems($purchase_id)
 
     {
@@ -512,6 +527,20 @@ class Inventories_model extends CI_Model
 
     }
 
+
+    public function getItemByProductId($id)
+    {
+
+        $q = $this->db->get_where('purchase_items', array('product_id' => $id), 1);
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+
+        return FALSE;
+
+    }
+
+
     public function getInventoryByPurchaseID($purchase_id)
     {
 
@@ -536,6 +565,33 @@ class Inventories_model extends CI_Model
 
     }
 
+
+    public function getMakeMrrInfoByPurchasedId($purchase_id)
+    {
+
+        $q = $this->db->get_where('make_mrr', array('make_purchase_id' => $purchase_id),1);
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+
+        return FALSE;
+
+    }
+
+
+    public function getMakeMrrInfo($purchase_id)
+    {
+
+        $q = $this->db->get_where('make_mrr', array('make_purchase_id' => $purchase_id));
+        if ($q->num_rows() > 0) {
+            foreach (($q->result()) as $row) {
+                $data[] = $row;
+            }
+            return $data;
+        }
+        return FALSE;
+
+    }
 
     public function getInventoryFromPOByMakePurchaseID($purchase_id)
     {
@@ -593,10 +649,10 @@ class Inventories_model extends CI_Model
         if ($this->db->insert('purchases', $purchseData)) {
             $purchase_id = $this->db->insert_id();
 
-            foreach ($items as $data) {
-                $this->npQTY($data['product_id'], $data['quantity']);
-                $this->updateProductQuantity($data['product_id'], $data['quantity'], $warehouse_id, $data['unit_price']);
-            }
+//            foreach ($items as $data) {
+//                $this->npQTY($data['product_id'], $data['quantity']);
+//                $this->updateProductQuantity($data['product_id'], $data['quantity'], $warehouse_id, $data['unit_price']);
+//            }
 
             $addOn = array('purchase_id' => $purchase_id);
             end($addOn);
@@ -747,10 +803,10 @@ class Inventories_model extends CI_Model
         $this->db->where('id', $id);
         if ($this->db->update('purchases', $purchseData) && $this->db->delete('purchase_items', array('purchase_id' => $id))) {
 
-            foreach ($items as $data) {
-                $this->npQTY($data['product_id'], $data['quantity']);
+//            foreach ($items as $data) {
+//                $this->npQTY($data['product_id'], $data['quantity']);
                 //$this->updateProductQuantity($data['product_id'], $data['quantity'], $warehouse_id, $data['unit_price']);
-            }
+//            }
 
             $addOn = array('purchase_id' => $id);
             end($addOn);
@@ -857,7 +913,8 @@ class Inventories_model extends CI_Model
     }
 
 
-    public function updateMrr($id, $pdata, $items = array(), $warehouse_id,$obj)
+    public function updateMrr($id, $pdata, $items = array(), $warehouse_id, $obj)
+
     {
         $purchseData = array(
             'mr_reference_no' => $pdata['mr_reference_no'],
@@ -868,49 +925,22 @@ class Inventories_model extends CI_Model
         );
 
 
-        $this->db->where('id', $id);
-//        if ($this->db->update('make_purchases', $purchseData)) {
+        $ifMrrNotExists = $this->getMakeMrrInfoByPurchasedId($obj['purchase_id']);
+        if (!$ifMrrNotExists) {
+            $this->db->where('id', $id);
+            if ($this->db->update('make_purchases', $purchseData)) {
 
-            foreach ($items as $data) {
-                $this->npQTY($data['product_id'], $data['quantity']);
-                $this->updateProductQuantity($data['product_id'], $data['quantity'], $warehouse_id, $data['unit_price']);
+                foreach ($obj as $data) {
+                    $this->npQTY($data['purchase_item_id'], $data['received_qty']);
+                    $this->updateProductQuantity($data['purchase_item_id'], $data['received_qty'], $warehouse_id, $data['price']);
+                }
+                $this->db->insert_batch('make_mrr', $obj);
+                return true;
+            } else {
+                return false;
             }
-
-//            $addOn = array('purchase_id' => $id);
-//            end($addOn);
-//            foreach ($items as &$var) {
-//                $var = array_merge($addOn, $var);
-//            }
-
-//            $this->db->insert_batch('make_mrr', $obj);
-//            return true;
-//        } else {
-//            return false;
-//        }
-
-        var_dump($obj);
-//        var_dump(array("y"=>$warehouse_id));
-    }
-
-
-    public function make_mrr_obj($obj)
-    {
-        $mrrObj = array("make_purchase_id" => $obj->$id,
-            "purchase_id" => $obj->$getPurchaseId,
-            "purchase_item_id" => $obj->$product_id,
-            "po_qty" => $obj->$product_qty,
-            "remain_qty" => $obj->$product_remain_qty,
-            "received_qty" => $obj->$inv_quantity,
-            "price" => $obj->$inv_unit_cost,
-            "tax_val" => $obj->$val_tax,
-            "tax_id" => $obj->$tax_rate_id,
-            "inv_val" => $obj->$inv_gross_total,
-            "mrr_date" => $obj->$xp_date,
-            "mrr_ref" => $obj->$mr_reference,
-            "supplier_id" => $obj->$supplier_id_no,
-            "wh_id" => $obj->$warehouse_id_no);
-
-        return $mrrObj;
+            return false;
+        }
     }
 
     public function updateCheck($purchase_id)
@@ -962,6 +992,17 @@ class Inventories_model extends CI_Model
         $data = array('mr_status' => 2, 'mr_approve_by' => USER_ID, 'mr_approve_date' => date('Y-m-d H:i:s'));
         $this->db->where('id', $purchase_id);
         if ($this->db->update('make_purchases', $data)) {
+
+            $mrrData=$this->db->getMakeMrrInfo($purchase_id);
+                $obj=array(
+                    "approved_by"=>USER_ID,
+                    "approved_date"=>date('Y-m-d H:i:s')
+                );
+                $condition=array(
+                    "make_purchase_id"=>$purchase_id,
+                );
+                $condition=array("make_purchase_id"=>$purchase_id);
+                $this->db->update('make_mrr', $obj,$condition);
             return true;
         } else {
             return false;

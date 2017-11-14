@@ -96,8 +96,6 @@ class Inventories extends MX_Controller
 
     function mrr_list()
     {
-//	   echo 'hello world';
-
         if ($this->ion_auth->in_group('salesman')) {
             $this->session->set_flashdata('message', $this->lang->line("access_denied"));
             $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
@@ -136,15 +134,15 @@ class Inventories extends MX_Controller
             ->from('purchases');
 
         $this->datatables->add_column("Actions",
-            "<center><a href='#' onClick=\"MyWindow=window.open('index.php?module=inventories&view=view_inventory&id=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=1000,height=600'); return false;\" title='" . $this->lang->line("view_inventory") . "' class='tip'><i class='icon-fullscreen'></i></a>&nbsp;<a href='index.php?module=inventories&amp;view=edit&amp;id=$1' title='Process' class='tip'><i class='icon-list'></i></a>
-			 &nbsp;
-			       <a href='index.php?module=inventories&amp;view=delete&amp;id=$1' onClick=\"return confirm('" . $this->lang->line('alert_x_inventory') . "')\" title='" . $this->lang->line("delete_inventory") . "' class='tip'><i class='icon-trash'></i></a>&nbsp; </center>", "id")
+            "<center><a href='#' onClick=\"MyWindow=window.open('index.php?module=inventories&view=view_inventory_po&id=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=1000,height=600'); return false;\" title='" . $this->lang->line("view_inventory") . "' class='tip'><i class='icon-fullscreen'></i></a>&nbsp;<a href='index.php?module=inventories&amp;view=edit&amp;id=$1' title='Process' class='tip'><i class='icon-list'></i></a>
+			 &nbsp;<a href='index.php?module=inventories&amp;view=delete&amp;id=$1' onClick=\"return confirm('" . $this->lang->line('alert_x_inventory') . "')\" title='" . $this->lang->line("delete_inventory") . "' class='tip'><i class='icon-trash'></i></a>&nbsp; </center>", "id")
             ->unset_column('id');
 
 
         echo $this->datatables->generate();
 
     }
+
 
     function getpodatatableajax()
     {
@@ -158,12 +156,12 @@ class Inventories extends MX_Controller
 
         $this->datatables
             ->select("make_purchases.id as id, date, reference_no, supplier_name, COALESCE(advance_payment, 0), total,  CASE WHEN approved = '1' THEN 'Approved' WHEN verify_status = '1' THEN 'Verified'  WHEN checked = '1' THEN 'Checked' END AS approved", FALSE)
-            ->from('make_purchases');
+            ->from('make_purchases')
+            ->where("mr_entry_by", "");
 
         $this->datatables->add_column("Actions",
             "<center><a href='#' onClick=\"MyWindow=window.open('index.php?module=inventories&view=view_inventory_po&id=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=1000,height=600'); return false;\" title='" . $this->lang->line("view_workOrder") . "' class='tip'><i class='icon-fullscreen'></i></a>&nbsp; <a href='index.php?module=inventories&view=pdf_purchase&id=$1' title='Work Order' class='tip'><i class='icon-download'></i></a>
-			  &nbsp;<a href='index.php?module=inventories&amp;view=make_mrr&amp;id=$1' title='Make MRR' class='tip'><i class='icon-adjust'></i></a>&nbsp;
-			      <a href='index.php?module=inventories&amp;view=edit&amp;id=$1' title='" . $this->lang->line("edit_order") . "' class='tip'><i class='icon-edit'></i></a> <a href='index.php?module=inventories&amp;view=delete&amp;id=$1' onClick=\"return confirm('" . $this->lang->line('alert_x_inventory') . "')\" title='" . $this->lang->line("delete_inventory") . "' class='tip'><i class='icon-trash'></i></a>&nbsp; <input type='checkbox' name='chk[]' value='$1' /> </center>", "id")
+			  &nbsp;<a href='index.php?module=inventories&amp;view=make_mrr&amp;id=$1' title='Make MRR' class='tip'><i class='icon-adjust'></i></a>&nbsp;<a href='index.php?module=inventories&amp;view=edit&amp;id=$1' title='" . $this->lang->line("edit_order") . "' class='tip'><i class='icon-edit'></i></a> <a href='index.php?module=inventories&amp;view=delete&amp;id=$1' onClick=\"return confirm('" . $this->lang->line('alert_x_inventory') . "')\" title='" . $this->lang->line("delete_inventory") . "' class='tip'><i class='icon-trash'></i></a>&nbsp; <input type='checkbox' name='chk[]' value='$1' /> </center>", "id")
             ->unset_column('id');
 
 
@@ -185,7 +183,9 @@ class Inventories extends MX_Controller
             ->from('make_purchases')
             ->where("mr_status != 0");
         $this->datatables->add_column("Actions",
-            "<center><a href='#' onClick=\"MyWindow=window.open('index.php?module=inventories&view=view_inventory&id=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=1000,height=600'); return false;\" title='" . $this->lang->line("view_workOrder") . "' class='tip'><i class='icon-fullscreen'></i></a> <a href='index.php?module=inventories&amp;view=make_mrr&amp;id=$1' title='Process' class='tip'><i class='icon-ban-circle'></i></a>&nbsp;<a href='index.php?module=inventories&view=pdf_mrr&id=$1' title='MRR Order' class='tip'><i class='icon-download'></i></a></center>", "id")
+            // omit mrr approve
+//            "<center><a href='#' onClick=\"MyWindow=window.open('index.php?module=inventories&view=view_inventory&id=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=1000,height=600'); return false;\" title='" . $this->lang->line("view_workOrder") . "' class='tip'><i class='icon-fullscreen'></i></a> <a href='index.php?module=inventories&amp;view=make_mrr&amp;id=$1' title='Process' class='tip'><i class='icon-ban-circle'></i></a>&nbsp;<a href='index.php?module=inventories&view=pdf_mrr&id=$1' title='MRR Order' class='tip'><i class='icon-download'></i></a></center>", "id")
+            "<center><a href='#' onClick=\"MyWindow=window.open('index.php?module=inventories&view=view_inventory&id=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=1000,height=600'); return false;\" title='" . $this->lang->line("view_workOrder") . "' class='tip'><i class='icon-fullscreen'></i></a>&nbsp;<a href='index.php?module=inventories&view=pdf_mrr&id=$1' title='MRR Order' class='tip'><i class='icon-download'></i></a></center>", "id")
             ->unset_column('id')->unset_column('checked');
 
 
@@ -407,7 +407,7 @@ class Inventories extends MX_Controller
 
     }
     /* -------------------------------------------------------------------------------------------------------------------------------- */
-//view inventory as html page
+//view MRR as html page
 
     function view_inventory($purchase_id = NULL)
     {
@@ -416,17 +416,15 @@ class Inventories extends MX_Controller
         }
         $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
 
-        $data['rows'] = $this->inventories_model->getAllInventoryItems($purchase_id);
 
-        $inv = $this->inventories_model->getInventoryByPurchaseID($purchase_id);
-        $supplier_id = $inv->supplier_id;
+        $inv = $this->inventories_model->getInventoryFromPOByPurchaseID($purchase_id);
+        $data['rows'] = $this->inventories_model->getMakeMrrInfo($purchase_id);
+        $supplier_id = $data['rows'][0]->supplier_id;
         $data['supplier'] = $this->inventories_model->getSupplierByID($supplier_id);
 
         $data['inv'] = $inv;
         $data['pid'] = $purchase_id;
         $data['page_title'] = $this->lang->line("inventory");
-
-
         $this->load->view('view_inventory', $data);
 
     }
@@ -438,22 +436,22 @@ class Inventories extends MX_Controller
         }
         $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
 
+        $inv = $this->inventories_model->getInventoryFromPOByPurchaseID($purchase_id);
         $data['rows'] = $this->inventories_model->getAllpoInventoryItems($purchase_id);
-
-        //pull info from purchase
-//        $inv = $this->inventories_model->getInventoryFromPOByPurchaseID($purchase_id);
-        $inv = $this->inventories_model->getInventoryFromPOByMakePurchaseID($purchase_id);
-        $supplier_id = $inv->supplier_id;
+        $supplier_id = $data['rows'][0]->supplier_id;
         $data['supplier'] = $this->inventories_model->getSupplierByID($supplier_id);
+
 
         $data['inv'] = $inv;
         $data['pid'] = $purchase_id;
         $data['page_title'] = $this->lang->line("inventory");
 
-
-        $this->load->view('view_inventory', $data);
+        $this->load->view('view_po', $data);
 
     }
+
+
+
     /* -------------------------------------------------------------------------------------------------------------------------------- */
 //generate pdf and force to download 
 
@@ -474,33 +472,35 @@ class Inventories extends MX_Controller
         $data['pid'] = $purchase_id;
         $data['page_title'] = $this->lang->line("inventory");
 
-
-        $html = $this->load->view('view_inventory', $data, TRUE);
-
-
-        $this->load->library('MPDF/mpdf');
-
-        $mpdf = new mPDF('utf-8', 'A4', '12', '', 10, 10, 10, 10, 9, 9);
-        $mpdf->useOnlyCoreFonts = true;
-        $mpdf->SetProtection(array('print'));
-        $mpdf->SetTitle(SITE_NAME);
-        $mpdf->SetAuthor(SITE_NAME);
-        $mpdf->SetCreator(SITE_NAME);
-        $mpdf->SetDisplayMode('fullpage');
-        $mpdf->SetAutoFont();
-        $stylesheet = file_get_contents('assets/css/bootstrap-' . THEME . '.css');
-        $mpdf->WriteHTML($stylesheet, 1);
-
-        $search = array("<div class=\"row-fluid\">", "<div class=\"span6\">");
-        $replace = array("<div style='width: 100%;'>", "<div style='width: 48%; float: left;'>");
-        $html = str_replace($search, $replace, $html);
+        var_dump($data['rows']);
 
 
-        $name = $this->lang->line("inventory") . "-" . $inv->id . ".pdf";
+//        $html = $this->load->view('view_inventory', $data, TRUE);
 
-        $mpdf->WriteHTML($html);
 
-        $mpdf->Output($name, 'D');
+//        $this->load->library('MPDF/mpdf');
+//
+//        $mpdf = new mPDF('utf-8', 'A4', '12', '', 10, 10, 10, 10, 9, 9);
+//        $mpdf->useOnlyCoreFonts = true;
+//        $mpdf->SetProtection(array('print'));
+//        $mpdf->SetTitle(SITE_NAME);
+//        $mpdf->SetAuthor(SITE_NAME);
+//        $mpdf->SetCreator(SITE_NAME);
+//        $mpdf->SetDisplayMode('fullpage');
+//        $mpdf->SetAutoFont();
+//        $stylesheet = file_get_contents('assets/css/bootstrap-' . THEME . '.css');
+//        $mpdf->WriteHTML($stylesheet, 1);
+//
+//        $search = array("<div class=\"row-fluid\">", "<div class=\"span6\">");
+//        $replace = array("<div style='width: 100%;'>", "<div style='width: 48%; float: left;'>");
+//        $html = str_replace($search, $replace, $html);
+//
+//
+//        $name = $this->lang->line("inventory") . "-" . $inv->id . ".pdf";
+//
+//        $mpdf->WriteHTML($html);
+//
+//        $mpdf->Output($name, 'D');
 
         exit;
 
@@ -527,7 +527,6 @@ class Inventories extends MX_Controller
 
         // pull from purchase table
         $inv = $this->inventories_model->getWorkorderByPurchaseID($purchase_id);
-//        $inv = $this->inventories_model->getInventoryFromPOByMakePurchaseID($purchase_id);
         $supplier_id = $inv->supplier_id;
         $data['supplier'] = $this->inventories_model->getSupplierByID($supplier_id);
 
@@ -586,21 +585,28 @@ class Inventories extends MX_Controller
         }
         $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
 
-        $data['rows'] = $this->inventories_model->getAllInventoryItems($purchase_id);
 
-        $inv = $this->inventories_model->getWorkorderByPurchaseID($purchase_id);
-        $supplier_id = $inv->supplier_id;
+        $inv = $this->inventories_model->getInventoryFromPOByPurchaseID($purchase_id);
+        $data['rows'] = $this->inventories_model->getMakeMrrInfo($purchase_id);
+        $supplier_id = $data['rows'][0]->supplier_id;
         $data['supplier'] = $this->inventories_model->getSupplierByID($supplier_id);
+
+//        $data['rows'] = $this->inventories_model->getAllInventoryItems($purchase_id);
+//
+//        $inv = $this->inventories_model->getWorkorderByPurchaseID($purchase_id);
+//        $supplier_id = $inv->supplier_id;
+//        $data['supplier'] = $this->inventories_model->getSupplierByID($supplier_id);
 
         $data['inv'] = $inv;
         $data['pid'] = $purchase_id;
         $data['page_title'] = $this->lang->line("inventory");
-        if ($inv->mr_status != 2) {
-            $this->session->set_flashdata('message', "This MRR Order Not Approve Yet");
-            $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
-            redirect('module=inventories', 'refresh');
-        }
+//      /  if ($inv->mr_status != 2) {
+//            $this->session->set_flashdata('message', "This MRR Order Not Approve Yet");
+//            $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
+//            redirect('module=inventories', 'refresh');
+//        }
 
+//        var_dump($data['rows']);
         $html = $this->load->view('view_mrr', $data, TRUE);
 
 
@@ -1383,7 +1389,7 @@ class Inventories extends MX_Controller
         for ($i = 1; $i <= 100; $i++) {
             $val = 0;
             $val = $this->input->post('rquantity' . $i);
-            $ar[$i]=$val;
+            $ar[$i] = $val;
         }
 
         for ($j = 1; $j <= count($ar); $j++) {
@@ -1392,7 +1398,7 @@ class Inventories extends MX_Controller
 
         for ($k = 1; $k <= count($cr); $k++) {
             $qty = $cr[$k] + 1;
-                $this->form_validation->set_rules('quantity' . $k, 'Quantity', 'required|less_than[' . $qty . ']');
+            $this->form_validation->set_rules('quantity' . $k, 'Quantity', 'required|less_than[' . $qty . ']');
         }
 
 //
@@ -1417,7 +1423,6 @@ class Inventories extends MX_Controller
         $mrrObj = array();
 
         if ($this->form_validation->run() == true) {
-
             $reference = $this->input->post('reference_no');
             $mr_reference_no = $this->input->post('mr_reference_no');
             $date = $this->ion_auth->fsd(trim($this->input->post('date')));
@@ -1429,19 +1434,17 @@ class Inventories extends MX_Controller
             $inv_total_no_tax = 0;
             for ($i = 1; $i <= 500; $i++) {
                 if ($this->input->post($quantity . $i) && $this->input->post($product . $i) && $this->input->post($unit_cost . $i)) {
-
                     $product_details = $this->inventories_model->getProductByCode($this->input->post($product . $i));
+                    $p_items = $this->inventories_model->getItemByProductId($product_details->id);
                     $product_id[] = $product_details->id;
-                    $product_name[] = $product_details->name;
-                    $product_code[] = $product_details->code;
+                    $product_name[] = $p_items->product_name;
+                    $product_code[] = $p_items->product_code;
                     $product_qty[] = $this->input->post($quantity . $i);
-//                    $product_qty[] = $product_details->quantity;
                     $product_pqty = $this->input->post($rquantity . $i);
                     $mr_item_status[] = in_array($product_details->id, $this->input->post('check_product')) ? 1 : 0;
 
                     $inv_quantity[] = $this->input->post($quantity . $i);
                     $product_remain_qty = ($this->input->post($rquantity . $i) - $this->input->post($quantity . $i));
-                    //$inv_product_code[] = $this->input->post($product.$i);
                     $inv_unit_cost[] = $this->input->post($unit_cost . $i);
 
 
@@ -1471,10 +1474,15 @@ class Inventories extends MX_Controller
                         } else {
                             $tax[] = $taxRate;
                         }
+
+                        // date Convertion
+
+                        $expDate = date('Y-m-d', strtotime(str_replace('/', '-', $this->input->post($exp_date . $i))));
+
                         $mrrObj[] = array("make_purchase_id" => $id,
                             "purchase_id" => $getPurchase->purchase_id,
-                            "purchase_item_code" => $getPurchase->product_code,
-                            "purchase_item_name" => $getPurchase->product_name,
+                            "purchase_item_code" => $p_items->product_code,
+                            "purchase_item_name" => $p_items->product_name,
                             "purchase_item_id" => $product_details->id,
                             "po_qty" => $product_pqty,
                             "remain_qty" => $product_remain_qty,
@@ -1486,7 +1494,9 @@ class Inventories extends MX_Controller
                             "mrr_date" => date('Y-m-d H:i:s'),
                             "mrr_ref" => $mr_reference_no,
                             "supplier_id" => $supplier_id,
-                            "wh_id" => $warehouse_id);
+                            "wh_id" => $warehouse_id,
+                            "created_by" => USER_ID,
+                            "exp_date" => $expDate);
 
 
                     } else {
@@ -1529,9 +1539,9 @@ class Inventories extends MX_Controller
         }
 
 
-        if ($this->form_validation->run() == true && $this->inventories_model->updateMrr($id, $invDetails, $items, $warehouse_id,$mrrObj)) {
-//            $this->session->set_flashdata('success_message', "MRR create successfully!");
-//            redirect("module=inventories&view=mrr_list", 'refresh');
+        if ($this->form_validation->run() == true && $this->inventories_model->updateMrr($id, $invDetails, $items, $warehouse_id, $mrrObj)) {
+            $this->session->set_flashdata('success_message', "MRR create successfully!");
+            redirect("module=inventories&view=mrr_list", 'refresh');
         } else {
 
             $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));

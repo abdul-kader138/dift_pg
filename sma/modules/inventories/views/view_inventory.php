@@ -44,10 +44,10 @@ html, body { height: 100%; /* font-family: "Segoe UI", Candara, "Bitstream Vera 
   
     <div class="span6">
     
-   <h3 class="inv"><?php echo $this->lang->line("inventory_no"); ?>. <?php echo $inv->id; ?></h3>
-<p style="font-weight:bold;"><?php echo $this->lang->line("reference_no"); ?>: <?php echo $inv->reference_no; ?></p>
+   <h3 class="inv"><?php echo $this->lang->line("purchase_no"); ?>. <?php echo $inv->purchase_id; ?></h3>
+<p style="font-weight:bold;"><?php echo $this->lang->line("mrr_reference_no"); ?>: <?php echo $inv->mr_reference_no; ?></p>
 
-<p style="font-weight:bold;"><?php echo $this->lang->line("date"); ?>: <?php echo date(PHP_DATE, strtotime($inv->date)); ?></p>   
+<p style="font-weight:bold;"><?php echo $this->lang->line("date"); ?>: <?php echo date(PHP_DATE, strtotime($inv->mr_entry_date)); ?></p>
 </div>
 <div style="clear: both;"></div>	
 </div>
@@ -59,8 +59,9 @@ html, body { height: 100%; /* font-family: "Segoe UI", Candara, "Bitstream Vera 
 	<tr> 
     	<th><?php echo $this->lang->line("no"); ?></th> 
 	    <th><?php echo $this->lang->line("description"); ?> (<?php echo $this->lang->line("code"); ?>)</th> 
-        <th><?php echo $this->lang->line("quantity"); ?></th>
-	    <th style="padding-right:20px;"><?php echo $this->lang->line("unit_price"); ?></th> 
+        <th><?php echo $this->lang->line("pquantity"); ?></th>
+        <th><?php echo $this->lang->line("rquantity"); ?></th>
+	    <th style="padding-right:20px;"><?php echo $this->lang->line("unit_price"); ?></th>
         <?php if(TAX1) { echo '<th style="padding-right:20px; text-align:center; vertical-align:middle;">'.$this->lang->line("tax").'</th>'; } ?>
 	    <th style="padding-right:20px;"><?php echo $this->lang->line("subtotal"); ?></th> 
 	</tr> 
@@ -69,25 +70,28 @@ html, body { height: 100%; /* font-family: "Segoe UI", Candara, "Bitstream Vera 
 
 	<tbody> 
 	
-	<?php $r = 1; foreach ($rows as $row):?>
+	<?php $grandTotal=0; $taxTotal=0;$r = 1; foreach ($rows as $row):?>
 			<tr>
             	<td style="text-align:center; width:40px; vertical-align:middle;"><?php echo $r; ?></td>
-                <td style="vertical-align:middle;"><?php echo $row->product_name." (".$row->product_code.")"; ?></td>
-                <td style="width: 100px; text-align:center; vertical-align:middle;"><?php echo $row->quantity; ?></td>
-                <td style="text-align:right; width:100px; padding-right:10px;"><?php echo $this->ion_auth->formatMoney($row->unit_price); ?></td>
+                <td style="vertical-align:middle;"><?php echo $row->purchase_item_name." (".$row->purchase_item_code.")"; ?></td>
+                <td style="width: 100px; text-align:center; vertical-align:middle;"><?php echo $row->po_qty; ?></td>
+                <td style="width: 100px; text-align:center; vertical-align:middle;"><?php echo $row->received_qty; ?></td>
+                <td style="text-align:right; width:100px; padding-right:10px;"><?php echo $this->ion_auth->formatMoney($row->price); ?></td>
                 <?php if(TAX1) { echo '<td style="width: 80px; text-align:right; vertical-align:middle;"><!--<small>('.$row->tax.')</small>--> '.$row->val_tax.'</td>'; } ?>
-                <td style="text-align:right; width:100px; padding-right:10px;"><?php echo $this->ion_auth->formatMoney($row->gross_total); ?></td> 
+                <td style="text-align:right; width:100px; padding-right:10px;"><?php echo $this->ion_auth->formatMoney(($row->price*$row->received_qty)); ?></td>
 			</tr> 
     <?php 
-		$r++; 
-		endforeach;
+		$r++;
+        $grandTotal=($grandTotal+($row->price*$row->received_qty));
+        $taxTotal=($taxTotal+$row->val_tax);
+    endforeach;
 	?>
-    <?php $col = 4; if(TAX1) { $col += 1; } ?>
+    <?php $col = 5; if(TAX1) { $col += 1; } ?>
     
 <?php if(TAX1) { ?>
-<tr><td colspan="<?php echo $col; ?>" style="text-align:right; padding-right:10px;"><?php echo $this->lang->line("total"); ?> (<?php echo CURRENCY_PREFIX; ?>)</td><td style="text-align:right; padding-right:10px;"><?php echo $this->ion_auth->formatMoney($inv->inv_total); ?></td></tr>
-<?php echo '<tr><td colspan="'.$col.'" style="text-align:right; padding-right:10px;;">'.$this->lang->line("product_tax").' ('. CURRENCY_PREFIX.')</td><td style="text-align:right; padding-right:10px;">'.$this->ion_auth->formatMoney($inv->total_tax).'</td></tr>'; } ?>
-<tr><td colspan="<?php echo $col; ?>" style="text-align:right; padding-right:10px; font-weight:bold;"><?php echo $this->lang->line("total_amount"); ?> (<?php echo CURRENCY_PREFIX; ?>)</td><td style="text-align:right; padding-right:10px; font-weight:bold;"><?php echo $this->ion_auth->formatMoney($inv->total); ?></td></tr>
+<tr><td colspan="<?php echo $col; ?>" style="text-align:right; padding-right:10px;"><?php echo $this->lang->line("total"); ?> (<?php echo CURRENCY_PREFIX; ?>)</td><td style="text-align:right; padding-right:10px;"><?php echo $grandTotal; ?></td></tr>
+<?php echo '<tr><td colspan="'.$col.'" style="text-align:right; padding-right:10px;;">'.$this->lang->line("product_tax").' ('. CURRENCY_PREFIX.')</td><td style="text-align:right; padding-right:10px;">'.$taxTotal.'</td></tr>'; } ?>
+<tr><td colspan="<?php echo $col; ?>" style="text-align:right; padding-right:10px; font-weight:bold;"><?php echo $this->lang->line("total_amount"); ?> (<?php echo CURRENCY_PREFIX; ?>)</td><td style="text-align:right; padding-right:10px; font-weight:bold;"><?php echo ($grandTotal+$taxTotal); ?></td></tr>
 
 	</tbody> 
 
@@ -108,7 +112,7 @@ html, body { height: 100%; /* font-family: "Segoe UI", Candara, "Bitstream Vera 
 <div class="row-fluid">
 <div class="span5"> 
 <p>&nbsp;</p>
-<p><?php echo $this->lang->line("order_by"); ?>: <?php echo $inv->user; ?> </p>
+<!--<p>--><?php //echo $this->lang->line("order_by"); ?><!--: --><?php //echo $inv->user; ?><!-- </p>-->
 <p>&nbsp;</p>
 <p style="border-bottom: 1px solid #666;">&nbsp;</p>
 <p><?php echo $this->lang->line("signature")." &amp; ".$this->lang->line("stamp"); ; ?></p>

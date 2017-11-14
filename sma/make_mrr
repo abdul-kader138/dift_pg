@@ -16,5 +16,10 @@ CREATE TABLE `make_mrr` (
  `approved_date` date NOT NULL,
  `supplier_id` int(11) NOT NULL,
  `wh_id` int(11) NOT NULL,
- PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1
+ `exp_date` date NOT NULL,
+ `created_by` tinyint(4) NOT NULL,
+ `purchase_item_code` varchar(20) NOT NULL,
+ `purchase_item_name` varchar(255) NOT NULL,
+ PRIMARY KEY (`id`),
+ UNIQUE KEY `purchase_id` (`purchase_id`,`purchase_item_id`,`po_qty`)
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=latin1
