@@ -274,6 +274,7 @@ $lang['invoice_type'] 					= "Invoice Type";
 $lang['tax_rate'] 						= "Tax Rate";
 $lang['reference_no'] 					= "Reference No";
 $lang['mrr_reference_no'] 				= "MRR Reference No";
+$lang['po_selection'] 			    	= "Select required PO";
 $lang['po_reference_no'] 				= "PO Reference No";
 $lang['edit_order'] 				    = "Edit Order";
 $lang['sale_added'] 					= "Sale Order Successfully Added";

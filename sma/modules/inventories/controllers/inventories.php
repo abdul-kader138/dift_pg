@@ -131,7 +131,8 @@ class Inventories extends MX_Controller
 
         $this->datatables
             ->select("purchases.id as id, date, reference_no, supplier_name, COALESCE(inv_total, 0), COALESCE(total_tax, 0), total,  CASE WHEN approved = '1' THEN 'Approved' WHEN verify_status = '1' THEN 'Verified'  WHEN checked = '1' THEN 'Checked' END AS approved", FALSE)
-            ->from('purchases');
+            ->from('purchases')
+            ->where("checked", '0');
 
         $this->datatables->add_column("Actions",
             "<center><a href='#' onClick=\"MyWindow=window.open('index.php?module=inventories&view=view_inventory_po&id=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=1000,height=600'); return false;\" title='" . $this->lang->line("view_inventory") . "' class='tip'><i class='icon-fullscreen'></i></a>&nbsp;<a href='index.php?module=inventories&amp;view=edit&amp;id=$1' title='Process' class='tip'><i class='icon-list'></i></a>
@@ -179,9 +180,9 @@ class Inventories extends MX_Controller
         }
         $this->load->library('datatables');
         $this->datatables
-            ->select("make_purchases.id as id, mr_date, reference_no, supplier_name, COALESCE(inv_total, 0), COALESCE(total_tax, 0), total, case mr_status when '2' Then 'Approved' when '1' Then 'Not Approved' when '3' Then 'Cancel' END approved", FALSE)
+            ->select("make_purchases.id as id, mr_date, reference_no, supplier_name, COALESCE(inv_total, 0), COALESCE(total_tax, 0), total, case mr_status when '1' Then 'Approved' END approved", FALSE)
             ->from('make_purchases')
-            ->where("mr_status != 0");
+            ->where("mr_status","1");
         $this->datatables->add_column("Actions",
             // omit mrr approve
 //            "<center><a href='#' onClick=\"MyWindow=window.open('index.php?module=inventories&view=view_inventory&id=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=1000,height=600'); return false;\" title='" . $this->lang->line("view_workOrder") . "' class='tip'><i class='icon-fullscreen'></i></a> <a href='index.php?module=inventories&amp;view=make_mrr&amp;id=$1' title='Process' class='tip'><i class='icon-ban-circle'></i></a>&nbsp;<a href='index.php?module=inventories&view=pdf_mrr&id=$1' title='MRR Order' class='tip'><i class='icon-download'></i></a></center>", "id")
@@ -216,46 +217,52 @@ class Inventories extends MX_Controller
             redirect('module=home', 'refresh');
         }
 
+        $this->form_validation->set_rules('chk', $this->lang->line("po_selection"), 'required');
 
-        $not_verify = [];
-        $All_ready_approved = [];
-        $purchase_id = $this->input->post('chk');
+        if ($this->form_validation->run() == true) {
+            $not_verify = [];
+            $All_ready_approved = [];
+            $purchase_id = $this->input->post('chk');
 
-        foreach ($purchase_id as $idvalue) {
-            $p_data = $this->inventories_model->getPurchaseId($idvalue);
-            if ($p_data->approved == 1) {
-                $All_ready_approved[] = $p_data->reference_no;
-            } else {
-                if ($p_data->verify_status == 1) {
-
-                    $this->inventories_model->updateApprovePO($idvalue);
-
+            foreach ($purchase_id as $idvalue) {
+                $p_data = $this->inventories_model->getPurchaseId($idvalue);
+                if ($p_data->approved == 1) {
+                    $All_ready_approved[] = $p_data->reference_no;
                 } else {
+                    if ($p_data->verify_status == 1) {
 
-                    $not_verify[] = $p_data->reference_no;
+                        $this->inventories_model->updateApprovePO($idvalue);
+
+                    } else {
+
+                        $not_verify[] = $p_data->reference_no;
+                    }
+
                 }
-
             }
+
+            if (count($All_ready_approved) > 0) {
+                $ready_approved = implode(',', $All_ready_approved);
+                $this->session->set_flashdata('message', "Following PO already are approved." . $ready_approved);
+                $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
+                redirect('module=inventories', 'refresh');
+            }
+
+
+            if (count($not_verify) > 0) {
+                $not_v_req = implode(',', $not_verify);
+                $this->session->set_flashdata('message', "Following Requisition are not verify yet." . $not_v_req);
+                $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
+                redirect('module=inventories', 'refresh');
+            }
+
+
+            $this->session->set_flashdata('success_message', 'Order Approved Successful');
+            redirect("module=inventories&view=po_content", 'refresh');
+        } else {
+            $this->session->set_flashdata('message', "Please select require PO");
+            redirect("module=inventories&view=po_content", 'refresh');
         }
-
-        if (count($All_ready_approved) > 0) {
-            $ready_approved = implode(',', $All_ready_approved);
-            $this->session->set_flashdata('message', "Following PO already are approved." . $ready_approved);
-            $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
-            redirect('module=inventories', 'refresh');
-        }
-
-
-        if (count($not_verify) > 0) {
-            $not_v_req = implode(',', $not_verify);
-            $this->session->set_flashdata('message', "Following Requisition are not verify yet." . $not_v_req);
-            $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
-            redirect('module=inventories', 'refresh');
-        }
-
-
-        $this->session->set_flashdata('success_message', 'Order Approved Successful');
-        redirect("module=inventories&view=po_content", 'refresh');
     }
 
 
@@ -270,43 +277,50 @@ class Inventories extends MX_Controller
         $All_ready_approved = [];
         $purchase_id = $this->input->post('chk');
 
-        foreach ($purchase_id as $idvalue) {
-            $p_data = $this->inventories_model->getPurchaseId($idvalue);
+        $this->form_validation->set_rules('chk', $this->lang->line("po_selection"), 'required');
 
-            if ($p_data->approved == 1) {
-                $All_ready_approved[] = $p_data->reference_no;
-            } else {
-                if ($p_data->checked == 1) {
+        if ($this->form_validation->run() == true) {
+            foreach ($purchase_id as $idvalue) {
+                $p_data = $this->inventories_model->getPurchaseId($idvalue);
 
-                    $this->inventories_model->updateVerifyPO($idvalue);
-
+                if ($p_data->approved == 1) {
+                    $All_ready_approved[] = $p_data->reference_no;
                 } else {
+                    if ($p_data->checked == 1) {
 
-                    $not_verify[] = $p_data->reference_no;
+                        $this->inventories_model->updateVerifyPO($idvalue);
+
+                    } else {
+
+                        $not_verify[] = $p_data->reference_no;
+                    }
+
                 }
-
             }
+
+
+            if (count($All_ready_approved) > 0) {
+                $ready_approved = implode(',', $All_ready_approved);
+                $this->session->set_flashdata('message', "Following PO already are approved." . $ready_approved);
+                $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
+                redirect("module=inventories&view=po_content", 'refresh');
+            }
+
+
+            if (count($not_verify) > 0) {
+                $not_v_req = implode(',', $not_verify);
+                $this->session->set_flashdata('message', "Following Requisition are not Checked yet." . $not_v_req);
+                $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
+                redirect("module=inventories&view=po_content", 'refresh');
+            }
+
+
+            $this->session->set_flashdata('success_message', 'Order Verify Successful');
+            redirect("module=inventories&view=po_content", 'refresh');
+        } else {
+            $this->session->set_flashdata('message', "Please select require PO");
+            redirect("module=inventories&view=po_content", 'refresh');
         }
-
-
-        if (count($All_ready_approved) > 0) {
-            $ready_approved = implode(',', $All_ready_approved);
-            $this->session->set_flashdata('message', "Following PO already are approved." . $ready_approved);
-            $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
-            redirect('module=inventories', 'refresh');
-        }
-
-
-        if (count($not_verify) > 0) {
-            $not_v_req = implode(',', $not_verify);
-            $this->session->set_flashdata('message', "Following Requisition are not Checked yet." . $not_v_req);
-            $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
-            redirect('module=inventories', 'refresh');
-        }
-
-
-        $this->session->set_flashdata('success_message', 'Order Verify Successful');
-        redirect("module=inventories&view=po_content", 'refresh');
     }
 
 
@@ -1507,7 +1521,6 @@ class Inventories extends MX_Controller
                     }
 
 
-                    $this->form_validation->set_rules($this->input->post($exp_date . $i), $this->lang->line("date"), 'xss_clean');
                     $xp_date[] = $this->input->post($exp_date . $i);
                     $inv_gross_total[] = (($this->input->post($quantity . $i)) * ($this->input->post($unit_cost . $i)));
                     $inv_total_no_tax += (($this->input->post($quantity . $i)) * ($this->input->post($unit_cost . $i)));
@@ -1557,7 +1570,7 @@ class Inventories extends MX_Controller
             if (!$data['inv']->approved) {
                 $this->session->set_flashdata('message', "This Purchese Order Not Approve Yet");
                 $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
-                redirect('module=inventories', 'refresh');
+                redirect('module=inventories&view=po_content', 'refresh');
             }
 
             $data['id'] = $id;

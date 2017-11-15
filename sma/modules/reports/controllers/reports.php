@@ -503,29 +503,34 @@ class Reports extends MX_Controller
             $start_date = $this->ion_auth->fsd($start_date);
             $end_date = $this->ion_auth->fsd($end_date);
 
-            $pp = "( SELECT pi.product_id, SUM( pi.quantity ) purchasedQty from purchases p JOIN purchase_items pi on p.id = pi.purchase_id where
-                         p.date >= '{$start_date}' and p.date < '{$end_date}' and p.mr_approve_by=1
-                         group by pi.product_id ) PCosts";
+            $pp = "(SELECT mm.purchase_item_id, SUM( mm.received_qty ) purchasedQty from purchases p JOIN make_mrr mm on p.id = mm.purchase_id where
+                         mm.mrr_date  between '{$start_date}' and '{$end_date}'
+                         group by mm.purchase_item_id ) PCosts";
+
+//            $pp = "( SELECT pi.product_id, SUM( pi.quantity ) purchasedQty from purchases p JOIN purchase_items pi on p.id = pi.purchase_id where
+//                         p.date >= '{$start_date}' and p.date < '{$end_date}' and p.mr_approve_by=1
+//                         group by pi.product_id ) PCosts";
 
             $sp = "( SELECT si.product_id, SUM( si.quantity ) soldQty, SUM( si.gross_total ) totalSale from sales s JOIN sale_items si on s.id = si.sale_id where
-                       s.date >= '{$start_date}' and s.date < '{$end_date}'
+                       s.date between '{$start_date}' and '{$end_date}'
                        group by si.product_id ) PSales";
         } else {
-            $pp = "( SELECT pi.product_id, SUM( pi.quantity ) purchasedQty from purchase_items pi group by pi.product_id ) PCosts";
+//            $pp = "( SELECT pi.product_id, SUM( pi.quantity ) purchasedQty from purchase_items pi group by pi.product_id ) PCosts";
+            $pp = "( SELECT mm.purchase_item_id, SUM(mm.received_qty ) purchasedQty from make_mrr mm group by mm.purchase_item_id ) PCosts";
 
             $sp = "( SELECT si.product_id, SUM( si.quantity ) soldQty, SUM( si.gross_total ) totalSale from sale_items si group by si.product_id ) PSales";
         }
 
         $this->load->library('datatables');
         $this->datatables
-            ->select("p.code, p.name, p.unit, p.quantity as quantity,
+            ->select("p.code, p.name, p.unit,COALESCE( p.quantity + PSales.soldQty, quantity  - PCosts.purchasedQty ) as quantity,
                 COALESCE( PCosts.purchasedQty, 0 ) as PurchasedQty,
                 COALESCE( PSales.soldQty, 0 ) as SoldQty,
                 p.adjust_qnt,
                 COALESCE( p.quantity + PCosts.purchasedQty - PSales.soldQty, quantity ) as CloseingQnt", FALSE)
             ->from('products p', FALSE)
             ->join($sp, 'p.id = PSales.product_id', 'left')
-            ->join($pp, 'p.id = PCosts.product_id', 'left');
+            ->join($pp, 'p.id = PCosts.purchase_item_id', 'left');
         // ->group_by('p.id');
 
         if ($product) {
@@ -557,15 +562,18 @@ class Reports extends MX_Controller
             $start_date = $this->ion_auth->fsd($start_date);
             $end_date = $this->ion_auth->fsd($end_date);
 
-            $pp = "( SELECT pi.product_id, SUM( pi.quantity ) purchasedQty from purchases p JOIN purchase_items pi on p.id = pi.purchase_id where
-                         p.date >= '{$start_date}' and p.date < '{$end_date}'
-                         group by pi.product_id ) PCosts";
+            $pp = "(SELECT mm.purchase_item_id, SUM( mm.received_qty ) purchasedQty from purchases p JOIN make_mrr mm on p.id = mm.purchase_id where
+                         mm.mrr_date  between '{$start_date}' and '{$end_date}'
+                         group by mm.purchase_item_id ) PCosts";
+//            $pp = "( SELECT pi.product_id, SUM( pi.quantity ) purchasedQty from purchases p JOIN purchase_items pi on p.id = pi.purchase_id where
+//                         p.date >= '{$start_date}' and p.date < '{$end_date}'
+//                         group by pi.product_id ) PCosts";
 
             $sp = "( SELECT si.product_id, SUM( si.quantity ) soldQty, SUM( si.gross_total ) totalSale from sales s JOIN sale_items si on s.id = si.sale_id where
-                       s.date >= '{$start_date}' and s.date < '{$end_date}'
+                       s.date between '{$start_date}' and '{$end_date}'
                        group by si.product_id ) PSales";
         } else {
-            $pp = "( SELECT pi.product_id, SUM( pi.quantity ) purchasedQty from purchase_items pi group by pi.product_id ) PCosts";
+            $pp = "( SELECT mm.purchase_item_id, SUM(mm.received_qty ) purchasedQty from make_mrr mm group by mm.purchase_item_id ) PCosts";
             $sp = "( SELECT si.product_id, SUM( si.quantity ) soldQty, SUM( si.gross_total ) totalSale from sale_items si group by si.product_id ) PSales";
         }
 
@@ -579,8 +587,7 @@ class Reports extends MX_Controller
                 COALESCE( p.quantity*p.cost, 0 ) as TotalSales", FALSE)
             ->from('products p', FALSE)
             ->join($sp, 'p.id = PSales.product_id', 'left')
-            ->join($pp, 'p.id = PCosts.product_id', 'left');
-        // ->group_by('p.id');
+            ->join($pp, 'p.id = PCosts.purchase_item_id', 'left');
 
         if ($product) {
             $this->datatables->where('p.id', $product);
@@ -593,8 +600,6 @@ class Reports extends MX_Controller
     function getVariance()
     {
 
-//       echo $this->input->get('product');
-//       echo $this->input->get('start_date');
         if ($this->input->get('product')) {
             $product = $this->input->get('product');
         } else {
@@ -610,34 +615,33 @@ class Reports extends MX_Controller
         } else {
             $end_date = NULL;
         }
+        if ($start_date) {
+            $var = $start_date;
+            $date = str_replace('/', '-', $var);
+            $new_date= date('Y-m-d', strtotime($date));
+            $sDate=$new_date.' 00:00:00';
+            $eDate = $new_date . ' 23:59:59';
+            $pp = "(SELECT count.id,count.product_id,count.quantity,count.created_at from count_products count where
+                         created_at between '{$sDate}' and '{$eDate}') pCount";
+
+        } else {
+            $pp = "( SELECT count.id,count.product_id,count.quantity ,count.created_at from count_products count) pCount";
+        }
         $this->load->library('datatables');
         $this->datatables
-            ->select("p.code, p.name,count_products.created_at as count_date, p.unit, count_products.quantity as cun_quantity, p.quantity as quantity,
-                COALESCE(count_products.quantity - p.quantity, 0 ) as variance", FALSE)
+            ->select("p.code, p.name,pCount.created_at as count_date, p.unit, pCount.quantity as cun_quantity, p.quantity as quantity,
+                COALESCE(pCount.quantity - p.quantity, 0 ) as variance", FALSE)
             ->from('products p', FALSE)
-            ->join("count_products", 'p.id = count_products.product_id', 'inner');
-        // ->group_by('p.id');
+            ->join($pp, 'p.id = pCount.product_id', 'inner');
 
-
-        //@Todo
-        if ($product) {
-            $date = $start_date;
-            $new_date = date("Y-m-d", strtotime($date));
-//            $sDate=$new_date.' 00:00:00';
-            $eDate=$new_date.' 23:59:59';
-//            $this->datatables->where('count_products.created_at <=', $eDate);
-//            $this->datatables->where('count_products.created_at <', $eDate);
-//            $this->datatables->where('count_products.created_at',$new_date);
-//            $this->datatables->where('count_products.created_at', $new_date);
-        }
 
         if ($product) {
             $this->datatables->where('p.id', $product);
         }
 
         echo $this->datatables->generate();
-//        echo $sDate;
-//        echo $eDate;
+//        var_dump($pp);
+//        echo $pp;
 
     }
 
