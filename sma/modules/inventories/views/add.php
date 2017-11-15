@@ -170,12 +170,13 @@ if ($this->input->post('submit')) {
                 var item_cost;
                 var pr_tax;
                 var item_name = ui.item.label;
+                var wh_id = $("#warehouse_s").val();
 
                 $.ajax({
                     type: "get",
                     async: false,
                     url: "<?php echo $this->config->base_url(); ?>index.php?module=inventories&view=add_item",
-                    data: {<?php echo $this->security->get_csrf_token_name(); ?>: "<?php echo $this->security->get_csrf_hash() ?>", name: item_name},
+                    data: {<?php echo $this->security->get_csrf_token_name(); ?>: "<?php echo $this->security->get_csrf_hash() ?>", name: item_name,wh:wh_id},
                     dataType: "json",
                     success: function(data) {
 

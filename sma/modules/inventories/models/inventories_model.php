@@ -198,6 +198,26 @@ class Inventories_model extends CI_Model
 
     }
 
+
+    public function getProductByNameFromWh($name,$wh_id)
+    {
+
+        $q = $this->db->get_where('products', array('name' => $name), 1);
+        if ($q->num_rows() > 0) {
+            $product= $q->row();
+            $wh_item = $this->db->get_where('warehouses_products', array('product_id' => $product->id,'warehouse_id' => $wh_id), 1);
+            if ($wh_item->num_rows() > 0) {
+                return $wh_item->row();
+            }
+            return true;
+
+        }
+
+        return FALSE;
+
+    }
+
+
     public function updateProductQuantity($product_id, $quantity, $warehouse_id, $product_cost)
     {
 

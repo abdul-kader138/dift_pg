@@ -1862,15 +1862,16 @@ class Inventories extends MX_Controller
             $name = $this->input->get('name');
         }
 
+        if ($this->input->get('wh')) {
+            $wh = $this->input->get('wh');
+        }
+
         if ($item = $this->inventories_model->getProductByName($name)) {
 
+            $itemDetails=$this->inventories_model->getProductByNameFromWh($name,$wh);
             $code = $item->code;
             $cost = $item->cost;
-            $product_tax = $item->tax_rate;
-
-            $tax_rate = $this->inventories_model->getTaxRateByID($product_tax);
-
-            $product = array('code' => $code, 'cost' => $cost, 'tax_rate' => $item->quantity);
+            $product = array('code' => $code, 'cost' => $cost, 'tax_rate' => $itemDetails->quantity);
 
         }
 
