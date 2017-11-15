@@ -484,5 +484,14 @@ echo form_open("module=inventories&view=add", $attrib);
         document.getElementById('sub_' + id).innerHTML = total.toFixed(2);
          
     }
+
+    $(document).ready(function(){
+        $("#warehouse_s").change(function(){
+            var tbody= $('#dyTable').find("tbody>tr");;
+            console.log(tbody);
+            if(tbody !=undefined && tbody) tbody.remove();
+        })
+//
+    })
 </script>
 
