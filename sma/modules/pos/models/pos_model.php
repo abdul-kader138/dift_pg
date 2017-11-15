@@ -685,25 +685,25 @@ public function getInvoiceByRefID($reference_no)
 
 		if($this->db->insert('sales', $saleData)) {
 			$sale_id = $this->db->insert_id();
-			
-			
+
+
 			foreach($items as $idata){
 				$this->nsQTY($idata['product_id'], $idata['quantity']);
 				$this->updateProductQuantity($idata['product_id'], $warehouse_id, $idata['quantity']);
 			}
-			
+
 			$addOn = array('sale_id' => $sale_id);
 					end($addOn);
 					foreach ( $items as &$var ) {
 						$var = array_merge($addOn, $var);
 			}
-				
+
 			if($this->db->insert_batch('sale_items', $items)) {
 				if($sid) { $this->deleteSale($sid); }
 				return $sale_id;
 			}
 		}
-		
+
 		return false;
 	}
 	

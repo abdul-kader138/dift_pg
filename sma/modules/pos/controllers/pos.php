@@ -323,6 +323,7 @@ class Pos extends MX_Controller {
 					'biller_name' => $biller_name,
 					'customer_id' => $customer_id,
 					'customer_name' => $customer_name,
+					'warehouse_id' => $warehouse_id,
 					'inv_total' => $inv_total_no_tax,
 					'total_tax' => $total_tax,
 					'total' => $gTotal,
@@ -354,7 +355,7 @@ class Pos extends MX_Controller {
 			} else {
 				if($saleID = $this->pos_model->addSale($saleDetails, $items, $warehouse_id, $did)) {
 					$this->session->set_flashdata('success_message', $this->lang->line("sale_added"));
-					redirect("module=pos&view=view_invoice&id=".$saleID, 'refresh');			
+					redirect("module=pos&view=view_invoice&id=".$saleID, 'refresh');
 				}
 			}
 		}
@@ -369,6 +370,7 @@ class Pos extends MX_Controller {
 		$data['customer'] = $this->pos_model->getCustomerById($suspende_sd->customer_id);
 	  } else {
 	  	$data['customer'] = $this->pos_model->getCustomerById(DCUS);
+          $data['warehouses'] = $this->pos_model->getAllWarehouses();
 	  }
 	  $data['biller'] = $this->pos_model->getBillerByID(DBILLER);
 	  $data['discounts'] = $this->pos_model->getAllDiscounts();

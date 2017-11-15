@@ -136,6 +136,18 @@
                                onkeyup="showHint(this.value)" autocomplete="off">
 
                         <div style="clear:both;"></div>
+                        <!--                        add wh here-->
+                        <div class="control-group">
+                            <div class="controls">  <?php
+                                $wh[''] = '';
+                                foreach ($warehouses as $warehouse) {
+                                    $wh[$warehouse->id] = $warehouse->name;
+                                }
+                                echo form_dropdown('warehouse', $wh, (isset($_POST['warehouse']) ? $_POST['warehouse'] : $inv->warehouse_id), 'id="warehouse" data-placeholder="' . $this->lang->line("select") . ' ' . $this->lang->line("warehouse") . '" required="required" data-error="' . $this->lang->line("warehouse") . ' ' . $this->lang->line("is_required") . '"');
+                                ?> </div>
+                        </div>
+
+                        <!--      add wh here-->
                     </div>
 
                     <div id="print">
@@ -233,7 +245,7 @@
                         <input type="hidden" name="biller" id="biller" value="<?php echo DBILLER; ?>"/>
                         <input type="hidden" name="customer_id" id="customer_id_from_db" value="0"/>
 
-                        <input type="hidden" name="warehouse" id="warehouse" value="<?php echo DEFAULT_WAREHOUSE; ?>"/>
+<!--                        <input type="hidden" name="warehouse" id="warehouse" value="--><?php //echo DEFAULT_WAREHOUSE; ?><!--"/>-->
                         <input type="hidden" name="paid_val" id="paid_val" value=""/>
                         <input type="hidden" name="cc_no_val" id="cc_no_val" value=""/>
 
@@ -2414,6 +2426,13 @@ window.onload = sivamtime;
     }
     //a.kader
 
+//
+//
+//    $('#warehouse_l').on('click', function() {
+//        setTimeout(function() {
+//            $('#warehouse_s').trigger('liszt:open');
+//        }, 0);
+//    });
 
 </script>
 </body>
