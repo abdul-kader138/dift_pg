@@ -63,7 +63,9 @@ class Pos extends MX_Controller {
 		}
 		
 		//validate form input
-		$this->form_validation->set_rules('customer', $this->lang->line("customer"), 'trim|required|xss_clean');
+
+
+//		$this->form_validation->set_rules('customer', $this->lang->line("customer"), 'trim|required|xss_clean');
                 $this->form_validation->set_rules('warehouse', $this->lang->line("warehouse"), 'required|xss_clean');
                 $this->form_validation->set_rules('biller', $this->lang->line("biller"), 'required|xss_clean');
 
@@ -90,17 +92,21 @@ class Pos extends MX_Controller {
                             redirect("module=pos", 'refresh');
 							
                         }
-						
+
+
+
+
 			if($this->input->post('customer_id')!=0) {
-				
-				$customer_id = $this->input->post('customer_id');
-				$customer_name = $this->input->post('customer');
-				
-			} else { 
-			
-				$customer_details = $this->pos_model->getCustomerByName(DCUS);
-				$customer_id = $customer_details->id;
-				$customer_name = $customer_details->name;
+                $customer_id = $this->input->post('customer_id');
+                $customer_name = $this->input->post('customer');
+
+			} else {
+                $customer=$this->pos_model->get_default_customer();
+                $customer_id = $customer->id;
+                $customer_name = $customer->name;
+//				$customer_details = $this->pos_model->getCustomerByName(DCUS);
+//				$customer_id = $customer_details->id;
+//				$customer_name = $customer_details->name;
 			}
 			
 			if(DISCOUNT_OPTION == 1) { $inv_discount = DEFAULT_DISCOUNT; }

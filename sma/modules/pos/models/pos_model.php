@@ -838,7 +838,28 @@ public function getInvoiceByRefID($reference_no)
 			return $q->row();
 		  } 
 	}
-	
+
+
+//    a.kader
+
+    public function get_default_customer()
+    {
+
+        $q = $this->db->get('pos_settings');
+        if ($q->num_rows() > 0) {
+            foreach (($q->result()) as $row) {
+                $data[] = $row;
+            }
+
+            $customer = $this->db->get_where('customers',array("id"=>$data[0]->default_customer));
+            return $customer->row();
+        }
+
+        return FALSE;
+    }
+
+//    a.kader
+
 	public function getTodayCCSales() 
 	{
 		$date = date('Y-m-d');	

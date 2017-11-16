@@ -104,212 +104,213 @@
     </div>
 </div>
 <div id="content">
-    <div class="c1">
-        <div class="pos">
-            <?php if ($message) {
-                echo "<div class=\"alert alert-error\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>" . $message . "</div>";
-            } ?>
-            <?php if ($success_message) {
-                echo "<div class=\"alert alert-success\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>" . $success_message . "</div>";
-            } ?>
-            <div id="pos"> <?php echo form_open("module=pos"); ?>
-                <div id="leftdiv">
-                    <div id="printhead">
-                        <h4 style="text-transform:uppercase;"><?php echo SITE_NAME; ?></h4>
-                        <?php echo "<h5 style=\"text-transform:uppercase;\">" . $this->lang->line('order_list') . "</h5>";
-                        echo $this->lang->line("date") . " " . date(PHP_DATE, strtotime('today'));
-                        ?>
-                    </div>
-                    <div id="lefttop">
-                        <div style="clear:left;"></div>
-                        <input value="<?php echo $customer->name; ?>" id="customer" name="customer" class="customer"
-                               style="width:330px;float: left;" placeholder="Customer - Type 2 char for suggestions"
-                               onClick="this.select();">
-                        <a href="#" id="showCustomerModal" role="button" data-toggle="modal"
-                           style="float: right;width:22px;height:22px; margin-top:-1px; border: 0;"><img
-                                src="assets/pos/images/plus-icon.png" alt="+"></a>
+<div class="c1">
+<div class="pos">
+<?php if ($message) {
+    echo "<div class=\"alert alert-error\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>" . $message . "</div>";
+} ?>
+<?php if ($success_message) {
+    echo "<div class=\"alert alert-success\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>" . $success_message . "</div>";
+} ?>
+<div id="pos"> <?php echo form_open("module=pos"); ?>
+    <div id="leftdiv">
+        <div id="printhead">
+            <h4 style="text-transform:uppercase;"><?php echo SITE_NAME; ?></h4>
+            <?php echo "<h5 style=\"text-transform:uppercase;\">" . $this->lang->line('order_list') . "</h5>";
+            echo $this->lang->line("date") . " " . date(PHP_DATE, strtotime('today'));
+            ?>
+        </div>
+        <div id="lefttop">
+            <div style="clear:left;"></div>
+            <input value="<?php echo $customer->name; ?>" id="customer" name="customer" class="customer"
+                   style="width:330px;float: left;" placeholder="Customer - Type 2 char for suggestions"
+                   onClick="this.select();">
+            <a href="#" id="showCustomerModal" role="button" data-toggle="modal"
+               style="float: right;width:22px;height:22px; margin-top:-1px; border: 0;"><img
+                    src="assets/pos/images/plus-icon.png" alt="+"></a>
 
-                        <div style="clear:left;"></div>
-                        <input id="scancode" name="code" class="scancode"
-                               style="width:370px; border: 1px solid #00ACED; color: #00ACED;"
-                               placeholder="<?php echo $this->lang->line('barcode_scanner'); ?>"
-                               onkeyup="showHint(this.value)" autocomplete="off">
+            <div style="clear:left;"></div>
+            <input id="scancode" name="code" class="scancode"
+                   style="width:370px; border: 1px solid #00ACED; color: #00ACED;"
+                   placeholder="<?php echo $this->lang->line('barcode_scanner'); ?>"
+                   onkeyup="showHint(this.value)" autocomplete="off">
 
-                        <div style="clear:both;"></div>
-                        <!--                        add wh here-->
-                        <div class="control-group">
-                            <div class="controls">  <?php
-                                $wh[''] = '';
-                                foreach ($warehouses as $warehouse) {
-                                    $wh[$warehouse->id] = $warehouse->name;
-                                }
-                                echo form_dropdown('warehouse', $wh, (isset($_POST['warehouse']) ? $_POST['warehouse'] : $inv->warehouse_id), 'id="warehouse" data-placeholder="' . $this->lang->line("select") . ' ' . $this->lang->line("warehouse") . '" required="required" data-error="' . $this->lang->line("warehouse") . ' ' . $this->lang->line("is_required") . '"');
-                                ?> </div>
-                        </div>
+            <div style="clear:both;"></div>
+            <!--                        add wh here-->
+            <div class="control-group">
+                <div class="controls">  <?php
+                    $wh[''] = '';
+                    foreach ($warehouses as $warehouse) {
+                        $wh[$warehouse->id] = $warehouse->name;
+                    }
+                    echo form_dropdown('warehouse', $wh, (isset($_POST['warehouse']) ? $_POST['warehouse'] : $inv->warehouse_id), 'id="warehouse" data-placeholder="' . $this->lang->line("select") . ' ' . $this->lang->line("warehouse") . '" required="required" data-error="' . $this->lang->line("warehouse") . ' ' . $this->lang->line("is_required") . '"');
+                    ?> </div>
+            </div>
 
-                        <!--      add wh here-->
-                    </div>
+            <!--      add wh here-->
+        </div>
 
-                    <div id="print">
-                        <div id="prodiv">
-                            <div style="background-color:#333;">
-                                <table id="title_table" border="0" cellpadding="0" cellspacing="0">
-                                    <thead>
-                                    <tr>
-                                        <th style="width: 30px; color:#FFF;padding:5px 0; font-weight:normal;"><i
-                                                class="icon-trash icon-white"></i></th>
-                                        <th style="width: 200px; color:#FFF;padding:5px 0; font-weight:normal;"><?php echo $this->lang->line('product'); ?></th>
-                                        <th style="width: 42px; color:#FFF;padding:5px 0; font-weight:normal;"><?php echo $this->lang->line('qty'); ?></th>
-                                        <th style="width: 82px; color:#FFF; padding:5px 0; font-weight:normal;"><?php echo $this->lang->line('price'); ?></th>
-                                    </tr>
-                                    </thead>
-                                </table>
-                            </div>
-                            <div id="protbldiv" overflow:auto;>
-                                <table border="0" cellpadding="0" cellspacing="0" class="protable" id="saletbl">
-                                    <tbody>
-                                    </tbody>
-                                </table>
-                                <div style="clear:both;"></div>
-                            </div>
-                        </div>
-                        <div style="clear:both;"></div>
-                        <table id="totalTable"
-                               style="width:100%; float:right; border: 1px solid #666; padding:5px; font-size: 14px; color:#000; background: #FFF;">
-                            <tr>
-                                <td style="padding-left:10px; text-align:left; font-weight:normal;"><?php echo $this->lang->line('total_items'); ?></td>
-                                <td style="text-align:right; padding-right:10px; font-size: 14px; font-weight:bold;">
-                                    <span id="count">0</span></td>
-                                <td style="padding-left:10px; text-align:left;"><?php echo $this->lang->line('total_x_tax'); ?></td>
-                                <td style="text-align:right; padding-right:10px; font-size: 14px; font-weight:bold;">
-                                    <span id="total">0.00</span></td>
-                            </tr>
-                            <?php if (TAX1 || TAX2) { ?>
-                                <tr>
-                                    <?php if (TAX1 && !TAX2) { ?>
-                                        <td></td>
-                                        <td></td>
-                                        <td style="padding-left:10px; text-align:left; font-weight:normal;"><?php echo $this->lang->line('tax1'); ?></td>
-                                        <td style="text-align:right; padding-right:10px; font-size: 14px; font-weight:bold;">
-                                            <span id="tax">0.00</span></td>
-                                    <?php } ?>
-                                    <?php if (TAX2 && !TAX1) { ?>
-                                        <td></td>
-                                        <td></td>
-                                        <td style="padding-left:10px; text-align:left; font-weight:normal;"><?php echo $tax_name2; ?></td>
-                                        <td style="text-align:right; padding-right:10px; font-size: 14px; font-weight:bold;">
-                                            <span id="tax2">0.00</span></td>
-                                    <?php } ?>
-                                    <?php if (TAX1 && TAX2) { ?>
-                                        <td style="padding-left:10px; text-align:left; font-weight:normal;"><?php echo $this->lang->line('tax1'); ?></td>
-                                        <td style="text-align:right; padding-right:10px; font-size: 14px; font-weight:bold;">
-                                            <span id="tax">0.00</span></td>
-                                        <td style="padding-left:10px; text-align:left; font-weight:normal;"><?php echo $tax_name2; ?></td>
-                                        <td style="text-align:right; padding-right:10px; font-size: 14px; font-weight:bold;">
-                                            <span id="tax2">0.00</span></td>
-                                    <?php } ?>
-                                </tr>
-                            <?php } ?>
-
-
-                            <tr>
-                                <td style="padding-left:10px; text-align:left; "
-                                    colspan="2"><?php echo $this->lang->line('discount'); ?></td>
-                                <td style="text-align:right; padding-right:10px; font-weight:bold;" colspan="2"><span
-                                        id="ds">20.00</span></td>
-                            </tr>
-
-                            <tr id="show_buy_1_get_1">
-                                <td style="padding-left:10px; text-align:left; " colspan="2">Buy ONE GET ONE</td>
-                                <td style="text-align:right; padding-right:10px; font-weight:bold;" colspan="2"><span
-                                        id="buy_1_get_1">0</span></td>
-                            </tr>
-
-                            <tr id="return_amount_in_front_1">
-                                <td style="padding-left:10px; text-align:left; " colspan="2">Return Amount</td>
-                                <td style="text-align:right; padding-right:10px; font-weight:bold;" colspan="2"><span
-                                        id="return_amount_in_front">0.00</span></td>
-                            </tr>
-
-                            <tr>
-                                <td style="padding: 5px 0px 5px 10px; text-align:left; border-top: 1px solid #666; font-weight:bold; background:#333; color:#FFF;"
-                                    colspan="2"><?php echo $this->lang->line('total_payable'); ?></td>
-                                <td style="text-align:right; padding:5px 10px 5px 0px; font-size: 14px;border-top: 1px solid #666; font-weight:bold; background:#333; color:#FFF;"
-                                    colspan="2"><span id="total-payable">0.00</span></td>
-                            </tr>
-                        </table>
-                    </div>
-
-                    <!--<div id="printfooter"> <?php /* echo BILL_FOOTER; */ ?> </div>-->
-                    <div id="botbuttons" style="text-align:center;">
-                        <input type="hidden" name="biller" id="biller" value="<?php echo DBILLER; ?>"/>
-                        <input type="hidden" name="customer_id" id="customer_id_from_db" value="0"/>
-
-<!--                        <input type="hidden" name="warehouse" id="warehouse" value="--><?php //echo DEFAULT_WAREHOUSE; ?><!--"/>-->
-                        <input type="hidden" name="paid_val" id="paid_val" value=""/>
-                        <input type="hidden" name="cc_no_val" id="cc_no_val" value=""/>
-
-                        <input type="hidden" name="items_return_val" id="items_return_val" value="0.00"/>
-                        <input type="hidden" name="items_return_ref" id="items_return_ref" value=""/>
-
-                        <input type="hidden" name="cc_holder_val" id="cc_holder_val" value=""/>
-                        <input type="hidden" name="cheque_no_val" id="cheque_no_val" value=""/>
-                        <button type="button" class="red bot"
-                                id="cancel"><?php echo $this->lang->line('cancel'); ?></button>
-                        <button type="button" class="cyan bot" id="return">Return</button>
-                        <!-- <button type="button" class="code bot" id="suspend" style="margin-right: 0;"><?php echo $this->lang->line('suspend'); ?></button> -->
-                        <button type="button" class="pg" id="payment"
-                                style="margin-left: auto; margin-right: auto; width:100%;"><?php echo $this->lang->line('payment'); ?></button>
-                    </div>
-                    <div style="clear:both; height:5px;"></div>
-                    <div id="num">
-                        <div id="icon"></div>
-                    </div>
-                    <span id="hidesuspend"></span>
-                    <input type="hidden" name="rpaidby" id="rpaidby" value="cash" style="display: none;"/>
-                    <input type="hidden" name="count" id="total_item" value="0" style="display: none;"/>
-                    <input type="submit" id="submit" value="Submit Sale" style="display: none;"/>
-
+        <div id="print">
+            <div id="prodiv">
+                <div style="background-color:#333;">
+                    <table id="title_table" border="0" cellpadding="0" cellspacing="0">
+                        <thead>
+                        <tr>
+                            <th style="width: 30px; color:#FFF;padding:5px 0; font-weight:normal;"><i
+                                    class="icon-trash icon-white"></i></th>
+                            <th style="width: 200px; color:#FFF;padding:5px 0; font-weight:normal;"><?php echo $this->lang->line('product'); ?></th>
+                            <th style="width: 42px; color:#FFF;padding:5px 0; font-weight:normal;"><?php echo $this->lang->line('qty'); ?></th>
+                            <th style="width: 82px; color:#FFF; padding:5px 0; font-weight:normal;"><?php echo $this->lang->line('price'); ?></th>
+                        </tr>
+                        </thead>
+                    </table>
                 </div>
-                <?php echo form_close(); ?>
-                <div id="cp">
-                    <div id="cpinner">
-                        <div id="catContainer">
-                            <div class="list_carousel">
-                                <ul id="cats">
-                                    <?php echo $categories; ?>
-                                </ul>
-                                <a class="prev" id="prev2" href="#"><span>prev</span></a> <a class="next" id="next2"
-                                                                                             href="#"><span>next</span></a>
-
-                                <div class="pagination" id="pager2"></div>
-                            </div>
-                        </div>
-                        <div class="quick-menu">
-
-                            <!--                            check main div-->
-                            <div id="proContainer">
-                                <div id="ajaxproducts">
-                                    <div id="proajax">
-                                        <?php
-                                        echo $products;
-
-                                        echo "</div><button id=\"previous\" type=\"button\" class=\"blue\" style='z-index:10002;'><i><img src='assets/pos/images/previous.png' alt='previous' /></i><span><span>" . $this->lang->line('previous') . "</span></span></button><button id=\"next\" type=\"button\" class=\"blue\" style='z-index:10003;'><i><img src='assets/pos/images/next.png' alt='next' /></i><span><span>" . $this->lang->line('next') . "</span></span></button></div>";
-                                        ?>
-                                    </div>
-                                </div>
-                                <div style="clear:both;"></div>
-                            </div>
-                            <!--                            check main div-->
-                        </div>
-                    </div>
+                <div id="protbldiv" overflow:auto;>
+                    <table border="0" cellpadding="0" cellspacing="0" class="protable" id="saletbl">
+                        <tbody>
+                        </tbody>
+                    </table>
+                    <div style="clear:both;"></div>
                 </div>
-                <div style="clear:both;"></div>
             </div>
             <div style="clear:both;"></div>
+            <table id="totalTable"
+                   style="width:100%; float:right; border: 1px solid #666; padding:5px; font-size: 14px; color:#000; background: #FFF;">
+                <tr>
+                    <td style="padding-left:10px; text-align:left; font-weight:normal;"><?php echo $this->lang->line('total_items'); ?></td>
+                    <td style="text-align:right; padding-right:10px; font-size: 14px; font-weight:bold;">
+                        <span id="count">0</span></td>
+                    <td style="padding-left:10px; text-align:left;"><?php echo $this->lang->line('total_x_tax'); ?></td>
+                    <td style="text-align:right; padding-right:10px; font-size: 14px; font-weight:bold;">
+                        <span id="total">0.00</span></td>
+                </tr>
+                <?php if (TAX1 || TAX2) { ?>
+                                <tr>
+                        <?php if (TAX1 && !TAX2) { ?>
+                            <td></td>
+                            <td></td>
+                            <td style="padding-left:10px; text-align:left; font-weight:normal;"><?php echo $this->lang->line('tax1'); ?></td>
+                            <td style="text-align:right; padding-right:10px; font-size: 14px; font-weight:bold;">
+                                <span id="tax">0.00</span></td>
+                        <?php } ?>
+                        <?php if (TAX2 && !TAX1) { ?>
+                            <td></td>
+                            <td></td>
+                            <td style="padding-left:10px; text-align:left; font-weight:normal;"><?php echo $tax_name2; ?></td>
+                            <td style="text-align:right; padding-right:10px; font-size: 14px; font-weight:bold;">
+                                <span id="tax2">0.00</span></td>
+                        <?php } ?>
+                        <?php if (TAX1 && TAX2) { ?>
+                            <td style="padding-left:10px; text-align:left; font-weight:normal;"><?php echo $this->lang->line('tax1'); ?></td>
+                            <td style="text-align:right; padding-right:10px; font-size: 14px; font-weight:bold;">
+                                <span id="tax">0.00</span></td>
+                            <td style="padding-left:10px; text-align:left; font-weight:normal;"><?php echo $tax_name2; ?></td>
+                            <td style="text-align:right; padding-right:10px; font-size: 14px; font-weight:bold;">
+                                <span id="tax2">0.00</span></td>
+                        <?php } ?>
+                    </tr>
+                <?php } ?>
+
+
+                <tr>
+                    <td style="padding-left:10px; text-align:left; "
+                        colspan="2"><?php echo $this->lang->line('discount'); ?></td>
+                    <td style="text-align:right; padding-right:10px; font-weight:bold;" colspan="2"><span
+                            id="ds">20.00</span></td>
+                </tr>
+
+                <tr id="show_buy_1_get_1">
+                    <td style="padding-left:10px; text-align:left; " colspan="2">Buy ONE GET ONE</td>
+                    <td style="text-align:right; padding-right:10px; font-weight:bold;" colspan="2"><span
+                            id="buy_1_get_1">0</span></td>
+                </tr>
+
+                <tr id="return_amount_in_front_1">
+                    <td style="padding-left:10px; text-align:left; " colspan="2">Return Amount</td>
+                    <td style="text-align:right; padding-right:10px; font-weight:bold;" colspan="2"><span
+                            id="return_amount_in_front">0.00</span></td>
+                </tr>
+
+                <tr>
+                    <td style="padding: 5px 0px 5px 10px; text-align:left; border-top: 1px solid #666; font-weight:bold; background:#333; color:#FFF;"
+                        colspan="2"><?php echo $this->lang->line('total_payable'); ?></td>
+                    <td style="text-align:right; padding:5px 10px 5px 0px; font-size: 14px;border-top: 1px solid #666; font-weight:bold; background:#333; color:#FFF;"
+                        colspan="2"><span id="total-payable">0.00</span></td>
+                </tr>
+            </table>
         </div>
-        <div style="clear:both;"></div>
+
+        <!--<div id="printfooter"> <?php /* echo BILL_FOOTER; */ ?> </div>-->
+        <div id="botbuttons" style="text-align:center;">
+            <input type="hidden" name="biller" id="biller" value="<?php echo DBILLER; ?>"/>
+            <input type="hidden" name="customer_id" id="customer_id_from_db" value="0"/>
+
+            <!--                        <input type="hidden" name="warehouse" id="warehouse" value="-->
+            <?php //echo DEFAULT_WAREHOUSE; ?><!--"/>-->
+            <input type="hidden" name="paid_val" id="paid_val" value=""/>
+            <input type="hidden" name="cc_no_val" id="cc_no_val" value=""/>
+
+            <input type="hidden" name="items_return_val" id="items_return_val" value="0.00"/>
+            <input type="hidden" name="items_return_ref" id="items_return_ref" value=""/>
+
+            <input type="hidden" name="cc_holder_val" id="cc_holder_val" value=""/>
+            <input type="hidden" name="cheque_no_val" id="cheque_no_val" value=""/>
+            <button type="button" class="red bot"
+                    id="cancel"><?php echo $this->lang->line('cancel'); ?></button>
+            <button type="button" class="cyan bot" id="return">Return</button>
+            <!-- <button type="button" class="code bot" id="suspend" style="margin-right: 0;"><?php echo $this->lang->line('suspend'); ?></button> -->
+            <button type="button" class="pg" id="payment"
+                    style="margin-left: auto; margin-right: auto; width:100%;"><?php echo $this->lang->line('payment'); ?></button>
+        </div>
+        <div style="clear:both; height:5px;"></div>
+        <div id="num">
+            <div id="icon"></div>
+        </div>
+        <span id="hidesuspend"></span>
+        <input type="hidden" name="rpaidby" id="rpaidby" value="cash" style="display: none;"/>
+        <input type="hidden" name="count" id="total_item" value="0" style="display: none;"/>
+        <input type="submit" id="submit" value="Submit Sale" style="display: none;"/>
+
     </div>
+    <?php echo form_close(); ?>
+    <div id="cp">
+        <div id="cpinner">
+            <div id="catContainer">
+                <div class="list_carousel">
+                    <ul id="cats">
+                        <?php echo $categories; ?>
+                    </ul>
+                    <a class="prev" id="prev2" href="#"><span>prev</span></a> <a class="next" id="next2"
+                                                                                 href="#"><span>next</span></a>
+
+                    <div class="pagination" id="pager2"></div>
+                </div>
+            </div>
+            <div class="quick-menu">
+
+                <!--                            check main div-->
+                <div id="proContainer">
+                    <div id="ajaxproducts">
+                        <div id="proajax">
+                            <?php
+                            echo $products;
+
+                            echo "</div><button id=\"previous\" type=\"button\" class=\"blue\" style='z-index:10002;'><i><img src='assets/pos/images/previous.png' alt='previous' /></i><span><span>" . $this->lang->line('previous') . "</span></span></button><button id=\"next\" type=\"button\" class=\"blue\" style='z-index:10003;'><i><img src='assets/pos/images/next.png' alt='next' /></i><span><span>" . $this->lang->line('next') . "</span></span></button></div>";
+                            ?>
+                        </div>
+                    </div>
+                    <div style="clear:both;"></div>
+                </div>
+                <!--                            check main div-->
+            </div>
+        </div>
+    </div>
+    <div style="clear:both;"></div>
+</div>
+<div style="clear:both;"></div>
+</div>
+<div style="clear:both;"></div>
+</div>
 </div>
 </div>
 
@@ -434,7 +435,7 @@
                     foreach ($warehouses as $warehouse) {
                         $wh[$warehouse->id] = $warehouse->name;
                     }
-                    echo form_dropdown('s_warehouse', $wh, (isset($_POST['s_warehouse']) ? $_POST['s_warehouse'] : DEFAULT_WAREHOUSE), 'id="s_warehouse" data-placeholder="' . $this->lang->line("select") . ' ' . $this->lang->line("warehouse") . '" required="required" data-error="' . $this->lang->line("warehouse") . ' ' . $this->lang->line("is_required") . '"');
+                    echo form_dropdown('s_warehouse', $wh, $_POST['s_warehouse'], 'id="s_warehouse" data-placeholder="' . $this->lang->line("select") . ' ' . $this->lang->line("warehouse") . '" required="required" data-error="' . $this->lang->line("warehouse") . ' ' . $this->lang->line("is_required") . '"');
                     ?> </div>
             </div>
             <div class="control-group">
@@ -1566,8 +1567,7 @@ function () {
     bootbox.alert('<?php echo $this->lang->line('ajax_error'); ?>');
     $('.ui-autocomplete-loading').removeClass("ui-autocomplete-loading");
 }
-})
-;
+});
 
 
 $('#scancode').keydown(function (e) {
@@ -1839,6 +1839,13 @@ $("#payment").click(function () {
 
     var twt = (total + tax_value + tax_value2) - total_discount - r_amount;
     count = count - 1;
+
+    var warehouse = $("#warehouse").val();
+    if (warehouse == undefined || warehouse == 0) {
+        bootbox.alert('<?php echo $this->lang->line('warehouse_message'); ?>');
+        return false;
+    }
+
     if (isNaN(twt) || twt == 0) {
         bootbox.alert('<?php echo $this->lang->line('x_total'); ?>');
         return false;
@@ -2067,8 +2074,8 @@ $("#paymentModal").on("click", '#submit-sale', function () {
     <?php } ?>
 
     var selectedVal = $('#paid_by').find(":selected").val();
-    var twt=parseFloat($('#twt').text());
-    var paid=0;
+    var twt = parseFloat($('#twt').text());
+    var paid = 0;
     if (selectedVal == 'CC_cash') {
         var cardVal = $('#cc_amount').val();
         var cashVal = $('#paid-amount').val();
@@ -2425,14 +2432,6 @@ window.onload = sivamtime;
         }
     }
     //a.kader
-
-//
-//
-//    $('#warehouse_l').on('click', function() {
-//        setTimeout(function() {
-//            $('#warehouse_s').trigger('liszt:open');
-//        }, 0);
-//    });
 
 </script>
 </body>
