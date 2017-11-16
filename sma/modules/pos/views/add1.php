@@ -160,7 +160,7 @@ echo $this->lang->line("date") . " " . date(PHP_DATE, strtotime('today'));
                                 <!--<div id="printfooter"> <?php /* echo BILL_FOOTER; */ ?> </div>-->
                                 <div id="botbuttons" style="text-align:center;">
                                     <input type="hidden" name="biller" id="biller" value="<?php echo DBILLER; ?>" />
-                                    <input type="hidden" name="warehouse" id="warehouse" value="<?php echo DEFAULT_WAREHOUSE; ?>" />
+<!--                                    <input type="hidden" name="warehouse" id="warehouse" value="--><?php //echo DEFAULT_WAREHOUSE; ?><!--" />-->
                                     <input type="hidden" name="paid_val" id="paid_val" value="" />
                                     <input type="hidden" name="cc_no_val" id="cc_no_val" value="" />
                                     <input type="hidden" name="cc_holder_val" id="cc_holder_val" value="" />

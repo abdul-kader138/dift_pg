@@ -428,15 +428,16 @@ class Reports extends MX_Controller
 
     function custom_products()
     {
-
         $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
         if ($this->input->post('start_date')) {
             $dt = "From " . $this->input->post('start_date') . " to " . $this->input->post('end_date');
         } else {
             $dt = "Till " . $this->input->post('end_date');
         }
-        //$meta['page_title'] = $this->lang->line("reports")." ".$dt;
+
+        $meta['page_title'] = $this->lang->line("reports") . " " . $dt;
         $data['products'] = $this->reports_model->getAllProducts();
+        $data['warehouses'] = $this->reports_model->getAllWarehouses();
         $meta['page_title'] = "Stock Reports" . " " . $dt;
         $data['page_title'] = "Stock Reports";
         $this->load->view('commons/header', $meta);
@@ -558,6 +559,13 @@ class Reports extends MX_Controller
         } else {
             $end_date = NULL;
         }
+//        if ($this->input->get('warehouse_id')) {
+//            $warehouse_id = $this->input->get('warehouse_id');
+//        } else {
+//            $warehouse_id = NULL;
+//        }
+
+        $warehouse_id=2;
         if ($start_date) {
             $start_date = $this->ion_auth->fsd($start_date);
             $end_date = $this->ion_auth->fsd($end_date);
@@ -618,8 +626,8 @@ class Reports extends MX_Controller
         if ($start_date) {
             $var = $start_date;
             $date = str_replace('/', '-', $var);
-            $new_date= date('Y-m-d', strtotime($date));
-            $sDate=$new_date.' 00:00:00';
+            $new_date = date('Y-m-d', strtotime($date));
+            $sDate = $new_date . ' 00:00:00';
             $eDate = $new_date . ' 23:59:59';
             $pp = "(SELECT count.id,count.product_id,count.quantity,count.created_at from count_products count where
                          created_at between '{$sDate}' and '{$eDate}') pCount";

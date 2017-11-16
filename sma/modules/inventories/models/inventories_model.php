@@ -202,7 +202,7 @@ class Inventories_model extends CI_Model
     public function getProductByNameFromWh($name,$wh_id)
     {
 
-        $q = $this->db->get_where('products', array('name' => $name), 1);
+        $q = $this->db->get_where('products', array('name' => trim($name)), 1);
         if ($q->num_rows() > 0) {
             $product= $q->row();
             $wh_item = $this->db->get_where('warehouses_products', array('product_id' => $product->id,'warehouse_id' => $wh_id), 1);
@@ -748,7 +748,7 @@ class Inventories_model extends CI_Model
 
                     $make_purchase_id = $this->db->insert_id();
 
-                    $this->db->update('purchases', array('checked' => 1, 'checked_by' => USER_ID, 'checked_at' => date('Y-m-d H:i:s')), array('id' => $id));
+                    $this->db->update('purchases', array('checked' => 1, 'checked_by' => USER_ID, 'checked_at' => date('Y-m-d H:i:s'),'warehouse_id'=>$warehouse_id), array('id' => $id));
 
 
                     foreach ($value as $data) {

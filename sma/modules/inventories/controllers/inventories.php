@@ -1840,19 +1840,31 @@ class Inventories extends MX_Controller
             $code = $this->input->get('code');
         }
 
+        if ($this->input->get('wh')) {
+            $wh = $this->input->get('wh');
+        }
+
+
         if ($item = $this->inventories_model->getProductByCode($code)) {
+            $itemDetails=$this->inventories_model->getProductByNameFromWh($item->name,$wh);
+            $code = $item->code;
+            $name = $item->name;
+            $cost = $item->cost;
+            $product = array('code' => $code, 'name' => $name,'cost' => $cost, 'tax_rate' => $itemDetails->quantity);
 
-            $product_name = $item->name;
-            $product_cost = $item->cost;
+//            $product_name = $item->name;
+//            $product_cost = $item->cost;
             $product_tax = $item->tax_rate;
-
-            $tax_rate = $this->inventories_model->getTaxRateByID($product_tax);
-
-            $product = array('name' => $product_name, 'cost' => $product_cost, 'tax_rate' => $item->quantity);
+//
+//            $tax_rate = $this->inventories_model->getTaxRateByID($product_tax);
+//
+//            $product = array('name' => $product_name, 'cost' => $product_cost, 'tax_rate' => $itemDetails->quantity);
 
         }
 
-        echo json_encode($product);
+//        var_dump($product);
+
+        echo json_encode($itemDetails);
 
     }
 
@@ -1872,6 +1884,7 @@ class Inventories extends MX_Controller
             $code = $item->code;
             $cost = $item->cost;
             $product = array('code' => $code, 'cost' => $cost, 'tax_rate' => $itemDetails->quantity);
+//            $product = array('code' => $code, 'cost' => $cost, 'tax_rate' => $itemDetails->quantity);
 
         }
 

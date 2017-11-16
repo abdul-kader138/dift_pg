@@ -35,6 +35,9 @@ $(document).ready(function() {
     $('#byTab a, #noteTab a').click(function(e) {
         e.preventDefault();
         $(this).tab('show');
+
+        $('#warehouse_s').prop('disabled',false);
+        $(".selectWh").readonly();
     });
     //$('#byTab #select_by_code, #noteTab a:last').tab('show');
     //$('#byTab #select_by_codes, #noteTab a:last').tab('show');
@@ -401,7 +404,7 @@ echo form_open("module=inventories&view=edit&id=" . $id, $attrib);
         foreach ($warehouses as $warehouse) {
             $wh[$warehouse->id] = $warehouse->name;
         }
-        echo form_dropdown('warehouse', $wh, (isset($_POST['warehouse']) ? $_POST['warehouse'] : $inv->warehouse_id), 'id="warehouse_s" data-placeholder="' . $this->lang->line("select") . ' ' . $this->lang->line("warehouse") . '" required="required" data-error="' . $this->lang->line("warehouse") . ' ' . $this->lang->line("is_required") . '"');
+        echo form_dropdown('warehouse', $wh, (isset($_POST['warehouse']) ? $_POST['warehouse'] : $inv->warehouse_id), 'id="warehouse_s" class="selectWh" data-placeholder="' . $this->lang->line("select") . ' ' . $this->lang->line("warehouse") . '" required="required" data-error="' . $this->lang->line("warehouse") . ' ' . $this->lang->line("is_required") . '"');
         ?> </div>
 </div>
 <div class="control-group" style="display:none">
