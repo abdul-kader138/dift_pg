@@ -182,7 +182,7 @@ class Inventories extends MX_Controller
         $this->datatables
             ->select("make_purchases.id as id, mr_date, reference_no, supplier_name, COALESCE(inv_total, 0), COALESCE(total_tax, 0), total, case mr_status when '1' Then 'Approved' END approved", FALSE)
             ->from('make_purchases')
-            ->where("mr_status","1");
+            ->where("mr_status", "1");
         $this->datatables->add_column("Actions",
             // omit mrr approve
 //            "<center><a href='#' onClick=\"MyWindow=window.open('index.php?module=inventories&view=view_inventory&id=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=1000,height=600'); return false;\" title='" . $this->lang->line("view_workOrder") . "' class='tip'><i class='icon-fullscreen'></i></a> <a href='index.php?module=inventories&amp;view=make_mrr&amp;id=$1' title='Process' class='tip'><i class='icon-ban-circle'></i></a>&nbsp;<a href='index.php?module=inventories&view=pdf_mrr&id=$1' title='MRR Order' class='tip'><i class='icon-download'></i></a></center>", "id")
@@ -467,7 +467,7 @@ class Inventories extends MX_Controller
 
 
     /* -------------------------------------------------------------------------------------------------------------------------------- */
-//generate pdf and force to download 
+//generate pdf and force to download
 
     function pdf()
     {
@@ -486,7 +486,6 @@ class Inventories extends MX_Controller
         $data['pid'] = $purchase_id;
         $data['page_title'] = $this->lang->line("inventory");
 
-        var_dump($data['rows']);
 
 
 //        $html = $this->load->view('view_inventory', $data, TRUE);
@@ -655,7 +654,7 @@ class Inventories extends MX_Controller
 
 
     /* -------------------------------------------------------------------------------------------------------------------------------- */
-//email inventory as html and send pdf as attachment   
+//email inventory as html and send pdf as attachment
 
     function email($purchase_id, $to, $cc = NULL, $bcc = NULL, $from_name, $from, $subject, $note)
     {
@@ -1460,8 +1459,6 @@ class Inventories extends MX_Controller
                     $inv_quantity[] = $this->input->post($quantity . $i);
                     $product_remain_qty = ($this->input->post($rquantity . $i) - $this->input->post($quantity . $i));
                     $inv_unit_cost[] = $this->input->post($unit_cost . $i);
-
-
                     if (TAX1) {
                         $tax_id = $this->input->post($tax_rate . $i);
                         $tax_details = $this->inventories_model->getTaxRateByID($tax_id);
@@ -1491,7 +1488,11 @@ class Inventories extends MX_Controller
 
                         // date Convertion
 
-                        $expDate = date('Y-m-d', strtotime(str_replace('/', '-', $this->input->post($exp_date . $i))));
+                        if ($this->input->post($exp_date . $i) != "") {
+                            $expDate = date('Y-m-d', strtotime(str_replace('/', '-', $this->input->post($exp_date . $i))));
+                        } else {
+                            $expDate = date('Y-m-d', strtotime(str_replace('/', '-', "01/01/1990")));
+                        }
 
                         $mrrObj[] = array("make_purchase_id" => $id,
                             "purchase_id" => $getPurchase->purchase_id,
@@ -1520,8 +1521,7 @@ class Inventories extends MX_Controller
                         $tax[] = "";
                     }
 
-
-                    $xp_date[] = $this->input->post($exp_date . $i);
+                    $xp_date[] = $expDate;
                     $inv_gross_total[] = (($this->input->post($quantity . $i)) * ($this->input->post($unit_cost . $i)));
                     $inv_total_no_tax += (($this->input->post($quantity . $i)) * ($this->input->post($unit_cost . $i)));
 
@@ -1536,10 +1536,6 @@ class Inventories extends MX_Controller
             $inv_total = $inv_total_no_tax + $total_tax;
             foreach (array_map(null, $product_id, $product_code, $product_name, $tax_rate_id, $tax, $product_qty, $inv_unit_cost, $inv_gross_total, $val_tax, $mr_item_status, $xp_date) as $key => $value) {
                 $items[] = array_combine($keys, $value);
-            }
-            $mrr_keys = array("make_purchase_id", "purchase_id", "purchase_item_id", "po_qty", "remain_qty", "received_qty", "price", "tax_val", "tax_id", "inv_val", "mrr_date", "mrr_ref", "supplier_id", "wh_id");
-            foreach (array_map(null, $id, $getPurchaseId, $product_id, $product_qty, $product_remain_qty, $inv_quantity, $inv_unit_cost, $val_tax, $tax_rate_id, $inv_gross_total, $xp_date, $mr_reference, $supplier_id_no, $warehouse_id_no) as $key => $value) {
-                $mrr_items[] = array_combine($mrr_keys, $value);
             }
 
 
@@ -1846,11 +1842,11 @@ class Inventories extends MX_Controller
 
 
         if ($item = $this->inventories_model->getProductByCode($code)) {
-            $itemDetails=$this->inventories_model->getProductByNameFromWh($item->name,$wh);
+            $itemDetails = $this->inventories_model->getProductByNameFromWh($item->name, $wh);
             $code = $item->code;
             $name = $item->name;
             $cost = $item->cost;
-            $product = array('code' => $code, 'name' => $name,'cost' => $cost, 'tax_rate' => $itemDetails->quantity);
+            $product = array('code' => $code, 'name' => $name, 'cost' => $cost, 'tax_rate' => $itemDetails->quantity);
 
 //            $product_name = $item->name;
 //            $product_cost = $item->cost;
@@ -1880,7 +1876,7 @@ class Inventories extends MX_Controller
 
         if ($item = $this->inventories_model->getProductByName($name)) {
 
-            $itemDetails=$this->inventories_model->getProductByNameFromWh($name,$wh);
+            $itemDetails = $this->inventories_model->getProductByNameFromWh($name, $wh);
             $code = $item->code;
             $cost = $item->cost;
             $product = array('code' => $code, 'cost' => $cost, 'tax_rate' => $itemDetails->quantity);
