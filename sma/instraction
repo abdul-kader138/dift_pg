@@ -2,3 +2,4 @@
 2) product table quantity column need to change  decimal(quantiy,adjust quantiy)
 3) purchases Item table quantity column need to change  decimal(quantiy)
 4) warehouse_products  table quantity column need to change  decimal(quantiy)
+

@@ -475,6 +475,7 @@ class Reports extends MX_Controller
         }
         //$meta['page_title'] = $this->lang->line("reports")." ".$dt;
         $data['products'] = $this->reports_model->getAllProducts();
+        $data['warehouses'] = $this->reports_model->getAllWarehouses();
         $meta['page_title'] = "Opening Stock & Closing Stock Report" . " " . $dt;
         $data['page_title'] = "Opening Stock & Closing Stock Report";
         $this->load->view('commons/header', $meta);
@@ -500,6 +501,12 @@ class Reports extends MX_Controller
         } else {
             $end_date = NULL;
         }
+
+
+        if ($this->input->get('warehouse')) {
+            $warehouse_id = $this->input->get('warehouse');
+        }
+
         if ($start_date) {
             $start_date = $this->ion_auth->fsd($start_date);
             $end_date = $this->ion_auth->fsd($end_date);
@@ -508,21 +515,21 @@ class Reports extends MX_Controller
                          mm.mrr_date  between '{$start_date}' and '{$end_date}'
                          group by mm.purchase_item_id ) PCosts";
 
-//            $pp = "( SELECT pi.product_id, SUM( pi.quantity ) purchasedQty from purchases p JOIN purchase_items pi on p.id = pi.purchase_id where
-//                         p.date >= '{$start_date}' and p.date < '{$end_date}' and p.mr_approve_by=1
-//                         group by pi.product_id ) PCosts";
 
             $sp = "( SELECT si.product_id, SUM( si.quantity ) soldQty, SUM( si.gross_total ) totalSale from sales s JOIN sale_items si on s.id = si.sale_id where
                        s.date between '{$start_date}' and '{$end_date}'
                        group by si.product_id ) PSales";
         } else {
-//            $pp = "( SELECT pi.product_id, SUM( pi.quantity ) purchasedQty from purchase_items pi group by pi.product_id ) PCosts";
             $pp = "( SELECT mm.purchase_item_id, SUM(mm.received_qty ) purchasedQty from make_mrr mm group by mm.purchase_item_id ) PCosts";
-
             $sp = "( SELECT si.product_id, SUM( si.quantity ) soldQty, SUM( si.gross_total ) totalSale from sale_items si group by si.product_id ) PSales";
         }
 
+
+        $wps = "(SELECT wp.quantity, wp.warehouse_id,wp.product_id from warehouses_products wp where wp.warehouse_id='{$warehouse_id}') wProducts";
         $this->load->library('datatables');
+        if ($product) {
+            $this->datatables->where('p.id', $product);
+        }
         $this->datatables
             ->select("p.code, p.name, p.unit,COALESCE( p.quantity + PSales.soldQty, quantity  - PCosts.purchasedQty ) as quantity,
                 COALESCE( PCosts.purchasedQty, 0 ) as PurchasedQty,
@@ -531,14 +538,27 @@ class Reports extends MX_Controller
                 COALESCE( p.quantity + PCosts.purchasedQty - PSales.soldQty, quantity ) as CloseingQnt", FALSE)
             ->from('products p', FALSE)
             ->join($sp, 'p.id = PSales.product_id', 'left')
+//            ->join($wps, 'p.id = wProducts.product_id', 'inner')
             ->join($pp, 'p.id = PCosts.purchase_item_id', 'left');
-        // ->group_by('p.id');
+
+
+//        $this->datatables
+//            ->select("p.code, p.name, p.unit,COALESCE( wProducts.quantity + PSales.soldQty, quantity  - PCosts.purchasedQty) as quantity,
+//                COALESCE( PCosts.purchasedQty, 0 ) as PurchasedQty,
+//                COALESCE( PSales.soldQty, 0 ) as SoldQty,
+//                p.adjust_qnt,
+//                COALESCE( wProducts.quantity + PCosts.purchasedQty - PSales.soldQty, quantity ) as CloseingQnt", FALSE)
+//            ->from('products p', FALSE)
+//            ->join($wp, 'p.id = wProducts.product_id', 'inner')
+//            ->join($sp, 'p.id = PSales.product_id', 'left')
+//            ->join($pp, 'p.id = PCosts.purchase_item_id', 'left');
 
         if ($product) {
             $this->datatables->where('p.id', $product);
         }
-
+//
         echo $this->datatables->generate();
+//        echo $sp;
 
     }
 
@@ -580,7 +600,7 @@ class Reports extends MX_Controller
             $sp = "( SELECT si.product_id, SUM( si.quantity ) soldQty, SUM( si.gross_total ) totalSale from sale_items si group by si.product_id ) PSales";
         }
 
-        $wh_qty="(SELECT wp.quantity, wp.warehouse_id,wp.product_id from warehouses_products wp where wp.warehouse_id='{$warehouse_id}') wProducts";
+        $wh_qty = "(SELECT wp.quantity, wp.warehouse_id,wp.product_id from warehouses_products wp where wp.warehouse_id='{$warehouse_id}') wProducts";
 
         $this->load->library('datatables');
         $this->datatables

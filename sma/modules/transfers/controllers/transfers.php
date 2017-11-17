@@ -121,7 +121,6 @@ class Transfers extends MX_Controller {
 					if( $this->input->post($quantity.$i) && $this->input->post($product.$i) && $this->input->post($unit_cost.$i) ) {	
                                         $product_details = $this->transfers_model->getProductByCode($this->input->post($product.$i));
                                         if(RESTRICT_SALE) {	
-                                            $pr_ck = $this->transfers_model->getWarehouseProductQuantity($from_warehouse, $product_details->id);
                                             if($pr_ck->quantity < $this->input->post($quantity.$i) && $product_details->track_quantity == 1) {
                                                 $check = TRUE;
                                                 $product_name = $product_details->name;
