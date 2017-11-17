@@ -107,7 +107,7 @@ class Products extends MX_Controller
 
         $this->load->library('datatables');
         $this->datatables
-            ->select("products.adjustment_date,products.id as productid, products.code as code, products.name as name,  COALESCE(quantity, 0) as quantity, products.adjust_qnt", FALSE)
+            ->select("products.id as productid, products.code as code, products.name as name,  COALESCE(quantity, 0) as quantity, products.adjust_qnt", FALSE)
             ->from('products')
             //->join('warehouses_products', 'products.id=warehouses_products.product_id', 'left')
             ->group_by("products.id");
@@ -377,7 +377,7 @@ class Products extends MX_Controller
 			<a class='image tip' id='$4 - $3' href='" . $this->config->base_url() . "assets/uploads/$2' title='" . $this->lang->line("view_image") . "'><i class='icon-picture'></i></a>
 			<a href='index.php?module=products&view=add_damage&product_id=$1&warehouse_id=$5' class='tip' title='" . $this->lang->line("add_damage_qty") . "'><i class='icon-filter'></i></a>
 			<a href='index.php?module=products&view=edit&id=$1' class='tip' title='" . $this->lang->line("edit_product") . "'><i class='icon-edit'></i></a>
-			<a href='index.php?module=products&view=delete&id=$1' onClick=\"return confirm('" . $this->lang->line('alert_x_product') . "')\" class='tip' title='" . $this->lang->line("delete_product") . "'><i class='icon-trash'></i></a></center>", "productid, image, code, name, wh")
+			<a href='index.php?module=products&view=save_adjust_inventory&id=$1&warehouse_id=$5' class='tip' title='Adjustment Quantity ADD'><i class='icon-list'></i></a></center>", "productid, image, code, name,wh")
             ->unset_column('productid')
             ->unset_column('wh')
             ->unset_column('image');
@@ -754,10 +754,13 @@ class Products extends MX_Controller
         }
     }
 
-    function save_adjust_inventory()
+    function save_adjust_inventory($id=null,$warehouse_id=null)
     {
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
+        }
+        if ($this->input->get('warehouse_id')) {
+            $warehouse_id = $this->input->get('warehouse_id');
         }
         $groups = array('owner', 'admin');
         if (!$this->ion_auth->in_group($groups)) {
@@ -780,7 +783,8 @@ class Products extends MX_Controller
         if ($this->form_validation->run() == true) {
             $data = array('code' => $this->input->post('code'),
                 'adjust_qnt' => $this->input->post('aj_quantity'),
-                'sign' => $this->input->post('qnt_sign')
+                'sign' => $this->input->post('qnt_sign'),
+                'warehouse_id' => $warehouse_id
             );
 
 
@@ -834,9 +838,8 @@ class Products extends MX_Controller
             redirect("module=products&view=view_adjustment", 'refresh');
         } else {
             $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
-
-
             $product_details = $this->products_model->getProductByID($id);
+            $data['warehouses'] = $this->products_model->getAllWarehouses();
             $data['categories'] = $this->products_model->getAllCategories();
             $data['shelfs'] = $this->products_model->getAllShelfs();
             $data['tax_rates'] = $this->products_model->getAllTaxRates();
@@ -846,6 +849,7 @@ class Products extends MX_Controller
 
             $meta['page_title'] = $this->lang->line("update_product");
             $data['id'] = $id;
+            $data['warehouse_id'] = $warehouse_id;
             $data['product'] = $product_details;
             $data['page_title'] = "Quantity Adjustment";
             $this->load->view('commons/header', $meta);

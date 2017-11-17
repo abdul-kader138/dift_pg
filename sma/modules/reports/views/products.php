@@ -14,6 +14,15 @@ if ($this->input->post('submit')) {
     if ($this->input->post('warehouse')) {
         $v .= "&warehouse=" . $this->input->post('warehouse');
     }
+    ?>
+    <script type="application/javascript">
+        $(document).ready(function(){
+            $("#whName").text();
+            $("#whName").text("Warehouse - "+$("#warehouse option:selected").text());
+        })
+
+    </script>
+<?php
 }
 ?>
 <style type="text/css">
@@ -162,10 +171,13 @@ if ($this->input->post('submit')) {
 </script>
 
 <h3><?php echo $page_title; ?> <?php if ($this->input->post('start_date')) {
-        echo "From " . $this->input->post('start_date') . " to " . $this->input->post('end_date');
+        echo" # ". $this->input->post('start_date') . " - " . $this->input->post('end_date');
     } else {
-        echo "Till " . $this->input->post('end_date');
-    } ?> <a href="#" class="btn btn-default btn-sm toggle_form"><?php echo $this->lang->line("show_hide"); ?></a></h3>
+        echo "Till # " . $this->input->post('end_date');
+    } ?>&nbsp; &nbsp;&nbsp;<a href="#" class="btn btn-default btn-sm toggle_form"><?php echo $this->lang->line("show_hide"); ?></a>
+    <br/>
+<div id="whName"></div>
+</h3>
 
 <div id="form">
     <p>Please customise the report below.</p>
