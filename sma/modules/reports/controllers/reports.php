@@ -559,13 +559,11 @@ class Reports extends MX_Controller
         } else {
             $end_date = NULL;
         }
-//        if ($this->input->get('warehouse_id')) {
-//            $warehouse_id = $this->input->get('warehouse_id');
-//        } else {
-//            $warehouse_id = NULL;
-//        }
 
-        $warehouse_id=2;
+        if ($this->input->get('warehouse')) {
+            $warehouse_id = $this->input->get('warehouse');
+        }
+
         if ($start_date) {
             $start_date = $this->ion_auth->fsd($start_date);
             $end_date = $this->ion_auth->fsd($end_date);
@@ -573,9 +571,6 @@ class Reports extends MX_Controller
             $pp = "(SELECT mm.purchase_item_id, SUM( mm.received_qty ) purchasedQty from purchases p JOIN make_mrr mm on p.id = mm.purchase_id where
                          mm.mrr_date  between '{$start_date}' and '{$end_date}'
                          group by mm.purchase_item_id ) PCosts";
-//            $pp = "( SELECT pi.product_id, SUM( pi.quantity ) purchasedQty from purchases p JOIN purchase_items pi on p.id = pi.purchase_id where
-//                         p.date >= '{$start_date}' and p.date < '{$end_date}'
-//                         group by pi.product_id ) PCosts";
 
             $sp = "( SELECT si.product_id, SUM( si.quantity ) soldQty, SUM( si.gross_total ) totalSale from sales s JOIN sale_items si on s.id = si.sale_id where
                        s.date between '{$start_date}' and '{$end_date}'
@@ -585,15 +580,18 @@ class Reports extends MX_Controller
             $sp = "( SELECT si.product_id, SUM( si.quantity ) soldQty, SUM( si.gross_total ) totalSale from sale_items si group by si.product_id ) PSales";
         }
 
+        $wh_qty="(SELECT wp.quantity, wp.warehouse_id,wp.product_id from warehouses_products wp where wp.warehouse_id='{$warehouse_id}') wProducts";
+
         $this->load->library('datatables');
         $this->datatables
             ->select("p.code, p.name,
                 COALESCE( PCosts.purchasedQty, 0 ) as PurchasedQty,
                 COALESCE( PSales.soldQty, 0 ) as SoldQty,
-                  p.quantity as quantity,
+                  wProducts.quantity as quantity,
                   p.cost,
-                COALESCE( p.quantity*p.cost, 0 ) as TotalSales", FALSE)
+                COALESCE( wProducts.quantity*p.cost, 0 ) as TotalSales", FALSE)
             ->from('products p', FALSE)
+            ->join($wh_qty, 'p.id = wProducts.product_id', 'inner')
             ->join($sp, 'p.id = PSales.product_id', 'left')
             ->join($pp, 'p.id = PCosts.purchase_item_id', 'left');
 

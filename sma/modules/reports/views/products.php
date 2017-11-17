@@ -185,7 +185,7 @@ if ($this->input->post('submit')) {
                 $pr[$product->id] = $product->name;
             }
 
-            echo form_dropdown('product', $pr, (isset($_POST['product']) ? $_POST['product'] : ""), 'class="form-control input-sm" id="product"'); ?> </div>
+            echo form_dropdown('product', $pr, (isset($_POST['product']) ? $_POST['product'] : ""), 'class="form-control input-sm" name="product" id="product"'); ?> </div>
     </div>
     <div class="control-group">
         <label class="control-label" for="start_date"><?php echo $this->lang->line("start_date"); ?></label>
@@ -201,15 +201,14 @@ if ($this->input->post('submit')) {
     </div>
 
     <div class="control-group">
-        <label class="control-label" for="product"><?php echo $this->lang->line("product"); ?></label>
+        <label class="control-label" for="warehouse"><?php echo $this->lang->line("warehouse"); ?></label>
 
         <div class="controls"> <?php
-            $wh[0] = $this->lang->line("select") . " " . $this->lang->line("warehouse");
             foreach ($warehouses as $warehouse) {
                 $wh[$warehouse->id] = $warehouse->name;
             }
 
-            echo form_dropdown('product', $wh, (isset($_POST['warehouse']) ? $_POST['warehouse'] : ""), 'class="form-control input-sm" id="warehouse"'); ?> </div>
+            echo form_dropdown('warehouse', $wh, (isset($_POST['warehouse']) ? $_POST['warehouse'] : ""), 'class="form-control input-sm" name="warehouse" id="warehouse"'); ?> </div>
     </div>
 
     <div class="control-group">
