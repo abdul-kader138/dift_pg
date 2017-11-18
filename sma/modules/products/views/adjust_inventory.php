@@ -163,7 +163,7 @@ echo form_open_multipart("module=products&view=save_adjust_inventory&id=" .$id."
     <label class="control-label" for="size">Adjustment Quantity</label>
 
     <div
-        class="controls"> <?php echo form_input('aj_quantity', $product->adjust_qnt, 'class="span4 tip" id="size" title="Adjustment" required="required" '); ?>
+        class="controls"> <?php echo form_input('aj_quantity', 0, 'class="span4 tip" id="size" title="Adjustment" required="required" '); ?>
         <select name="qnt_sign" id="qnt_sign" required>
             <option>+</option>
             <option>-</option>

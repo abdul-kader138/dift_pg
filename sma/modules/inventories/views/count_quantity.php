@@ -52,7 +52,7 @@ $cno = $pr_value + 1;
                        $("#product_name").val(data.name);
 					   $("#current_quantity").val(data.tax_rate);
 					   $("#product_code").val(item_code);
-                      
+
                     },
                     error: function() {
                         alert('<?php echo $this->lang->line('code_error'); ?>');
@@ -119,7 +119,7 @@ if ($this->input->post('submit')) {
             select: function(event, ui) {
             $(this).removeClass('ui-autocomplete-loading');
 
-               
+
                 var item_code;
                 var item_cost;
                 var pr_tax;
@@ -134,7 +134,7 @@ if ($this->input->post('submit')) {
                     success: function(data) {
 
                         $("#product_name").val(item_name);
-						$("#current_quantity").val(data.tax_rate);
+						$("#um").val(data.um);
 						$("#product_code").val(data.code);
 
                     },
@@ -150,7 +150,7 @@ if ($this->input->post('submit')) {
                     $(this).val('');
                     return false;
                 }
-           
+
             },
             close: function() {
                 $('#name').val('');
@@ -191,9 +191,9 @@ if ($this->input->post('submit')) {
                     success: function(data) {
 
 						$("#product_name").val(data.name);
-						$("#current_quantity").val(data.tax_rate);
+						$("#um").val(data.um);
 						$("#product_code").val(data.code);
-						
+
 
                     },
                     error: function() {
@@ -220,7 +220,7 @@ if ($this->input->post('submit')) {
             }
         });
         $("form").submit(function() {
-           
+
         });
 
         $('#supplier_l').on('click', function() {
@@ -255,17 +255,29 @@ echo form_open("module=inventories&view=add_quantity", $attrib);
 </div>
 
 <div class="control-group">
-    <label class="control-label" for="current_quantity">Theoretical Quantity</label>
-    <div class="controls"> <?php echo form_input('current_quantity', (isset($_POST['current_quantity']) ? $_POST['current_quantity'] : $current_quantity), 'class="span4 tip"  readonly = "readonly" id="current_quantity" required="required" data-error="' . $this->lang->line("current_quantity") . ' ' . $this->lang->line("is_required") . '"'); ?> </div>
+    <label class="control-label" for="current_quantity">UM</label>
+    <div class="controls"> <?php echo form_input('um', (isset($_POST['um']) ? $_POST['um'] : $um), 'class="span4 tip"  readonly = "readonly" id="um" required="required" data-error="' . $this->lang->line("um") . ' ' . $this->lang->line("is_required") . '"'); ?> </div>
 </div>
 
 <div class="control-group">
     <label class="control-label" for="count_quantity">Count Quantity</label>
     <div class="controls"> <?php echo form_input('count_quantity', (isset($_POST['count_quantity']) ? $_POST['count_quantity'] : $count_quantity), 'class="span4 tip" id="count_quantity" required="required" data-error="' . $this->lang->line("count_quantity") . ' ' . $this->lang->line("is_required") . '"'); ?> </div>
 </div>
+
+<div class="control-group">
+    <label class="control-label" for="warehouse"><?php echo $this->lang->line("warehouse"); ?></label>
+
+    <div class="controls"> <?php
+        foreach ($warehouses as $warehouse) {
+            $wh[$warehouse->id] = $warehouse->name;
+        }
+
+        echo form_dropdown('warehouse', $wh, (isset($_POST['warehouse']) ? $_POST['warehouse'] : ""), 'class="form-control input-sm" name="warehouse" id="warehouse"'); ?> </div>
+</div>
+
 <input type="hidden" name="product_code" id="product_code" value="" />
 <div class="control-group"><div class="controls"><?php echo form_submit('submit', $this->lang->line("submit"), 'class="btn btn-primary" style="padding: 6px 15px;"'); ?></div></div>
-<?php echo form_close(); ?> 
+<?php echo form_close(); ?>
 <div class="control-group">
     <div class="controls">
         <div class="span4" id="drag">
@@ -292,13 +304,13 @@ echo form_open("module=inventories&view=add_quantity", $attrib);
 
 
 <script>
-    
+
     function getSubtottal(id){
         var value = document.getElementById('qnt_' + id).value;
-        var unit_cost = document.getElementById('unit_cost' + id).value; 
+        var unit_cost = document.getElementById('unit_cost' + id).value;
         var total = parseFloat(value) * parseFloat(unit_cost);
         document.getElementById('sub_' + id).innerHTML = total.toFixed(2);
-         
+
     }
 </script>
 

@@ -324,10 +324,10 @@ class Products_model extends CI_Model
                 'product_id' => $id,
                 'warehouse_id' => $data['warehouse_id'],
                 'adjust_qty_add' => $adjust_qty_add,
-                'adjust_qty_remove' => $adjust_qty_remove,
                 'product_qty' => $whProductInfo->quantity,
                 'adjusted_by' => USER_ID,
-                'adjustment_date' => $date);
+                'adjustment_date' => $date,
+                'adjust_qty_remove' => $adjust_qty_remove);
             if ($this->db->update('products', $productData, array("id"=>$id))) {
                 if ($this->db->update('warehouses_products', $WhProductData, array('product_id' => $id, 'warehouse_id' => $data['warehouse_id']))) {
                     $this->db->insert('adjustment_products', $adjustment_obj);

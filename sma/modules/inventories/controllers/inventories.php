@@ -1015,7 +1015,8 @@ class Inventories extends MX_Controller
 
         $this->form_validation->set_rules('product_name', "Product Name Required", 'required|xss_clean');
 
-        $this->form_validation->set_rules('current_quantity', "Current Quantity Required", 'required|xss_clean');
+//        $this->form_validation->set_rules('um', "UM Required", 'required|xss_clean');
+        $this->form_validation->set_rules('warehouse', "Warehouse Required", 'required|xss_clean');
 
         $this->form_validation->set_rules('count_quantity', "Count Quantity Required", 'required|is_natural_no_zero|xss_clean');
 
@@ -1023,14 +1024,14 @@ class Inventories extends MX_Controller
 
 
         if ($this->form_validation->run() == true) {
-
+            $warehouse_id = $this->input->post('warehouse');
             $quantity = $this->input->post('count_quantity');
             $product_code = $this->input->post('product_code');
 
         }
 
 
-        if ($this->form_validation->run() == true && $this->inventories_model->addCountQuantity($product_code, $quantity)) {
+        if ($this->form_validation->run() == true && $this->inventories_model->addCountQuantity($product_code, $quantity,$warehouse_id)) {
 
             $this->session->set_flashdata('success_message', $this->lang->line("purchase_added"));
 
@@ -1879,7 +1880,7 @@ class Inventories extends MX_Controller
             $itemDetails = $this->inventories_model->getProductByNameFromWh($name, $wh);
             $code = $item->code;
             $cost = $item->cost;
-            $product = array('code' => $code, 'cost' => $cost, 'tax_rate' => $itemDetails->quantity);
+            $product = array('code' => $code, 'cost' => $cost, 'tax_rate' => $itemDetails->quantity, "um" => $item->unit);
 //            $product = array('code' => $code, 'cost' => $cost, 'tax_rate' => $itemDetails->quantity);
 
         }

@@ -314,14 +314,16 @@ class Inventories_model extends CI_Model
     }
 
 
-    public function addCountQuantity($code, $quantity)
+    public function addCountQuantity($code, $quantity,$warehouseId)
     {
         $data = $this->getProductByCode($code);
-
+        $warehouse_data=$this->getProductQuantity($data->id,$warehouseId);
         // Product data
         $productData = array(
             'product_id' => $data->id,
-            'quantity' => $quantity,
+            'count_quantity' => $quantity,
+            'actual_quantity' => $warehouse_data['quantity'],
+            'warehouse_id' => $warehouseId,
             'user_id' => USER_ID
         );
 
