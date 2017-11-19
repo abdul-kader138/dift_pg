@@ -663,6 +663,7 @@ class Reports extends MX_Controller
 
     function getVariance()
     {
+
         if ($this->input->get('product')) {
             $product = $this->input->get('product');
         } else {
