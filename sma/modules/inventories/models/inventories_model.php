@@ -1109,16 +1109,16 @@ class Inventories_model extends CI_Model
 
         foreach ($items as $item) {
             $product_id = $item->product_id;
-            $item_details = $this->getProductQuantity($product_id, $warehouse_id);
-            $pr_quantity = $item_details['quantity'];
-            $inv_quantity = $item->quantity;
-            $new_quantity = $pr_quantity - $inv_quantity;
-
-            $this->updateQuantity($product_id, $warehouse_id, $new_quantity);
-            $this->upQTY($product_id, $item->quantity);
+//            $item_details = $this->getProductQuantity($product_id, $warehouse_id);
+//            $pr_quantity = $item_details['quantity'];
+//            $inv_quantity = $item->quantity;
+//            $new_quantity = $pr_quantity - $inv_quantity;
+//
+//            $this->updateQuantity($product_id, $warehouse_id, $new_quantity);
+//            $this->upQTY($product_id, $item->quantity);
         }
 
-        if ($this->db->delete('purchase_items', array('purchase_id' => $id)) && $this->db->delete('purchases', array('id' => $id))) {
+        if ($this->db->delete('purchase_items', array('purchase_id' => $id,'make_purchase_id'=>0)) && $this->db->delete('purchases', array('id' => $id, "checked"=>0))) {
             return true;
         }
         return FALSE;

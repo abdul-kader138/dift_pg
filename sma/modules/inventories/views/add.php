@@ -57,6 +57,7 @@ $(document).ready(function () {
             }
 
             item_code = $(this).val();
+            var wh_id = $("#warehouse_s").val();
 
             $.ajax({
                 type: "get",
@@ -64,22 +65,17 @@ $(document).ready(function () {
                 url: "<?php echo $this->config->base_url(); ?>index.php?module=inventories&view=scan_item",
                 data: {
             <?php echo $this->security->get_csrf_token_name(); ?>:
-            "<?php echo $this->security->get_csrf_hash() ?>", code
-        :
-            item_code
-        }
-        ,
+            "<?php echo $this->security->get_csrf_hash() ?>",
+
+                code : item_code,
+                wh  : wh_id},
         dataType: "json",
-            success
-        :
+            success:
         function (data) {
             item_code = data.code;
             item_name = data.name;
             item_cost = data.cost;
             pr_tax = data.tax_rate;
-//                        item_cost = data.cost;
-//                        item_name = data.name;
-//                        pr_tax = data.tax_rate;
 
         }
 
@@ -112,9 +108,18 @@ $(document).ready(function () {
         }
     });
 
+
+    var taxes = pr_tax;
+
     var newTr = $('<tr id="row_' + count + '"></tr>');
-    newTr.html('<td><input name="product' + count + '" type="hidden" value="' + item_code + '"><input class="span5 tran" style="text-align:left;" name="item' + count + '" type="text" value="' + item_name + ' (' + item_code + ')"></td><?php if (TAX1) { ?><td><select class="input-block-level" data-placeholder="Select..." name="tax_rate' + count + '" id="tax_rate-' + count + '">' + taxes + '</select></td><?php } ?><td><input class="input-block-level text-center" name="quantity' + count + '" id="qnt_' + count + '" type="text" value="1" onkeyup="getSubtottal(' + count + ')" onClick="this.select();"></td><td><input class="span2 tran" style="text-align:right;" name="unit_cost' + count + '" id="unit_cost' + count + '"  type="text" value="' + item_cost + '"></td><td id="sub_' + count + '">' + item_cost + '</td><td><i class="icon-trash tip del" id="' + count + '" title="Remove this Item" style="cursor:pointer;" data-placement="right"></i></td>');
+    newTr.html('<td><input name="product' + count + '" type="hidden" value="' + item_code + '"><input class="span5 tran" style="text-align:left;" name="item' + count + '" type="text" value="' + item_name + ' (' + item_code + ')"></td><td><input class="input-block-level text-center" type="text"  name="tax_rate' + count + '" value="' + taxes + '" id="tax_rate-' + count + '" /></td><td><input class="input-block-level text-center" name="quantity' + count + '" id="qnt_' + count + '" type="text" value="1" onkeyup="getSubtottal(' + count + ')" onClick="this.select();"></td><td><input class="span2 tran" style="text-align:right;" name="unit_cost' + count + '" id="unit_cost' + count + '" type="text" value="' + item_cost + '"></td><td id="sub_' + count + '">' + item_cost + '</td><td><i class="icon-trash tip del" id="' + count + '" title="Remove this Item" style="cursor:pointer;" data-placement="right"></i></td>');
+
     newTr.prependTo("#dyTable");
+
+//    var newTr = $('<tr id="row_' + count + '"></tr>');
+//    newTr.html('<td><input name="product' + count + '" type="hidden" value="' + item_code + '"><input class="span5 tran" style="text-align:left;" name="item' + count + '" type="text" value="' + item_name + ' (' + item_code + ')"></td><?php //if (TAX1) { ?>//<td><select class="input-block-level" data-placeholder="Select..." name="tax_rate' + count + '" id="tax_rate-' + count + '">' + taxes + '</select></td><?php //} ?>//<td><input class="input-block-level text-center" name="quantity' + count + '" id="qnt_' + count + '" type="text" value="1" onkeyup="getSubtottal(' + count + ')" onClick="this.select();"></td><td><input class="span2 tran" style="text-align:right;" name="unit_cost' + count + '" id="unit_cost' + count + '"  type="text" value="' + item_cost + '"></td><td id="sub_' + count + '">' + item_cost + '</td><td><i class="icon-trash tip del" id="' + count + '" title="Remove this Item" style="cursor:pointer;" data-placement="right"></i></td>');
+//    newTr.html('<td><input name="product' + count + '" type="hidden" value="' + item_code + '"><input class="span5 tran" style="text-align:left;" name="item' + count + '" type="text" value="' + item_name + ' (' + item_code + ')"></td><?php //if (TAX1) { ?>//<td><select class="input-block-level" data-placeholder="Select..." name="tax_rate' + count + '" id="tax_rate-' + count + '">' + taxes + '</select></td><?php //} ?>//<td><input class="input-block-level text-center" name="quantity' + count + '" id="qnt_' + count + '" type="text" value="1" onkeyup="getSubtottal(' + count + ')" onClick="this.select();"></td><td><input class="span2 tran" style="text-align:right;" name="unit_cost' + count + '" id="unit_cost' + count + '"  type="text" value="' + item_cost + '"></td><td id="sub_' + count + '">' + item_cost + '</td><td><i class="icon-trash tip del" id="' + count + '" title="Remove this Item" style="cursor:pointer;" data-placement="right"></i></td>');
+//    newTr.prependTo("#dyTable");
 
     count++;
     an++;
@@ -168,8 +173,7 @@ $("#name").autocomplete({
             data: {
         <?php echo $this->security->get_csrf_token_name(); ?>:
         "<?php echo $this->security->get_csrf_hash() ?>", term
-        :
-        $("#name").val()
+        :$("#name").val()
     },
     dataType: "json",
     type: "get",
@@ -210,11 +214,8 @@ function (event, ui) {
         url: "<?php echo $this->config->base_url(); ?>index.php?module=inventories&view=add_item",
         data: {
     <?php echo $this->security->get_csrf_token_name(); ?>:
-    "<?php echo $this->security->get_csrf_hash() ?>", name
-:
-    item_name, wh
-:
-    wh_id
+    "<?php echo $this->security->get_csrf_hash() ?>", name:item_name,
+        wh:wh_id
 }
 ,
 dataType: "json",
@@ -304,6 +305,7 @@ function (event, ui) {
     var item_cost;
     var pr_tax;
     var item_code = ui.item.label;
+    var wh_id = $("#warehouse_s").val();
 
     $.ajax({
         type: "get",
@@ -313,7 +315,10 @@ function (event, ui) {
     <?php echo $this->security->get_csrf_token_name(); ?>:
     "<?php echo $this->security->get_csrf_hash() ?>", code
 :
-    item_code
+    item_code,
+        "wh"
+:
+    wh_id
 }
 ,
 dataType: "json",
@@ -356,9 +361,16 @@ $.each(tax_rates, function () {
     }
 });
 
+var taxes = pr_tax;
+
 var newTr = $('<tr id="row_' + count + '"></tr>');
-newTr.html('<td><input name="product' + count + '" type="hidden" value="' + item_code + '"><input class="span5 tran" style="text-align:left;" name="item' + count + '" type="text" value="' + item_name + ' (' + item_code + ')"></td><?php if (TAX1) { ?><td><select class="input-block-level" data-placeholder="Select..." name="tax_rate' + count + '" id="tax_rate-' + count + '">' + taxes + '</select></td><?php } ?><td><input class="input-block-level text-center" name="quantity' + count + '" id="qnt_' + count + '" type="text" value="1" onkeyup="getSubtottal(' + count + ')" onClick="this.select();"></td><td><input class="span2 tran" style="text-align:right;" name="unit_cost' + count + '" id="unit_cost' + count + '" type="text" value="' + item_cost + '"></td><td id="sub_' + count + '">' + item_cost + '</td><td><i class="icon-trash tip del" id="' + count + '" title="Remove this Item" style="cursor:pointer;" data-placement="right"></i></td>');
+newTr.html('<td><input name="product' + count + '" type="hidden" value="' + item_code + '"><input class="span5 tran" style="text-align:left;" name="item' + count + '" type="text" value="' + item_name + ' (' + item_code + ')"></td><td><input class="input-block-level text-center" type="text"  name="tax_rate' + count + '" value="' + taxes + '" id="tax_rate-' + count + '" /></td><td><input class="input-block-level text-center" name="quantity' + count + '" id="qnt_' + count + '" type="text" value="1" onkeyup="getSubtottal(' + count + ')" onClick="this.select();"></td><td><input class="span2 tran" style="text-align:right;" name="unit_cost' + count + '" id="unit_cost' + count + '" type="text" value="' + item_cost + '"></td><td id="sub_' + count + '">' + item_cost + '</td><td><i class="icon-trash tip del" id="' + count + '" title="Remove this Item" style="cursor:pointer;" data-placement="right"></i></td>');
+
 newTr.prependTo("#dyTable");
+
+//var newTr = $('<tr id="row_' + count + '"></tr>');
+//newTr.html('<td><input name="product' + count + '" type="hidden" value="' + item_code + '"><input class="span5 tran" style="text-align:left;" name="item' + count + '" type="text" value="' + item_name + ' (' + item_code + ')"></td><?php //if (TAX1) { ?>//<td><select class="input-block-level" data-placeholder="Select..." name="tax_rate' + count + '" id="tax_rate-' + count + '">' + taxes + '</select></td><?php //} ?>//<td><input class="input-block-level text-center" name="quantity' + count + '" id="qnt_' + count + '" type="text" value="1" onkeyup="getSubtottal(' + count + ')" onClick="this.select();"></td><td><input class="span2 tran" style="text-align:right;" name="unit_cost' + count + '" id="unit_cost' + count + '" type="text" value="' + item_cost + '"></td><td id="sub_' + count + '">' + item_cost + '</td><td><i class="icon-trash tip del" id="' + count + '" title="Remove this Item" style="cursor:pointer;" data-placement="right"></i></td>');
+//newTr.prependTo("#dyTable");
 
 count++;
 an++;
@@ -463,11 +475,11 @@ echo form_open("module=inventories&view=add", $attrib);
                 <div id="draggable"><?php echo $this->lang->line('draggable'); ?></div>
                 <div class="fancy-tab-container">
                     <ul class="nav nav-tabs three-tabs fancy" id="byTab">
-<!--                        <li class="active"><a href="#by_code"-->
-<!--                                              id="select_by_code">--><?php //echo $this->lang->line("barcode_scanner"); ?><!--</a>-->
-<!--                        </li>-->
-<!--                        <li><a href="#by_codes"-->
-<!--                               id="select_by_codes">--><?php //echo $this->lang->line("product_code"); ?><!--</a></li>-->
+                        <li class="active"><a href="#by_code"
+                                              id="select_by_code"><?php echo $this->lang->line("barcode_scanner"); ?></a>
+                        </li>
+                        <li><a href="#by_codes"
+                               id="select_by_codes"><?php echo $this->lang->line("product_code"); ?></a></li>
                         <li><a href="#by_name" id="select_by_name"><?php echo $this->lang->line("product_name"); ?></a>
                         </li>
                     </ul>
@@ -515,17 +527,17 @@ echo form_open("module=inventories&view=add", $attrib);
                 foreach ($inv_products as $prod) {
 
                     echo '<tr id="row_' . $r . '"><td><input name="product' . $r . '" type="hidden" value="' . $prod->code . '"><input class="span5 tran" style="text-align:left;" name="item' . $r . '" type="text" value="' . $prod->name . ' (' . $prod->code . ')"></td>';
-                    if (TAX1) {
-                        echo '<td><select class="input-block-level" data-placeholder="Select..." name="tax_rate' . $r . '" id="tax_rate-' . $r . '">';
-                        foreach ($tax_rates as $tax) {
-                            echo "<option value=" . $tax->id;
-                            if ($tax->id == $prod->tax_rate_id) {
-                                echo ' selected="selected"';
-                            }
-                            echo ">" . $tax->name . "</option>";
-                        }
-                        echo '</select></td>';
-                    }
+//                    if (TAX1) {
+//                        echo '<td><select class="input-block-level" data-placeholder="Select..." name="tax_rate' . $r . '" id="tax_rate-' . $r . '">';
+//                        foreach ($tax_rates as $tax) {
+//                            echo "<option value=" . $tax->id;
+//                            if ($tax->id == $prod->tax_rate_id) {
+//                                echo ' selected="selected"';
+//                            }
+//                            echo ">" . $tax->name . "</option>";
+//                        }
+//                        echo '</select></td>';
+//                    }
 
                     echo '<td><input class="input-block-level text-center" name="quantity' . $r . '" id="qnt_' . $r . '" type="text" value="' . 1 . '" onkeyup="getSubtottal(' . $r . ')"></td><td><input class="span2 tran" style="text-align:right;" name="unit_cost' . $r . '" id="unit_cost' . $r . '" type="text" value="' . $prod->cost . '"></td><td id="sub_' . $r . '">' . $prod->cost . '</td><td><i class="icon-trash tip del" id="' . $r . '" title="Remove this Item" style="cursor:pointer;" data-placement="right"></i></td></tr>';
                     $r++;
