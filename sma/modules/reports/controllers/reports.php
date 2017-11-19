@@ -699,6 +699,7 @@ class Reports extends MX_Controller
              and c.product_id=wp.product_id and c.warehouse_id=wp.warehouse_id) pd";
         }
 
+
         $this->load->library('datatables');
         $this->datatables
             ->select("p.code, p.name,pd.code as c ,pd.created_at as count_date, p.unit, pd.count_quantity as cun_quantity, pd.quantity as quantity,
