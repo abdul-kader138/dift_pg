@@ -682,7 +682,7 @@ class Reports extends MX_Controller
             $eDate = Null;
         }
 
-        if ($product != null) {
+        if ($product != NULL) {
             $var = $start_date;
             $date = str_replace('/', '-', $var);
             $new_date = date('Y-m-d', strtotime($date));
@@ -696,8 +696,7 @@ class Reports extends MX_Controller
         } else {
             $wp = "(select w.code,c.created_at,c.count_quantity,wp.quantity,wp.product_id
              FROM warehouses_products wp inner join warehouses w inner join count_products c on w.id=wp.warehouse_id
-             and c.product_id=wp.product_id and c.warehouse_id=wp.warehouse_id where c.created_at
-             between '{$sDate}' and '{$eDate}') pd";
+             and c.product_id=wp.product_id and c.warehouse_id=wp.warehouse_id) pd";
         }
 
         $this->load->library('datatables');
