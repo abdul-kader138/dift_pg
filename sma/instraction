@@ -4,3 +4,4 @@
 4) warehouse_products  table quantity column need to change  decimal(quantiy)
 5)add column to warehouse_id to count_product(warehouse_id, change name $count_quantity, new column  $actual_county)
 
+6)transfer_items(change column int decimal for qty,), add coulmn (from_warehouse_id,to_warehouse_id)

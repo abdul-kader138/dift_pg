@@ -241,7 +241,10 @@ if ($this->input->post('submit')) {
             <th>Opening Quantity</th>
             <th> Purchases Quantity</th>
             <th>Sales Quantity</th>
-            <th>Adjustment Quantity</th>
+            <th>Adjustment<br/>(+)</th>
+            <th>Adjustment<br/>(-)</th>
+            <th>Transfer<br/>(+)</th>
+            <th>Transfer<br/>(-)</th>
             <th>Closing Quantity</th>
         </tr>
         </thead>
@@ -258,7 +261,10 @@ if ($this->input->post('submit')) {
             <th>Opening Quantity</th>
             <th> Purchases Quantity</th>
             <th>Sales Quantity</th>
-            <th>Adjustment Quantity</th>
+            <th>Adjustment(+)</th>
+            <th>Adjustment(-)</th>
+            <th>Transfer<br/>(+)</th>
+            <th>Transfer<br/>(-)</th>
             <th>Closing Quantity</th>
         </tr>
         </tfoot>

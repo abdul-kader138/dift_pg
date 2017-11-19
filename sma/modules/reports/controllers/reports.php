@@ -507,59 +507,97 @@ class Reports extends MX_Controller
             $warehouse_id = $this->input->get('warehouse');
         }
 
+
         if ($start_date) {
-            $start_date = $this->ion_auth->fsd($start_date);
-            $end_date = $this->ion_auth->fsd($end_date);
+            $var1 = $start_date;
+            $var2 = $end_date;
+            $date1 = str_replace('/', '-', $var1);
+            $date2 = str_replace('/', '-', $var2);
+            $new_date = date('Y-m-d', strtotime($date1));
+            $newE_date = date('Y-m-d', strtotime($date2));
+            $s_date = $new_date . ' 00:00:00';
+            $e_date = $newE_date . ' 23:59:59';
+
+
+            $tr_s_date=$this->ion_auth->fsd($start_date);
+            $tr_e_date=$this->ion_auth->fsd($end_date);
+
+            // get All purchase Data
 
             $pp = "(SELECT mm.purchase_item_id, SUM( mm.received_qty ) purchasedQty from purchases p JOIN make_mrr mm on p.id = mm.purchase_id where
-                         mm.mrr_date  between '{$start_date}' and '{$end_date}'
+                         mm.mrr_date  between '{$s_date}' and '{$e_date}'
                          group by mm.purchase_item_id ) PCosts";
 
-
+            // get All Sales Data
             $sp = "( SELECT si.product_id, SUM( si.quantity ) soldQty, SUM( si.gross_total ) totalSale from sales s JOIN sale_items si on s.id = si.sale_id where
-                       s.date between '{$start_date}' and '{$end_date}'
+                       s.date between '{$s_date}' and '{$e_date}'
                        group by si.product_id ) PSales";
+
+
+            // get All Adjustment Data
+            $ad_qty = "( SELECT  ap.product_id,ap.warehouse_id,sum(ap.adjust_qty_add) addQty, sum(ap.adjust_qty_remove) removeQty from adjustment_products ap where
+                 ap.adjustment_date between '{$s_date}' and '{$e_date}'  group by ap.product_id, ap.warehouse_id  ) adPro";
+
+
+
+            // get All Transfer Data
+            $tr_remove="(SELECT ti.product_id,sum(quantity) qty FROM transfers t inner join transfer_items ti on t.id=ti.transfer_id where t.date BETWEEN '{$tr_s_date}'
+             and '{$tr_e_date}' and t.from_warehouse_id='{$warehouse_id}' group by t.from_warehouse_id,ti.product_id,ti.quantity) trRemove";
+
+            $tr_add="(SELECT ti.product_id,sum(quantity) qty FROM transfers t inner join transfer_items ti on t.id=ti.transfer_id where t.date BETWEEN '{$tr_s_date}'
+             and '{$tr_e_date}' and t.to_warehouse_id='{$warehouse_id}' group by t.from_warehouse_id,ti.product_id,ti.quantity) trAdd";
         } else {
+
+            // get All purchase Data
             $pp = "( SELECT mm.purchase_item_id, SUM(mm.received_qty ) purchasedQty from make_mrr mm group by mm.purchase_item_id ) PCosts";
+
+            // get All Sales Data
             $sp = "( SELECT si.product_id, SUM( si.quantity ) soldQty, SUM( si.gross_total ) totalSale from sale_items si group by si.product_id ) PSales";
+
+            // get All Adjustment Data
+            $ad_qty = "( SELECT  ap.product_id,ap.warehouse_id,sum(ap.adjust_qty_add) addQty, sum(ap.adjust_qty_remove) removeQty from adjustment_products ap group by ap.product_id, ap.warehouse_id) adPro";
+
+            // get All Transfer Data
+            $tr_remove="(SELECT ti.product_id,sum(quantity) qty FROM transfers t inner join transfer_items ti on t.id=ti.transfer_id
+            where t.from_warehouse_id='{$warehouse_id}' group by t.from_warehouse_id,ti.product_id,ti.quantity) trRemove";
+            $tr_add="(SELECT ti.product_id,sum(quantity) qty FROM transfers t inner join transfer_items ti on t.id=ti.transfer_id
+            where t.to_warehouse_id='{$warehouse_id}' group by t.from_warehouse_id,ti.product_id,ti.quantity) trAdd";
+
         }
 
 
+
+        // Get Ware House Quantity
         $wps = "(SELECT wp.quantity, wp.warehouse_id,wp.product_id from warehouses_products wp where wp.warehouse_id='{$warehouse_id}') wProducts";
+
+
+
+        // pull all main data
         $this->load->library('datatables');
         if ($product) {
             $this->datatables->where('p.id', $product);
         }
         $this->datatables
-            ->select("p.code, p.name, p.unit,COALESCE( p.quantity + PSales.soldQty, quantity  - PCosts.purchasedQty ) as quantity,
+            ->select("p.code, p.name, p.unit,
+                (COALESCE( wProducts.quantity,0)+ COALESCE( adPro.removeQty, 0 )- COALESCE( adPro.addQty, 0 ) + COALESCE( trRemove.qty, 0 ) - COALESCE( trAdd.qty, 0 ) - COALESCE( PCosts.purchasedQty, 0 ) + COALESCE( PSales.soldQty, 0 ) ) as quantity,
                 COALESCE( PCosts.purchasedQty, 0 ) as PurchasedQty,
                 COALESCE( PSales.soldQty, 0 ) as SoldQty,
-                p.adjust_qnt,
-                COALESCE( p.quantity + PCosts.purchasedQty - PSales.soldQty, quantity ) as CloseingQnt", FALSE)
+                COALESCE( adPro.addQty, 0 ) as addQty,COALESCE( adPro.removeQty, 0 ) as removeQty,
+                COALESCE( trAdd.qty, 0 ) as trAddQty,
+                COALESCE( trRemove.qty, 0 ) as trRmvQty,
+                COALESCE( wProducts.quantity) as CloseingQnt", FALSE)
             ->from('products p', FALSE)
             ->join($sp, 'p.id = PSales.product_id', 'left')
-//            ->join($wps, 'p.id = wProducts.product_id', 'inner')
-            ->join($pp, 'p.id = PCosts.purchase_item_id', 'left');
-
-
-//        $this->datatables
-//            ->select("p.code, p.name, p.unit,COALESCE( wProducts.quantity + PSales.soldQty, quantity  - PCosts.purchasedQty) as quantity,
-//                COALESCE( PCosts.purchasedQty, 0 ) as PurchasedQty,
-//                COALESCE( PSales.soldQty, 0 ) as SoldQty,
-//                p.adjust_qnt,
-//                COALESCE( wProducts.quantity + PCosts.purchasedQty - PSales.soldQty, quantity ) as CloseingQnt", FALSE)
-//            ->from('products p', FALSE)
-//            ->join($wp, 'p.id = wProducts.product_id', 'inner')
-//            ->join($sp, 'p.id = PSales.product_id', 'left')
-//            ->join($pp, 'p.id = PCosts.purchase_item_id', 'left');
+            ->join($pp, 'p.id = PCosts.purchase_item_id', 'left')
+            ->join($wps, 'p.id = wProducts.product_id', 'inner')
+            ->join($ad_qty, 'p.id = adPro.product_id', 'left')
+            ->join($tr_add, 'p.id = trAdd.product_id', 'left')
+            ->join($tr_remove, 'p.id = trRemove.product_id', 'left');
 
         if ($product) {
             $this->datatables->where('p.id', $product);
         }
-//
         echo $this->datatables->generate();
-//        echo $sp;
-
     }
 
     function getCP()
@@ -633,41 +671,43 @@ class Reports extends MX_Controller
         }
         if ($this->input->get('start_date')) {
             $start_date = $this->input->get('start_date');
-        } else {
-            $start_date = NULL;
-        }
-        if ($this->input->get('end_date')) {
-            $end_date = $this->input->get('end_date');
-        } else {
-            $end_date = NULL;
-        }
-        if ($start_date) {
             $var = $start_date;
             $date = str_replace('/', '-', $var);
             $new_date = date('Y-m-d', strtotime($date));
             $sDate = $new_date . ' 00:00:00';
             $eDate = $new_date . ' 23:59:59';
-            $pp = "(SELECT count.id,count.product_id,count.quantity,count.created_at from count_products count where
-                         created_at between '{$sDate}' and '{$eDate}') pCount";
-
         } else {
-            $pp = "( SELECT count.id,count.product_id,count.quantity ,count.created_at from count_products count) pCount";
+            $start_date = NULL;
+            $sDate = Null;
+            $eDate = Null;
         }
+
+        if ($product != null) {
+            $var = $start_date;
+            $date = str_replace('/', '-', $var);
+            $new_date = date('Y-m-d', strtotime($date));
+            $sDate = $new_date . ' 00:00:00';
+            $eDate = $new_date . ' 23:59:59';
+
+            $wp = "(select w.code,c.created_at,c.count_quantity,wp.quantity,wp.product_id
+             FROM warehouses_products wp inner join warehouses w inner join count_products c on w.id=wp.warehouse_id
+             and c.product_id=wp.product_id and c.warehouse_id=wp.warehouse_id where c.created_at
+             between '{$sDate}' and '{$eDate}' and c.product_id='{$product}') pd";
+        } else {
+            $wp = "(select w.code,c.created_at,c.count_quantity,wp.quantity,wp.product_id
+             FROM warehouses_products wp inner join warehouses w inner join count_products c on w.id=wp.warehouse_id
+             and c.product_id=wp.product_id and c.warehouse_id=wp.warehouse_id where c.created_at
+             between '{$sDate}' and '{$eDate}') pd";
+        }
+
         $this->load->library('datatables');
         $this->datatables
-            ->select("p.code, p.name,pCount.created_at as count_date, p.unit, pCount.quantity as cun_quantity, p.quantity as quantity,
-                COALESCE(pCount.quantity - p.quantity, 0 ) as variance", FALSE)
-            ->from('products p', FALSE)
-            ->join($pp, 'p.id = pCount.product_id', 'inner');
-
-
-        if ($product) {
-            $this->datatables->where('p.id', $product);
-        }
+            ->select("p.code, p.name,pd.code as c ,pd.created_at as count_date, p.unit, pd.count_quantity as cun_quantity, pd.quantity as quantity,
+                COALESCE(pd.quantity - pd.count_quantity, 0 ) as variance", FALSE)
+            ->from('products p', false)
+            ->join($wp, 'p.id = pd.product_id', 'inner');
 
         echo $this->datatables->generate();
-//        var_dump($pp);
-//        echo $pp;
 
     }
 

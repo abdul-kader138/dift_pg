@@ -2381,7 +2381,6 @@ window.onload = sivamtime;
 
     $("#return_form").on("submit", function (event) {
         event.preventDefault();
-        var data = $(this).serialize();
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
@@ -2398,6 +2397,7 @@ window.onload = sivamtime;
 
             }
         };
+        var data = $(this).serialize();
         xmlhttp.open("GET", "index.php?module=pos&view=save_return&" + data, true);
         xmlhttp.send();
         $('#returnModal').modal('hide');

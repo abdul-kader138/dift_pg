@@ -1096,13 +1096,20 @@ function products() {
 	   
  function save_return()
 	{
+		$sales_id = $this->input->get('return_ordeer_id');
 		$qnt = $this->input->get('returnproduct');
 		$id = $this->input->get('orderitems_id');
 		$product_id = $this->input->get('return_product_id');
 		$price = $this->input->get('return_price');
+        var_dump(array($sales_id));
+        var_dump(array($product_id));
+        var_dump(array($id));
+        var_dump(array($qnt));
+        var_dump(array($price));
 	    $total = $this->pos_model->return_items($id, $qnt, $product_id, $price);
-   echo $total;		
-		
+//   echo $total;
+//   echo $product_id;
+
 	}
 	   
 	   

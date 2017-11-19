@@ -487,7 +487,6 @@ class Inventories extends MX_Controller
         $data['page_title'] = $this->lang->line("inventory");
 
 
-
 //        $html = $this->load->view('view_inventory', $data, TRUE);
 
 
@@ -1031,29 +1030,25 @@ class Inventories extends MX_Controller
         }
 
 
-        if ($this->form_validation->run() == true && $this->inventories_model->addCountQuantity($product_code, $quantity,$warehouse_id)) {
-
-            $this->session->set_flashdata('success_message', $this->lang->line("purchase_added"));
-
-            $data['success_message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('purchase_added'));
-
-            redirect("module=inventories&view=add_quantity");
-
+        if (($this->form_validation->run()) == true) {
+            if ($this->inventories_model->addCountQuantity($product_code, $quantity, $warehouse_id)) {
+                $this->session->set_flashdata('success_message', $this->lang->line("item_count_added"));
+                $data['success_message'] = $this->lang->line("item_count_added");
+                $data['message'] = validation_errors();
+            }
         } else {
-
-            $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
-
-            $data['suppliers'] = $this->inventories_model->getAllSuppliers();
-            $data['tax_rates'] = $this->inventories_model->getAllTaxRates();
-            $data['warehouses'] = $this->inventories_model->getAllWarehouses();
-            $data['rnumber'] = $this->inventories_model->getRQNextAI();
-            $meta['page_title'] = "Count Variance Quantity";
-            $data['page_title'] = "Count Variance Quantity";
-            $this->load->view('commons/header', $meta);
-            $this->load->view('count_quantity', $data);
-            $this->load->view('commons/footer');
-
+            $data['message'] = validation_errors();
         }
+//        $data['suppliers'] = $this->inventories_model->getAllSuppliers();
+//        $data['tax_rates'] = $this->inventories_model->getAllTaxRates();
+        $data['warehouses'] = $this->inventories_model->getAllWarehouses();
+//        $data['rnumber'] = $this->inventories_model->getRQNextAI();
+        $meta['page_title'] = "Count Variance Quantity";
+        $data['page_title'] = "Count Variance Quantity";
+        $this->load->view('commons/header', $meta);
+        $this->load->view('count_quantity', $data);
+        $this->load->view('commons/footer');
+
     }
     /* -------------------------------------------------------------------------------------------------------------------------------- */
 //Edit inventory
@@ -1847,21 +1842,12 @@ class Inventories extends MX_Controller
             $code = $item->code;
             $name = $item->name;
             $cost = $item->cost;
-            $product = array('code' => $code, 'name' => $name, 'cost' => $cost, 'tax_rate' => $itemDetails->quantity);
-
-//            $product_name = $item->name;
-//            $product_cost = $item->cost;
+            $product = array('name' => $name,'code' => $code, 'cost' => $cost, 'tax_rate' => $itemDetails->quantity, "um" => $item->unit);
             $product_tax = $item->tax_rate;
-//
-//            $tax_rate = $this->inventories_model->getTaxRateByID($product_tax);
-//
-//            $product = array('name' => $product_name, 'cost' => $product_cost, 'tax_rate' => $itemDetails->quantity);
-
         }
 
-//        var_dump($product);
 
-        echo json_encode($itemDetails);
+        echo json_encode($product);
 
     }
 

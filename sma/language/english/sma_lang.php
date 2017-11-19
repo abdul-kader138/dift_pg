@@ -166,6 +166,7 @@ $lang['product1'] 						= "Product 1";
 $lang['unit_price1'] 					= "Unit Price 1";
 $lang['note'] 							= "Note";
 $lang['purchase_added'] 				= "Purchase Order Successfully Added";
+$lang['item_count_added'] 				= "Item count data Successfully Added";
 $lang['add_purchase'] 					= "Add Purchase Requisition";
 $lang['upload_file'] 					= "Upload File";
 $lang['purchase_updated'] 				= "Purchase Order Successfully Updated";

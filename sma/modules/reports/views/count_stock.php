@@ -116,7 +116,7 @@ span.date { display: none; }
 	});
 </script>
 
-<h3><?php echo $page_title; ?> <?php if($this->input->post('start_date')){ echo "From ".$this->input->post('start_date')." to ".$this->input->post('end_date'); } else { echo "Till ".$this->input->post('end_date'); } ?> <a href="#" class="btn btn-default btn-sm toggle_form"><?php echo $this->lang->line("show_hide"); ?></a></h3>
+<h3><?php echo $page_title; ?> <?php if($this->input->post('start_date')){ echo "till- ".$this->input->post('start_date'); } else { echo "Till ".$this->input->post('end_date'); } ?> &nbsp;&nbsp;&nbsp; <a href="#" class="btn btn-default btn-sm toggle_form"><?php echo $this->lang->line("show_hide"); ?></a></h3>
 
 <div id="form">
 <p>Please customise the report below.</p>
@@ -152,24 +152,26 @@ span.date { display: none; }
         <tr class="active">
             <th><?php echo $this->lang->line("product_code"); ?></th>
             <th><?php echo $this->lang->line("product_name"); ?></th>
+            <th>WH Code</th>
             <th>Count Date</th>
             <th>UOM</th>
             <th> Quantity Counted</th>
             <th>Theoretical Stock Quantity</th>
-             <th>Quantity Variance</th>
+            <th>Quantity Variance</th>
             
 		</tr>
         </thead>
 		<tbody>
 			<tr>
-            	<td colspan="6" class="dataTables_empty">Loading data from server</td>
+            	<td colspan="8" class="dataTables_empty">Loading data from server</td>
 			</tr>
         </tbody>
         <tfoot>
         <tr>
             <th><?php echo $this->lang->line("product_code"); ?></th>
             <th><?php echo $this->lang->line("product_name"); ?></th>
-            <th>CountDate</th>
+            <th>WH Code</th>
+            <th>Count Date</th>
             <th>UOM</th>
             <th> Quantity Counted</th>
             <th>Theoretical Stock Quantity</th>
