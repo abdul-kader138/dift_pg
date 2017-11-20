@@ -457,6 +457,7 @@ class Reports extends MX_Controller
         }
         //$meta['page_title'] = $this->lang->line("reports")." ".$dt;
         $data['products'] = $this->reports_model->getAllProducts();
+        $data['warehouses'] = $this->reports_model->getAllWarehouses();
         $meta['page_title'] = "Stock Count Variance Report" . " " . $dt;
         $data['page_title'] = "Stock Count Variance Report";
         $this->load->view('commons/header', $meta);
@@ -519,8 +520,8 @@ class Reports extends MX_Controller
             $e_date = $newE_date . ' 23:59:59';
 
 
-            $tr_s_date=$this->ion_auth->fsd($start_date);
-            $tr_e_date=$this->ion_auth->fsd($end_date);
+            $tr_s_date = $this->ion_auth->fsd($start_date);
+            $tr_e_date = $this->ion_auth->fsd($end_date);
 
             // get All purchase Data
 
@@ -539,12 +540,11 @@ class Reports extends MX_Controller
                  ap.adjustment_date between '{$s_date}' and '{$e_date}'  group by ap.product_id, ap.warehouse_id  ) adPro";
 
 
-
             // get All Transfer Data
-            $tr_remove="(SELECT ti.product_id,sum(quantity) qty FROM transfers t inner join transfer_items ti on t.id=ti.transfer_id where t.date BETWEEN '{$tr_s_date}'
+            $tr_remove = "(SELECT ti.product_id,sum(quantity) qty FROM transfers t inner join transfer_items ti on t.id=ti.transfer_id where t.date BETWEEN '{$tr_s_date}'
              and '{$tr_e_date}' and t.from_warehouse_id='{$warehouse_id}' group by t.from_warehouse_id,ti.product_id,ti.quantity) trRemove";
 
-            $tr_add="(SELECT ti.product_id,sum(quantity) qty FROM transfers t inner join transfer_items ti on t.id=ti.transfer_id where t.date BETWEEN '{$tr_s_date}'
+            $tr_add = "(SELECT ti.product_id,sum(quantity) qty FROM transfers t inner join transfer_items ti on t.id=ti.transfer_id where t.date BETWEEN '{$tr_s_date}'
              and '{$tr_e_date}' and t.to_warehouse_id='{$warehouse_id}' group by t.from_warehouse_id,ti.product_id,ti.quantity) trAdd";
         } else {
 
@@ -558,18 +558,16 @@ class Reports extends MX_Controller
             $ad_qty = "( SELECT  ap.product_id,ap.warehouse_id,sum(ap.adjust_qty_add) addQty, sum(ap.adjust_qty_remove) removeQty from adjustment_products ap group by ap.product_id, ap.warehouse_id) adPro";
 
             // get All Transfer Data
-            $tr_remove="(SELECT ti.product_id,sum(quantity) qty FROM transfers t inner join transfer_items ti on t.id=ti.transfer_id
+            $tr_remove = "(SELECT ti.product_id,sum(quantity) qty FROM transfers t inner join transfer_items ti on t.id=ti.transfer_id
             where t.from_warehouse_id='{$warehouse_id}' group by t.from_warehouse_id,ti.product_id,ti.quantity) trRemove";
-            $tr_add="(SELECT ti.product_id,sum(quantity) qty FROM transfers t inner join transfer_items ti on t.id=ti.transfer_id
+            $tr_add = "(SELECT ti.product_id,sum(quantity) qty FROM transfers t inner join transfer_items ti on t.id=ti.transfer_id
             where t.to_warehouse_id='{$warehouse_id}' group by t.from_warehouse_id,ti.product_id,ti.quantity) trAdd";
 
         }
 
 
-
         // Get Ware House Quantity
         $wps = "(SELECT wp.quantity, wp.warehouse_id,wp.product_id from warehouses_products wp where wp.warehouse_id='{$warehouse_id}') wProducts";
-
 
 
         // pull all main data
@@ -660,6 +658,7 @@ class Reports extends MX_Controller
         echo $this->datatables->generate();
 
     }
+
     function getVariance()
     {
 
@@ -668,45 +667,68 @@ class Reports extends MX_Controller
         } else {
             $product = NULL;
         }
+
         if ($this->input->get('start_date')) {
             $start_date = $this->input->get('start_date');
-            $var = $start_date;
-            $date = str_replace('/', '-', $var);
-            $new_date = date('Y-m-d', strtotime($date));
-            $sDate = $new_date . ' 00:00:00';
-            $eDate = $new_date . ' 23:59:59';
+            $start_date = $this->ion_auth->fsd($start_date);
+        } else {
+            $start_date = NULL;
+        }
+
+
+        if ($this->input->get('end_date')) {
+            $end_date = $this->input->get('end_date');
+            $end_date = $this->ion_auth->fsd($end_date);
+        } else {
+            $end_date = NULL;
+        }
+        if ($this->input->get('warehouse')) {
+            $wh = $this->input->get('warehouse');
+        }
+
+        if ($start_date) {
+            $var1 = $start_date;
+            $var2 = $end_date;
+            $sDate = $var1 . ' 00:00:00';
+            $eDate = $var2 . ' 23:59:59';
         } else {
             $start_date = NULL;
             $sDate = Null;
             $eDate = Null;
         }
 
-        if ($product != NULL) {
-            $var = $start_date;
-            $date = str_replace('/', '-', $var);
-            $new_date = date('Y-m-d', strtotime($date));
-            $sDate = $new_date . ' 00:00:00';
-            $eDate = $new_date . ' 23:59:59';
+        if ($product != NULL & $start_date != NULL) {
 
-            $wp = "(select w.code,c.created_at,c.count_quantity,wp.quantity,wp.product_id
-             FROM warehouses_products wp inner join warehouses w inner join count_products c on w.id=wp.warehouse_id
+            $wp = "(select w.code,c.created_at,c.count_quantity,wp.quantity,c.product_id
+             FROM warehouses_products wp inner join warehouses w right join count_products c on w.id=wp.warehouse_id
              and c.product_id=wp.product_id and c.warehouse_id=wp.warehouse_id where c.created_at
-             between '{$sDate}' and '{$eDate}' and c.product_id='{$product}') pd";
+             between '{$sDate}' and '{$eDate}' and c.product_id='{$product}' and c.warehouse_id='{$wh}') pd";
+        } elseif ($product != NULL & $start_date == NULL) {
+            $wp = "(select w.code,c.created_at,c.count_quantity,wp.quantity,c.product_id
+             FROM warehouses_products wp inner join warehouses w right join count_products c on w.id=wp.warehouse_id
+             and c.product_id=wp.product_id and c.warehouse_id=wp.warehouse_id where c.product_id='{$product}'
+             and c.warehouse_id='{$wh}') pd";
+        } elseif ($product == NULL & $start_date != NULL) {
+            $wp = "(select w.code,c.created_at,c.count_quantity,wp.quantity,c.product_id
+             FROM warehouses_products wp inner join warehouses w right join count_products c on w.id=wp.warehouse_id
+             and c.product_id=wp.product_id and c.warehouse_id=wp.warehouse_id where c.created_at
+             between '{$sDate}' and '{$eDate}' and c.warehouse_id='{$wh}') pd";
         } else {
-            $wp = "(select w.code,c.created_at,c.count_quantity,wp.quantity,wp.product_id
-             FROM warehouses_products wp inner join warehouses w inner join count_products c on w.id=wp.warehouse_id
-             and c.product_id=wp.product_id and c.warehouse_id=wp.warehouse_id) pd";
+            $wp = "(select w.code,c.created_at,c.count_quantity,wp.quantity,c.product_id
+             FROM warehouses_products wp inner join warehouses w right join count_products c on w.id=wp.warehouse_id
+             and c.product_id=wp.product_id and c.warehouse_id=wp.warehouse_id and c.warehouse_id='{$wh}') pd";
         }
 
 
         $this->load->library('datatables');
         $this->datatables
-            ->select("p.code, p.name,pd.code as c ,pd.created_at as count_date, p.unit, pd.count_quantity as cun_quantity, pd.quantity as quantity,
+            ->select("p.code, p.name,pd.code as c ,pd.created_at as count_date, p.unit, pd.count_quantity as cun_quantity, COALESCE( pd.quantity, 0 ) as quantity,
                 COALESCE(pd.quantity - pd.count_quantity, 0 ) as variance", FALSE)
             ->from('products p', false)
-            ->join($wp, 'p.id = pd.product_id', 'inner');
+            ->join($wp, 'p.id = pd.product_id', 'right');
 
         echo $this->datatables->generate();
+//        echo $wp;
 
     }
 

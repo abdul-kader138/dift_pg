@@ -57,7 +57,9 @@ $(document).ready(function () {
             <?php echo $this->security->get_csrf_token_name(); ?>:
             "<?php echo $this->security->get_csrf_hash() ?>", code
         :
-            item_code
+            item_code,
+                wh:$("#warehouse").val()
+
         }
         ,
         dataType: "json",
@@ -65,7 +67,7 @@ $(document).ready(function () {
         :
         function (data) {
 
-            $("#product_name").val(item_name);
+            $("#product_name").val(data.name);
             $("#um").val(data.um);
             $("#product_code").val(data.code);
 
@@ -226,6 +228,7 @@ function (event, ui) {
     var pr_tax;
     var item_code = ui.item.label;
 
+
     $.ajax({
         type: "get",
         async: false,
@@ -234,7 +237,8 @@ function (event, ui) {
     <?php echo $this->security->get_csrf_token_name(); ?>:
     "<?php echo $this->security->get_csrf_hash() ?>", code
 :
-    item_code
+    item_code,
+        wh:$("#warehouse").val()
 }
 ,
 dataType: "json",

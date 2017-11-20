@@ -8,7 +8,11 @@ if($this->input->post('submit')) {
 		   if($this->input->post('start_date')){
 			   $v .= "&start_date=".$this->input->post('start_date');
 		   }
-		   
+            if($this->input->post('end_date')){
+                $v .= "&end_date=".$this->input->post('end_date');
+            }if($this->input->post('warehouse')){
+                $v .= "&warehouse=".$this->input->post('warehouse');
+            }
 	  
 }
 ?>
@@ -100,8 +104,12 @@ span.date { display: none; }
 	$(document).ready(function(){
 		$( "#start_date" ).datepicker({
         	format: "<?php echo JS_DATE; ?>",
-			autoclose: true
+            autoclose: true
     	});
+        $( "#end_date" ).datepicker({
+            format: "<?php echo JS_DATE; ?>",
+            autoclose: true
+        });
 
 		<?php if(!isset($_POST['submit'])) { echo '$( "#end_date" ).datepicker("setDate", new Date());'; } ?>
 		<?php if($this->input->post('submit')) { echo "$('#form').hide();"; } ?>
@@ -116,7 +124,8 @@ span.date { display: none; }
 	});
 </script>
 
-<h3><?php echo $page_title; ?> <?php if($this->input->post('start_date')){ echo "till- ".$this->input->post('start_date'); } else { echo "Till ".$this->input->post('end_date'); } ?> &nbsp;&nbsp;&nbsp; <a href="#" class="btn btn-default btn-sm toggle_form"><?php echo $this->lang->line("show_hide"); ?></a></h3>
+<h3><?php echo $page_title; ?> <?php if ($this->input->post('start_date')) {
+        echo" # ". $this->input->post('start_date') . " - " . $this->input->post('end_date'); } ?> &nbsp;&nbsp;&nbsp; <a href="#" class="btn btn-default btn-sm toggle_form"><?php echo $this->lang->line("show_hide"); ?></a></h3>
 
 <div id="form">
 <p>Please customise the report below.</p>
@@ -134,9 +143,25 @@ span.date { display: none; }
 		echo form_dropdown('product', $pr, (isset($_POST['product']) ? $_POST['product'] : ""), 'class="form-control input-sm" id="product"'); ?> </div>
 </div>
 <div class="control-group">
-  <label class="control-label" for="start_date">Count Date</label>
+  <label class="control-label" for="start_date"><?php echo $this->lang->line("start_date"); ?></label>
   <div class="controls"> <?php echo form_input('start_date', (isset($_POST['start_date']) ? $_POST['start_date'] : ""), 'class="span4" id="start_date"');?> </div>
 </div>
+
+    <div class="control-group">
+        <label class="control-label" for="end_date"><?php echo $this->lang->line("end_date"); ?></label>
+        <div class="controls"> <?php echo form_input('end_date', (isset($_POST['end_date']) ? $_POST['end_date'] : ""), 'class="span4" id="end_date"');?> </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label" for="warehouse"><?php echo $this->lang->line("warehouse"); ?></label>
+
+        <div class="controls"> <?php
+            foreach ($warehouses as $warehouse) {
+                $wh[$warehouse->id] = $warehouse->name;
+            }
+
+            echo form_dropdown('warehouse', $wh, (isset($_POST['warehouse']) ? $_POST['warehouse'] : ""), 'class="form-control input-sm" name="warehouse" id="warehouse"'); ?> </div>
+    </div>
 <div class="control-group">
   <div class="controls"> <?php echo form_submit('submit', $this->lang->line("submit"), 'class="btn btn-primary"'); ?> </div>
 </div>

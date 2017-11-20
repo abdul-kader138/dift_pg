@@ -326,7 +326,7 @@ class Inventories_model extends CI_Model
             'warehouse_id' => $warehouseId,
             'user_id' => USER_ID
         );
-
+//
         if ($this->db->insert('count_products', $productData)) {
             return true;
         } else {
