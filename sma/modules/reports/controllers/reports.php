@@ -535,7 +535,7 @@ class Reports extends MX_Controller
                        group by si.product_id ) PSales";
 
             // get All Sales return Data
-            $sr = "( SELECT sir.product_id,sum(sir.return_qty)FROM `sale_items` si inner join sales_item_return sir on si.product_id=sir.product_id where
+            $sr = "( SELECT sir.product_id,sum(sir.return_qty) as return_qty FROM `sale_items` si inner join sales_item_return sir on si.product_id=sir.product_id where
             sir.return_date BETWEEN '{$s_date}' and '{$e_date}' and sir.warehouse_id='{$warehouse_id}' ) SalesReturn";
 
 
@@ -559,7 +559,7 @@ class Reports extends MX_Controller
             $sp = "( SELECT si.product_id, SUM( si.quantity ) soldQty, SUM( si.gross_total ) totalSale from sale_items si group by si.product_id ) PSales";
 
             // get All Sales return Data
-            $sr = "( SELECT sir.product_id,sum(sir.return_qty)FROM `sale_items` si inner join sales_item_return sir on si.product_id=sir.product_id ) SalesReturn";
+            $sr = "( SELECT sir.product_id,sum(sir.return_qty) as return_qty FROM `sale_items` si inner join sales_item_return sir on si.product_id=sir.product_id ) SalesReturn";
 
 
             // get All Adjustment Data
@@ -585,9 +585,10 @@ class Reports extends MX_Controller
         }
         $this->datatables
             ->select("p.code, p.name, p.unit,
-                (COALESCE( wProducts.quantity,0)+ COALESCE( adPro.removeQty, 0 )- COALESCE( adPro.addQty, 0 ) + COALESCE( trRemove.qty, 0 ) - COALESCE( trAdd.qty, 0 ) - COALESCE( PCosts.purchasedQty, 0 ) + COALESCE( PSales.soldQty, 0 ) ) as quantity,
+                (COALESCE( wProducts.quantity,0)+ COALESCE( adPro.removeQty, 0 )- COALESCE( adPro.addQty, 0 ) - COALESCE( SalesReturn.return_qty, 0 ) + COALESCE( trRemove.qty, 0 ) - COALESCE( trAdd.qty, 0 ) - COALESCE( PCosts.purchasedQty, 0 ) + COALESCE( PSales.soldQty, 0 ) ) as quantity,
                 COALESCE( PCosts.purchasedQty, 0 ) as PurchasedQty,
                 COALESCE( PSales.soldQty, 0 ) as SoldQty,
+                COALESCE( SalesReturn.return_qty, 0 ) as SoldReturnQty,
                 COALESCE( adPro.addQty, 0 ) as addQty,COALESCE( adPro.removeQty, 0 ) as removeQty,
                 COALESCE( trAdd.qty, 0 ) as trAddQty,
                 COALESCE( trRemove.qty, 0 ) as trRmvQty,

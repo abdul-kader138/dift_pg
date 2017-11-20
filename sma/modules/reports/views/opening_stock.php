@@ -130,8 +130,8 @@ if ($this->input->post('submit')) {
                 }
 
                 var nCells = nRow.getElementsByTagName('th');
-                nCells[5].innerHTML = parseFloat(income).toFixed(2);
-                nCells[6].innerHTML = parseFloat(profit).toFixed(2);
+//                nCells[5].innerHTML = parseFloat(income).toFixed(2);
+//                nCells[6].innerHTML = parseFloat(profit).toFixed(2);
             }
 
         }).columnFilter({
@@ -241,6 +241,7 @@ if ($this->input->post('submit')) {
             <th>Opening Quantity</th>
             <th> Purchases Quantity</th>
             <th>Sales Quantity</th>
+            <th>Sales Return</th>
             <th>Adjustment<br/>(+)</th>
             <th>Adjustment<br/>(-)</th>
             <th>Transfer<br/>(+)</th>
@@ -261,6 +262,7 @@ if ($this->input->post('submit')) {
             <th>Opening Quantity</th>
             <th> Purchases Quantity</th>
             <th>Sales Quantity</th>
+            <th>Sales Return</th>
             <th>Adjustment(+)</th>
             <th>Adjustment(-)</th>
             <th>Transfer<br/>(+)</th>
