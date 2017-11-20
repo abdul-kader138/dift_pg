@@ -534,6 +534,10 @@ class Reports extends MX_Controller
                        s.date between '{$s_date}' and '{$e_date}'
                        group by si.product_id ) PSales";
 
+            // get All Sales return Data
+            $sr = "( SELECT sir.product_id,sum(sir.return_qty)FROM `sale_items` si inner join sales_item_return sir on si.product_id=sir.product_id where
+            sir.return_date BETWEEN '{$s_date}' and '{$e_date}' and sir.warehouse_id='{$warehouse_id}' ) SalesReturn";
+
 
             // get All Adjustment Data
             $ad_qty = "( SELECT  ap.product_id,ap.warehouse_id,sum(ap.adjust_qty_add) addQty, sum(ap.adjust_qty_remove) removeQty from adjustment_products ap where
@@ -553,6 +557,10 @@ class Reports extends MX_Controller
 
             // get All Sales Data
             $sp = "( SELECT si.product_id, SUM( si.quantity ) soldQty, SUM( si.gross_total ) totalSale from sale_items si group by si.product_id ) PSales";
+
+            // get All Sales return Data
+            $sr = "( SELECT sir.product_id,sum(sir.return_qty)FROM `sale_items` si inner join sales_item_return sir on si.product_id=sir.product_id ) SalesReturn";
+
 
             // get All Adjustment Data
             $ad_qty = "( SELECT  ap.product_id,ap.warehouse_id,sum(ap.adjust_qty_add) addQty, sum(ap.adjust_qty_remove) removeQty from adjustment_products ap group by ap.product_id, ap.warehouse_id) adPro";
@@ -586,6 +594,7 @@ class Reports extends MX_Controller
                 COALESCE( wProducts.quantity) as CloseingQnt", FALSE)
             ->from('products p', FALSE)
             ->join($sp, 'p.id = PSales.product_id', 'left')
+            ->join($sr, 'p.id = SalesReturn.product_id', 'left')
             ->join($pp, 'p.id = PCosts.purchase_item_id', 'left')
             ->join($wps, 'p.id = wProducts.product_id', 'inner')
             ->join($ad_qty, 'p.id = adPro.product_id', 'left')
