@@ -730,6 +730,7 @@ class Reports extends MX_Controller
         echo $this->datatables->generate();
 //        echo $wp;
 
+
     }
 
 }
