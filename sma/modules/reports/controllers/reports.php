@@ -723,7 +723,7 @@ class Reports extends MX_Controller
         $this->load->library('datatables');
         $this->datatables
             ->select("p.code, p.name,pd.code as c ,pd.created_at as count_date, p.unit, pd.count_quantity as cun_quantity, COALESCE( pd.quantity, 0 ) as quantity,
-                COALESCE(pd.quantity - pd.count_quantity, 0 ) as variance", FALSE)
+            (COALESCE( pd.quantity,0) - COALESCE( pd.count_quantity, 0 )) as variance", FALSE)
             ->from('products p', false)
             ->join($wp, 'p.id = pd.product_id', 'right');
 
