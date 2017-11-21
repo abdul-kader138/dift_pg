@@ -735,6 +735,12 @@ $lang['grand_total']					= "Grand Total";
 $lang['product_qty']					= "Product (Qty)";
 $lang['check_tax_rate']					= "Please check tax rate";
 $lang['tax_rate_x_found']				= "Tax Rate does not exist!";
+//
+
+$lang['current_stock']		    		= "Current Stock";
+$lang['opening_closing_stock']			= "Opening & Closing Stock";
+$lang['count_quantity']				    = "Count Quantity";
+$lang['count_variance_quantity']		= "Count Variance Quantity";
 
 
 
