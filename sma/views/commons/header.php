@@ -61,12 +61,12 @@
                                                             <li id="eann"><a href="#myModal" role="button" data-toggle="modal"><i class="icon-edit icon-white"></i>  <?php echo $this->lang->line('edit_ann'); ?></a></li>
                             <?php } ?>
                             <?php
-                             if (ALERT_NO > 0) {
-                                 
-                             echo "<li><a class=\"btn btn-warning hbtn\" href=\"index.php?module=inventories&view=add&alert=1\">" . ALERT_NO . " Purchase Requisition Alert</a></li>";
-                             
-                                 
-                             }
+//                             if (ALERT_NO > 0) {
+//
+//                             echo "<li><a class=\"btn btn-warning hbtn\" href=\"index.php?module=inventories&view=add&alert=1\">" . ALERT_NO . " Purchase Requisition Alert</a></li>";
+//
+//
+//                             }
                              
                             if (file_exists('sma/modules/pos/controllers/pos.php') && is_dir('sma/modules/pos')) {
                                 echo '<li><a href="index.php?module=pos" class="btn btn-success hbtn">Point of Sale</a></li>';

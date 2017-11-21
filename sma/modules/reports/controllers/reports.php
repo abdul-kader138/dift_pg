@@ -63,26 +63,38 @@ class Reports extends MX_Controller
     function getProductAlerts()
     {
 
+
+        $sp = "( select wp.product_id,sum(wp.quantity) quantity from warehouses_products wp group by product_id) pAlert";
+
         $this->load->library('datatables');
 
         $this->datatables
-            ->select('products.id as productid, products.image as image, products.code as code, products.name as name, products.unit, products.price, quantity, alert_quantity')
-            ->from('products')
-            ->where('alert_quantity >= quantity', NULL)
-            ->where('track_quantity', 1);
+            ->select('p.id as product_id, p.image as image, p.code as code, p.name as name, p.unit, p.price, pAlert.quantity, p.alert_quantity')
+            ->from('products p')
+            ->join($sp,'pAlert.product_id=p.id','inner')
+            ->where('p.alert_quantity >= pAlert.quantity', NULL)
+            ->where('p.track_quantity', 1);
+
+//        $this->datatables->add_column("Actions",
+//            "<center><a id='$4 - $3' href='index.php?module=products&view=gen_barcode&code=$3&height=200' title='" . $this->lang->line("view_barcode") . "' class='barcode tip'><i class='icon-barcode'></i></a>
+//			<a href='#' onClick=\"MyWindow=window.open('index.php?module=products&view=product_details&id=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=600,height=500'); return false;\" class='tip' title='" . $this->lang->line("product_details") . "'><i class='icon-fullscreen'></i></a>
+//			<a class='image tip' id='$4 - $3' href='" . $this->config->base_url() . "uploads/$2' title='" . $this->lang->line("view_image") . "'><i class='icon-picture'></i></a>
+//			<a href='index.php?module=products&amp;view=edit&amp;id=$1' class='tip' title='" . $this->lang->line("edit_product") . "'><i class='icon-edit'></i></a>
+//			<a href='index.php?module=products&amp;view=delete&amp;id=$1' onClick=\"return confirm('" . $this->lang->line('alert_x_product') . "')\" class='tip' title='" . $this->lang->line("delete_product") . "'><i class='icon-trash'></i></a></center>", "productid, image, code, name");
+
 
         $this->datatables->add_column("Actions",
             "<center><a id='$4 - $3' href='index.php?module=products&view=gen_barcode&code=$3&height=200' title='" . $this->lang->line("view_barcode") . "' class='barcode tip'><i class='icon-barcode'></i></a>
 			<a href='#' onClick=\"MyWindow=window.open('index.php?module=products&view=product_details&id=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=600,height=500'); return false;\" class='tip' title='" . $this->lang->line("product_details") . "'><i class='icon-fullscreen'></i></a>
 			<a class='image tip' id='$4 - $3' href='" . $this->config->base_url() . "uploads/$2' title='" . $this->lang->line("view_image") . "'><i class='icon-picture'></i></a>
-			<a href='index.php?module=products&amp;view=edit&amp;id=$1' class='tip' title='" . $this->lang->line("edit_product") . "'><i class='icon-edit'></i></a>
-			<a href='index.php?module=products&amp;view=delete&amp;id=$1' onClick=\"return confirm('" . $this->lang->line('alert_x_product') . "')\" class='tip' title='" . $this->lang->line("delete_product") . "'><i class='icon-trash'></i></a></center>", "productid, image, code, name");
+			</center>", "product_id, image, code, name");
 
-        $this->datatables->unset_column('productid');
+        $this->datatables->unset_column('product_id');
         $this->datatables->unset_column('image');
 
         echo $this->datatables->generate();
 
+//        echo $sp;
     }
 
     function overview()
@@ -606,6 +618,7 @@ class Reports extends MX_Controller
             $this->datatables->where('p.id', $product);
         }
         echo $this->datatables->generate();
+//        echo $pp;
     }
 
     function getCP()
