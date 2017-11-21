@@ -67,6 +67,17 @@ class Inventories_model extends CI_Model
 
     }
 
+    public function getAllPurchaseInfo($id)
+    {
+
+        $q = $this->db->get_where('purchases', array('id' => $id), 1);
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+        return FALSE;
+
+    }
+
     public function getSupplierByID($id)
     {
 

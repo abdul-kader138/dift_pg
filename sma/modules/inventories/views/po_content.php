@@ -49,7 +49,7 @@
 						]
 					},
 					"aoColumns": [ 
-					  { "mRender": format_date },  null,  null, { "mRender": currencyFormate }, { "mRender": currencyFormate }, null,
+					  { "mRender": format_date },  null,  null, { "mRender": currencyFormate },null, null,
 					  { "bSortable": false }
 					],
 					"fnFooterCallback": function ( nRow, aaData, iStart, iEnd, aiDisplay ) {
@@ -58,13 +58,13 @@
 						{
 					
 							tax += parseFloat(aaData[ aiDisplay[i] ][3]);
-							gtotal += parseFloat(aaData[ aiDisplay[i] ][4]);
+//							gtotal += parseFloat(aaData[ aiDisplay[i] ][4]);
 						}
 						
 						var nCells = nRow.getElementsByTagName('th');
 						
 						nCells[3].innerHTML = currencyFormate(parseFloat(tax).toFixed(2));
-						nCells[4].innerHTML = currencyFormate(parseFloat(gtotal).toFixed(2));
+//						nCells[4].innerHTML = currencyFormate(parseFloat(gtotal).toFixed(2));
 					}
                 }).columnFilter({ aoColumns: [
 						{ type: "text", bRegex:true },
@@ -105,9 +105,9 @@
 			<th><?php echo $this->lang->line("ref_no"); ?></th>
             <th><?php echo $this->lang->line("supplier"); ?></th>
             
-            <th>Advance Payment</th>
             <th><?php echo $this->lang->line("grand_total"); ?></th>
-            <th>Status</th>
+            <th>PO Status</th>
+            <th>MRR Status</th>
             <th><?php echo $this->lang->line("actions"); ?></th>
 		</tr>
         </thead>
@@ -119,14 +119,14 @@
         <tfoot>
         <tr>
            
-            <th>[<?php echo $this->lang->line("date"); ?> (yyyy-mm-dd)]</th>
-			<th>[<?php echo $this->lang->line("ref_no"); ?>]</th>
-            <th>[<?php echo $this->lang->line("supplier"); ?>]</th>
+            <th></th>
+			<th></th>
+            <th></th>
            
-            <th>Advance Payment</th>
-            <th><?php echo $this->lang->line("grand_total"); ?></th>
-            <th>Status</th>
-            <th><?php echo $this->lang->line("actions"); ?></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
 		</tr>
         </tfoot>
 	</table>

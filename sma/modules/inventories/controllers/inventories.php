@@ -133,9 +133,16 @@ class Inventories extends MX_Controller
             ->select("purchases.id as id, date, reference_no, supplier_name, COALESCE(inv_total, 0), COALESCE(total_tax, 0), total,  CASE WHEN approved = '1' THEN 'Approved' WHEN verify_status = '1' THEN 'Verified'  WHEN checked = '1' THEN 'Checked' END AS approved", FALSE)
             ->from('purchases')
             ->where("checked", '0');
+//
+//        $this->datatables->add_column("Actions",
+//            "<center><a href='#' onClick=\"MyWindow=window.open('index.php?module=inventories&view=view_inventory_po&id=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=1000,height=600'); return false;\" title='" . $this->lang->line("view_inventory") . "' class='tip'><i class='icon-fullscreen'></i></a>&nbsp;<a href='index.php?module=inventories&amp;view=edit&amp;id=$1' title='Process' class='tip'><i class='icon-list'></i></a>
+//			 &nbsp;<a href='index.php?module=inventories&amp;view=delete&amp;id=$1' onClick=\"return confirm('" . $this->lang->line('alert_x_inventory') . "')\" title='" . $this->lang->line("delete_inventory") . "' class='tip'><i class='icon-trash'></i></a>&nbsp; </center>", "id")
+//            ->unset_column('id');
+
+
 
         $this->datatables->add_column("Actions",
-            "<center><a href='#' onClick=\"MyWindow=window.open('index.php?module=inventories&view=view_inventory_po&id=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=1000,height=600'); return false;\" title='" . $this->lang->line("view_inventory") . "' class='tip'><i class='icon-fullscreen'></i></a>&nbsp;<a href='index.php?module=inventories&amp;view=edit&amp;id=$1' title='Process' class='tip'><i class='icon-list'></i></a>
+            "<center><a href='index.php?module=inventories&amp;view=edit&amp;id=$1' title='Process' class='tip'><i class='icon-list'></i></a>
 			 &nbsp;<a href='index.php?module=inventories&amp;view=delete&amp;id=$1' onClick=\"return confirm('" . $this->lang->line('alert_x_inventory') . "')\" title='" . $this->lang->line("delete_inventory") . "' class='tip'><i class='icon-trash'></i></a>&nbsp; </center>", "id")
             ->unset_column('id');
 
@@ -156,13 +163,19 @@ class Inventories extends MX_Controller
         $this->load->library('datatables');
 
         $this->datatables
-            ->select("make_purchases.id as id, date, reference_no, supplier_name, COALESCE(advance_payment, 0), total,  CASE WHEN approved = '1' THEN 'Approved' WHEN verify_status = '1' THEN 'Verified'  WHEN checked = '1' THEN 'Checked' END AS approved", FALSE)
+            ->select("make_purchases.id as id, date, reference_no, supplier_name, total,CASE WHEN approved = '1' THEN 'Approved' WHEN verify_status = '1' THEN 'Verified'  WHEN checked = '1' THEN 'Checked' END AS approved,CASE WHEN mr_status = '1' THEN 'Done' END AS mrrApproved", FALSE)
             ->from('make_purchases')
-            ->where("mr_entry_by", "");
+            ->where("checked", 1);
+
+//        $this->datatables->add_column("Actions",
+//            "<center><a href='#' onClick=\"MyWindow=window.open('index.php?module=inventories&view=view_inventory_po&id=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=1000,height=600'); return false;\" title='" . $this->lang->line("view_workOrder") . "' class='tip'><i class='icon-fullscreen'></i></a>&nbsp; <a href='index.php?module=inventories&view=pdf_purchase&id=$1' title='Work Order' class='tip'><i class='icon-download'></i></a>
+//			  &nbsp;<a href='index.php?module=inventories&amp;view=make_mrr&amp;id=$1' title='Make MRR' class='tip'><i class='icon-adjust'></i></a>&nbsp;<a href='index.php?module=inventories&amp;view=edit&amp;id=$1' title='" . $this->lang->line("edit_order") . "' class='tip'><i class='icon-edit'></i></a> <a href='index.php?module=inventories&amp;view=delete&amp;id=$1' onClick=\"return confirm('" . $this->lang->line('alert_x_inventory') . "')\" title='" . $this->lang->line("delete_inventory") . "' class='tip'><i class='icon-trash'></i></a>&nbsp; <input type='checkbox' name='chk[]' value='$1' /> </center>", "id")
+//            ->unset_column('id');
+
 
         $this->datatables->add_column("Actions",
             "<center><a href='#' onClick=\"MyWindow=window.open('index.php?module=inventories&view=view_inventory_po&id=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=1000,height=600'); return false;\" title='" . $this->lang->line("view_workOrder") . "' class='tip'><i class='icon-fullscreen'></i></a>&nbsp; <a href='index.php?module=inventories&view=pdf_purchase&id=$1' title='Work Order' class='tip'><i class='icon-download'></i></a>
-			  &nbsp;<a href='index.php?module=inventories&amp;view=make_mrr&amp;id=$1' title='Make MRR' class='tip'><i class='icon-adjust'></i></a>&nbsp;<a href='index.php?module=inventories&amp;view=edit&amp;id=$1' title='" . $this->lang->line("edit_order") . "' class='tip'><i class='icon-edit'></i></a> <a href='index.php?module=inventories&amp;view=delete&amp;id=$1' onClick=\"return confirm('" . $this->lang->line('alert_x_inventory') . "')\" title='" . $this->lang->line("delete_inventory") . "' class='tip'><i class='icon-trash'></i></a>&nbsp; <input type='checkbox' name='chk[]' value='$1' /> </center>", "id")
+			  &nbsp;<a href='index.php?module=inventories&amp;view=make_mrr&amp;id=$1' title='Make MRR' class='tip'><i class='icon-adjust'></i></a>&nbsp;<a href='index.php?module=inventories&amp;view=edit&amp;id=$1' title='" . $this->lang->line("edit_order") . "' class='tip'><i class='icon-edit'></i></a> &nbsp; <input type='checkbox' name='chk[]' value='$1' /> </center>", "id")
             ->unset_column('id');
 
 
@@ -245,7 +258,7 @@ class Inventories extends MX_Controller
                 $ready_approved = implode(',', $All_ready_approved);
                 $this->session->set_flashdata('message', "Following PO already are approved." . $ready_approved);
                 $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
-                redirect('module=inventories', 'refresh');
+                redirect('module=inventories&view=po_content', 'refresh');
             }
 
 
@@ -253,7 +266,7 @@ class Inventories extends MX_Controller
                 $not_v_req = implode(',', $not_verify);
                 $this->session->set_flashdata('message', "Following Requisition are not verify yet." . $not_v_req);
                 $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
-                redirect('module=inventories', 'refresh');
+                redirect('module=inventories&view=po_content', 'refresh');
             }
 
 
@@ -1075,7 +1088,7 @@ class Inventories extends MX_Controller
             $ready_approved = implode(',', $All_ready_approved);
             $this->session->set_flashdata('message', "Following PO already are approved." . $ready_approved);
             $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
-            redirect('module=inventories', 'refresh');
+            redirect('module=inventories&view=po_content', 'refresh');
         }
 
 
@@ -1385,6 +1398,16 @@ class Inventories extends MX_Controller
             $this->session->set_flashdata('message', $this->lang->line("access_denied"));
             $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
             redirect('module=home', 'refresh');
+        }
+
+        $getPurchaseRef = $this->inventories_model->getPurchaseId($id);
+        $All_ready_approved["id"] = null;
+        if ($getPurchaseRef->mr_status === '1') $All_ready_approved["id"] = $getPurchaseRef->reference_no;
+        if ($All_ready_approved["id"] != "" && $All_ready_approved["id"] != null) {
+            $ready_approved = implode(',', $All_ready_approved);
+            $this->session->set_flashdata('message', "MRR already created for following PO (" . $ready_approved.").");
+            $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
+            redirect("module=inventories&view=mrr_list", 'refresh');
         }
 
         //validate form input

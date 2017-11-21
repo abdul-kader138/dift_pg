@@ -469,7 +469,7 @@ echo form_open("module=inventories&view=edit&id=" . $id, $attrib);
 
                 echo '<tr id="row_' . $r . '"><td><input name="product' . $r . '" type="hidden" value="' . $prod->product_code . '"><input name="item_id' . $r . '" type="hidden" value="' . $prod->id . '"><input class="span5 tran" style="text-align:left;" name="item' . $r . '" type="text" value="' . $prod->product_name . ' (' . $prod->product_code . ')"></td>';
                 if (TAX1) {
-                    echo '<td><input class="span2 tran" style="text-align:right;"  name="tax_rate' . $r . '" id="tax_rate-' . $r . '" value="'.$prod->tax_rate_id.'"></td>';
+                    echo '<td><input class="span2 tran" style="text-align:right;" readonly  name="tax_rate' . $r . '" id="tax_rate-' . $r . '" value="'.$prod->tax_rate_id.'"></td>';
                 }
 
 

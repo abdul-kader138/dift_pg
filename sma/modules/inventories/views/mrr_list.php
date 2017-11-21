@@ -104,14 +104,14 @@
         </tbody>
         <tfoot>
         <tr>
-            <th>[<?php echo $this->lang->line("date"); ?> (yyyy-mm-dd)]</th>
-			<th>[<?php echo $this->lang->line("ref_no"); ?>]</th>
-            <th>[<?php echo $this->lang->line("supplier"); ?>]</th>
-            <th>[<?php echo $this->lang->line("total"); ?>]</th>
-            <th><?php echo $this->lang->line("product_tax"); ?></th>
-            <th><?php echo $this->lang->line("grand_total"); ?></th>
-            <th>Status</th>
-            <th><?php echo $this->lang->line("actions"); ?></th>
+            <th></th>
+			<th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
 		</tr>
         </tfoot>
 	</table>
