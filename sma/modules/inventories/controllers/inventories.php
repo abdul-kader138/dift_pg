@@ -960,7 +960,7 @@ class Inventories extends MX_Controller
 
         if ($this->form_validation->run() == true && $this->inventories_model->addPurchase($invDetails, $items, $warehouse_id)) {
 
-            $this->session->set_flashdata('success_message', $this->lang->line("purchase_added"));
+            $this->session->set_flashdata('success_message', "Purchase requisition successfully created");
             redirect("module=inventories", 'refresh');
 
         } else {
@@ -1841,7 +1841,7 @@ class Inventories extends MX_Controller
         }
 
         if ($this->inventories_model->deleteInventory($id)) {
-            $this->session->set_flashdata('success_message', $this->lang->line("inventory_deleted"));
+            $this->session->set_flashdata('success_message', "Purchase requisition deleted successfully.");
             redirect('module=inventories', 'refresh');
         }
 

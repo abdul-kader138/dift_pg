@@ -2378,9 +2378,14 @@ window.onload = sivamtime;
 
     }
 
+    //clear modal
+    $("#return").on("click", function (event) {
+        $("#return_ordeer_id").val("");
+        $("#returnAmount").remove(0);
+    });
 
     $("#return_form").on("submit", function (event) {
-        event.preventDefault();
+
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {

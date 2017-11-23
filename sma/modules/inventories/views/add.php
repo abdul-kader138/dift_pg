@@ -570,20 +570,20 @@ echo form_open("module=inventories&view=add", $attrib);
                 <tr>
                     <td>3</td>
                     <td>Important Clause:</td>
-                    <td>Buyer reserves the right to change/cancle the part/full order without assigning any reason</td>
+                    <td>Buyer reserves the right to change/cancel the part/full order without assigning any reason</td>
                 </tr>
                 <tr>
                     <td>4</td>
                     <td>Terms of Payment:</td>
                     <td>Final Payment will be made after 30 Days of the completion of full delivery and submission of
-                        authorized chalan and bill
+                        authorized challan and bill
                     </td>
                 </tr>
                 <tr>
                     <td>5</td>
                     <td>Weight, Transport Cost & Reject goods:</td>
                     <td>Net weight will be finalized at factory, Transport cost will be paid by company. Suppliers need
-                        to recieve the goods back if rejected at thire own expenses.
+                        to receive the goods back if rejected at their own expenses.
                     </td>
                 </tr>
                 <tr>

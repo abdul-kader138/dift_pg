@@ -609,7 +609,7 @@ class Pos extends MX_Controller
                     border-bottom: 1px solid #ddd;
                 }
             </style>
-            <table border="0" cellpadding="0" cellspacing="0" class="protable">
+            <table border="0" cellpadding="0" cellspacing="0" class="protable" id="returnAmount">
                 <thead>
                 <tr>
                     <th>Product Name</th>
