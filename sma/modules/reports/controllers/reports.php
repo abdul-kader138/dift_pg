@@ -538,22 +538,22 @@ class Reports extends MX_Controller
             // get All purchase Data
 
             $pp = "(SELECT mm.purchase_item_id, SUM( mm.received_qty ) purchasedQty from purchases p JOIN make_mrr mm on p.id = mm.purchase_id where
-                         mm.mrr_date  between '{$s_date}' and '{$e_date}'
+                         mm.mrr_date  between '{$s_date}' and '{$e_date}'and mm.wh_id='{$warehouse_id}'
                          group by mm.purchase_item_id ) PCosts";
 
             // get All Sales Data
             $sp = "( SELECT si.product_id, SUM( si.quantity ) soldQty, SUM( si.gross_total ) totalSale from sales s JOIN sale_items si on s.id = si.sale_id where
-                       s.date between '{$s_date}' and '{$e_date}'
+                       s.date between '{$s_date}' and '{$e_date}' and s.warehouse_id='{$warehouse_id}'
                        group by si.product_id ) PSales";
 
             // get All Sales return Data
-            $sr = "( SELECT sir.product_id,sum(sir.return_qty) as return_qty FROM `sale_items` si inner join sales_item_return sir on si.product_id=sir.product_id where
+            $sr = "( SELECT sir.product_id,sum(sir.return_qty) as return_qty FROM `sale_items` si inner join sales_item_return sir on si.product_id=sir.product_id  and si.sale_id=sir.sales_id where
             sir.return_date BETWEEN '{$s_date}' and '{$e_date}' and sir.warehouse_id='{$warehouse_id}' ) SalesReturn";
 
 
             // get All Adjustment Data
             $ad_qty = "( SELECT  ap.product_id,ap.warehouse_id,sum(ap.adjust_qty_add) addQty, sum(ap.adjust_qty_remove) removeQty from adjustment_products ap where
-                 ap.adjustment_date between '{$s_date}' and '{$e_date}'  group by ap.product_id, ap.warehouse_id  ) adPro";
+                 ap.adjustment_date between '{$s_date}' and '{$e_date}'  and ap.warehouse_id='{$warehouse_id}' group by ap.product_id, ap.warehouse_id  ) adPro";
 
 
             // get All Transfer Data
@@ -565,17 +565,17 @@ class Reports extends MX_Controller
         } else {
 
             // get All purchase Data
-            $pp = "( SELECT mm.purchase_item_id, SUM(mm.received_qty ) purchasedQty from make_mrr mm group by mm.purchase_item_id ) PCosts";
+            $pp = "( SELECT mm.purchase_item_id, SUM(mm.received_qty ) purchasedQty from make_mrr mm where  mm.wh_id='{$warehouse_id}' group by mm.purchase_item_id ) PCosts";
 
             // get All Sales Data
-            $sp = "( SELECT si.product_id, SUM( si.quantity ) soldQty, SUM( si.gross_total ) totalSale from sale_items si group by si.product_id ) PSales";
+            $sp = "( SELECT si.product_id, SUM( si.quantity ) soldQty, SUM( si.gross_total ) totalSale from sale_items si inner join sales s on s.id = si.sale_id where s.warehouse_id='{$warehouse_id}' group by si.product_id ) PSales";
 
             // get All Sales return Data
-            $sr = "( SELECT sir.product_id,sum(sir.return_qty) as return_qty FROM `sale_items` si inner join sales_item_return sir on si.product_id=sir.product_id ) SalesReturn";
+            $sr = "( SELECT sir.product_id,sum(sir.return_qty) as return_qty FROM `sale_items` si inner join sales_item_return sir on si.product_id=sir.product_id and si.sale_id=sir.sales_id where sir.warehouse_id='{$warehouse_id}') SalesReturn";
 
 
             // get All Adjustment Data
-            $ad_qty = "( SELECT  ap.product_id,ap.warehouse_id,sum(ap.adjust_qty_add) addQty, sum(ap.adjust_qty_remove) removeQty from adjustment_products ap group by ap.product_id, ap.warehouse_id) adPro";
+            $ad_qty = "( SELECT  ap.product_id,ap.warehouse_id,sum(ap.adjust_qty_add) addQty, sum(ap.adjust_qty_remove) removeQty from adjustment_products ap where ap.warehouse_id='{$warehouse_id}' group by ap.product_id, ap.warehouse_id) adPro";
 
             // get All Transfer Data
             $tr_remove = "(SELECT ti.product_id,sum(quantity) qty FROM transfers t inner join transfer_items ti on t.id=ti.transfer_id
@@ -618,7 +618,7 @@ class Reports extends MX_Controller
             $this->datatables->where('p.id', $product);
         }
         echo $this->datatables->generate();
-//        echo $pp;
+//        echo $sr;
     }
 
     function getCP()
@@ -648,15 +648,15 @@ class Reports extends MX_Controller
             $end_date = $this->ion_auth->fsd($end_date);
 
             $pp = "(SELECT mm.purchase_item_id, SUM( mm.received_qty ) purchasedQty from purchases p JOIN make_mrr mm on p.id = mm.purchase_id where
-                         mm.mrr_date  between '{$start_date}' and '{$end_date}'
+                         mm.mrr_date  between '{$start_date}' and '{$end_date}' and mm.wh_id='{$warehouse_id}'
                          group by mm.purchase_item_id ) PCosts";
 
             $sp = "( SELECT si.product_id, SUM( si.quantity ) soldQty, SUM( si.gross_total ) totalSale from sales s JOIN sale_items si on s.id = si.sale_id where
-                       s.date between '{$start_date}' and '{$end_date}'
+                       s.date between '{$start_date}' and '{$end_date}' and s.warehouse_id='{$warehouse_id}'
                        group by si.product_id ) PSales";
         } else {
-            $pp = "( SELECT mm.purchase_item_id, SUM(mm.received_qty ) purchasedQty from make_mrr mm group by mm.purchase_item_id ) PCosts";
-            $sp = "( SELECT si.product_id, SUM( si.quantity ) soldQty, SUM( si.gross_total ) totalSale from sale_items si group by si.product_id ) PSales";
+            $pp = "( SELECT mm.purchase_item_id, SUM(mm.received_qty ) purchasedQty from make_mrr mm and mm.warehouse_id='{$warehouse_id}' group by mm.purchase_item_id ) PCosts";
+            $sp = "( SELECT si.product_id, SUM( si.quantity ) soldQty, SUM( si.gross_total ) totalSale from sale_items si inner join sales s on s.id = si.sale_id where s.warehouse_id='{$warehouse_id}' group by si.product_id ) PSales";
         }
 
         $wh_qty = "(SELECT wp.quantity, wp.warehouse_id,wp.product_id from warehouses_products wp where wp.warehouse_id='{$warehouse_id}') wProducts";
