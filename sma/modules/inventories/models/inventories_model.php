@@ -183,6 +183,21 @@ class Inventories_model extends CI_Model
 
     }
 
+
+
+    public function getProductByCodeForScan($code)
+    {
+
+        //$q = $this->db->get_where('products', array('code' => $code), 1);
+        $q = $this->db->query("SELECT * FROM products LEFT JOIN promotion ON products.discount_id=promotion.promo_id  WHERE code LIKE '%{$code}%' OR cf4 LIKE  '%{$code}%' OR name LIKE  '%{$code}%' Limit 1");
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+
+        return FALSE;
+
+    }
+
     public function getProductNames($term)
     {
         $this->db->select('name')->limit('10');

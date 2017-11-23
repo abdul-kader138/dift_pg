@@ -1860,7 +1860,7 @@ class Inventories extends MX_Controller
         }
 
 
-        if ($item = $this->inventories_model->getProductByCode($code)) {
+        if ($item = $this->inventories_model->getProductByCodeForScan($code)) {
             $itemDetails = $this->inventories_model->getProductByNameFromWh($item->name, $wh);
             $code = $item->code;
             $name = $item->name;
