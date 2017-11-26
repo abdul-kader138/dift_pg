@@ -372,6 +372,7 @@ class Pos extends MX_Controller
                 'user' => USER_NAME,
                 'paid_by' => $paid_by,
                 'count' => $count,
+                'card_val' => $this->input->post('card_val'),
                 'paid_val' => $this->input->post('paid_val'),
                 'cc_no_val' => $this->input->post('cc_no_val'),
                 'cc_holder_val' => $this->input->post('cc_holder_val'),

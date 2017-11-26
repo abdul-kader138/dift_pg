@@ -139,7 +139,7 @@
             <!--                        add wh here-->
             <div class="control-group">
                 <div class="controls">  <?php
-                    $wh[''] = '';
+//                    $wh[''] = '';
                     foreach ($warehouses as $warehouse) {
                         $wh[$warehouse->id] = $warehouse->name;
                     }
@@ -248,6 +248,7 @@
             <!--                        <input type="hidden" name="warehouse" id="warehouse" value="-->
             <?php //echo DEFAULT_WAREHOUSE; ?><!--"/>-->
             <input type="hidden" name="paid_val" id="paid_val" value=""/>
+            <input type="hidden" name="card_val" id="card_val" value=""/>
             <input type="hidden" name="cc_no_val" id="cc_no_val" value=""/>
 
             <input type="hidden" name="items_return_val" id="items_return_val" value="0.00"/>
@@ -525,7 +526,7 @@
                 <div class="control-group"><label class="control-label"
                                                   for="paid-amount"><?php echo $this->lang->line("cc_amount"); ?></label>
 
-                    <div class="controls"><input type="text" id="cc_amount" class="pa"/></div>
+                    <div class="controls"><input type="text" id="cc_amount" class="cca"/></div>
                 </div>
             </div>
 
@@ -1838,7 +1839,7 @@ $("#payment").click(function () {
     var r_amount = parseFloat($('#items_return_val').val());
 
     var twt = (total + tax_value + tax_value2) - total_discount - r_amount;
-    count = count - 1;
+//    count = count - 1;
 
     var warehouse = $("#warehouse").val();
     if (warehouse == undefined || warehouse == 0) {
@@ -1853,12 +1854,16 @@ $("#payment").click(function () {
     twt = parseFloat(twt).toFixed(2);
 
     $('#twt').text(twt);
-    $('#item_count').text(count);
+    $('#item_count').text($("#count").text());
     $('#paid-amount').change(function () {
         $('#paid_val').val($(this).val());
     });
+
+    $('#cc_amount').change(function () {
+        $('#card_val').val($(this).val());
+    });
     $('#ptclick').trigger('click');
-    count = count + 1;
+//    count = count + 1;
 
     $('#paymentModal').modal();
     clearModalData();
@@ -1885,7 +1890,9 @@ $("#payment").click(function () {
                         return false;
                     }
                     $("#balance").empty();
-                    var balance = paid - twt;
+                    var return_amount=0;
+                    if($("#twt_return").val()) return_amount=$("#twt_return").val();
+                    var balance = (paid - twt);
                     balance = parseFloat(balance).toFixed(2);
                     $("#balance").append(balance);
 
@@ -1915,11 +1922,9 @@ $("#payment").click(function () {
             $('.pcash').show();
 
 
-            $('#paid-amount').val(0);
-            $('#cc_amount').val(0);
+            $('#paid-amount').val("");
+            $('#cc_amount').val("");
             $('#pcc_holder').val("");
-            $('#pcc_holder').text();
-            $('#pcc_holder').html();
             $('#pcc').val("");
 
 
@@ -1933,7 +1938,9 @@ $("#payment").click(function () {
                         return false;
                     }
                     $("#balance").empty();
-                    var balance = (paid + cardVal) - twt;
+                    var return_amount=0;
+                    if($("#twt_return").val()) return_amount=$("#twt_return").val();
+                    var balance = ((paid + cardVal) - (twt));
                     balance = parseFloat(balance).toFixed(2);
                     $("#balance").append(balance);
 
@@ -1984,10 +1991,14 @@ $("#payment").click(function () {
         beforeClose: function (e, keyboard, el, accepted) {
             var paid = 0;
             var selectedVal = $('#paid_by').find(":selected").val();
+
+            var return_amount=0;
+            if($("#twt_return").val()) return_amount=$("#twt_return").val();
             if (selectedVal == 'CC_cash') {
                 var cardVal = $('#cc_amount').val();
                 var cashVal = $('#paid-amount').val();
                 if (cardVal == undefined || cardVal == '') cardVal = 0;
+                if (cashVal == undefined || cashVal == '') cashVal = 0;
                 paid = parseFloat(cashVal) + parseFloat(cardVal);
             }
             if (selectedVal == 'cash') {
@@ -2001,7 +2012,8 @@ $("#payment").click(function () {
                 return false;
             }
             $("#balance").empty();
-            var balance = paid - twt;
+
+            var balance = (paid - twt);
             balance = parseFloat(balance).toFixed(2);
             if (balance != "NaN") {
                 $("#balance").append(balance);
@@ -2053,6 +2065,8 @@ $('#cc_amount').keyboard({
             $(this).val('');
             return false;
         }
+        $("#card_val").val(cardVal);
+
     }
 });
 
@@ -2079,11 +2093,20 @@ $("#paymentModal").on("click", '#submit-sale', function () {
     if (selectedVal == 'CC_cash') {
         var cardVal = $('#cc_amount').val();
         var cashVal = $('#paid-amount').val();
+        var return_amount=0;
+        if($("#twt_return").val()) return_amount=$("#twt_return").val();
         if (cardVal == undefined || cardVal == '') cardVal = 0;
+        if (cashVal == undefined || cashVal == '') cashVal = 0;
         paid = parseFloat(cashVal) + parseFloat(cardVal);
 
         if (paid < twt) {
             bootbox.alert('<?php echo $this->lang->line('paid_l_t_payable'); ?>');
+            $(this).val('');
+            return false;
+        }
+
+        if (twt < 0) {
+            bootbox.alert('<?php echo $this->lang->line('product_l_t_payable'); ?>');
             $(this).val('');
             return false;
         }
@@ -2092,9 +2115,15 @@ $("#paymentModal").on("click", '#submit-sale', function () {
     if (selectedVal == 'cash') {
         var cashVal = $('#paid-amount').val();
         paid = parseFloat(cashVal);
-
+        var return_amount=0;
+        if($("#twt_return").val()) return_amount=$("#twt_return").val();
         if (paid < twt) {
             bootbox.alert('<?php echo $this->lang->line('paid_l_t_payable'); ?>');
+            $(this).val('');
+            return false;
+        }
+        if (twt < 0) {
+            bootbox.alert('<?php echo $this->lang->line('product_l_t_payable'); ?>');
             $(this).val('');
             return false;
         }
@@ -2407,14 +2436,15 @@ window.onload = sivamtime;
         xmlhttp.send();
         $('#returnModal').modal('hide');
         return false;
-        //console.log( $( this ).serialize() );
     });
 
 
     //a.kader
     function clearModalData() {
         $('#cc_amount').val(0);
-        $('#pcc_holder').attr('value', '');
+        $('#pcc_holder').val('');
+        $('#pcc_holder').text('');
+        $('#pcc_holder').html('');
         $('#pcc').attr('value', '');
         $('#paid-amount').val(0);
         $('#cheque_no').val("");

@@ -48,6 +48,7 @@ $lang['max_pro_reached'] 			= "Max Allowed Reached! Please add payment for this 
 $lang['code_error'] 				= "Request Failed, Please check your code and try again!";
 $lang['x_total'] 					= "Please add product before peyemnt. Thank you!";
 $lang['paid_l_t_payable'] 			= "Paid amount is less than the payable amount.";
+$lang['product_l_t_payable'] 		= "Product amount can not be 0.";
 $lang['warehouse_message'] 			= "Please select warehouse";
 $lang['paid_C_t_payable'] 			= "Please provide Card amount.";
 $lang['suspended_sales'] 			= "Suspended Sales";

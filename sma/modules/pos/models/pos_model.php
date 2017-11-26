@@ -704,6 +704,7 @@ class Pos_model extends CI_Model
             'paid_by' => $saleDetails['paid_by'],
             'count' => $saleDetails['count'],
             'pos' => '1',
+            'paid_card' => $saleDetails['card_val'],
             'paid' => $saleDetails['paid_val'],
             'cc_no' => $saleDetails['cc_no_val'],
             'cc_holder' => $saleDetails['cc_holder_val'],

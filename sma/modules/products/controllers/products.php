@@ -1006,7 +1006,7 @@ class Products extends MX_Controller
 
                 $config['upload_path'] = 'assets/uploads/csv/';
                 $config['allowed_types'] = 'csv';
-                $config['max_size'] = '200';
+                $config['max_size'] = '400';
                 $config['overwrite'] = TRUE;
 
                 $this->upload_photo->initialize($config);
@@ -1023,14 +1023,14 @@ class Products extends MX_Controller
                 $arrResult = array();
                 $handle = fopen("assets/uploads/csv/" . $csv, "r");
                 if ($handle) {
-                    while (($row = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                    while (($row = fgetcsv($handle, 6000, ",")) !== FALSE) {
                         $arrResult[] = $row;
                     }
                     fclose($handle);
                 }
                 $titles = array_shift($arrResult);
 
-                $keys = array('code', 'price');
+                $keys = array('code', 'name','cost','price');
 
                 $final = array();
 
