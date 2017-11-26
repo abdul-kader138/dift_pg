@@ -233,7 +233,10 @@
     
                            <li><a href="<?php echo base_url(); ?>index.php?module=inventories&view=po_content">Purchases Order</a></li>
                                     <li><a href="<?php echo base_url(); ?>index.php?module=inventories&amp;view=mrr_list">List Of MRR</a></li>
-                                    
+                                    <li><a href="<?php echo base_url(); ?>index.php?module=reports&amp;view=custom_product">Current Stock Report</a></li>
+                                    <li><a href="<?php echo base_url(); ?>index.php?module=reports&amp;view=opening_stock">Opening & Closing Stock Report</a></li>
+                                    <li><a href="<?php echo base_url(); ?>index.php?module=reports&amp;view=quantity_variance">Count Variance Quantity Report</a></li>
+
                             <?php } ?>
                         <?php if ($this->ion_auth->in_group('purchaser')) { ?>
                                         <li><a href="<?php echo base_url(); ?>index.php?module=suppliers"><?php echo $this->lang->line('list_suppliers'); ?></a></li>
