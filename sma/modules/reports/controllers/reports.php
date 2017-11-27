@@ -192,7 +192,7 @@ class Reports extends MX_Controller
         }
         $this->load->library('datatables');
         $this->datatables
-            ->select("sales.id as sid,date, reference_no, biller_name, customer_name, GROUP_CONCAT(CONCAT(sale_items.product_name, ' (', sale_items.quantity, ')') SEPARATOR ', <br>') as iname, total_tax, total_tax2, total", FALSE)
+            ->select("sales.id as sid,date, reference_no, biller_name, customer_name, GROUP_CONCAT(CONCAT(sale_items.product_name, ' (Qty-', sale_items.quantity, ' ,Price-', sale_items.unit_price, ')') SEPARATOR ', <br>') as iname, total_tax, total_tax2, total", FALSE)
             ->from('sales')
             ->join('sale_items', 'sale_items.sale_id=sales.id', 'left')
             ->join('warehouses', 'warehouses.id=sales.warehouse_id', 'left')
@@ -721,7 +721,7 @@ class Reports extends MX_Controller
 
         if ($product != NULL & $start_date != NULL) {
 
-            $wp = "(select w.code,c.created_at,c.count_quantity,c.actual_quantity,wp.quantity,c.product_id
+            $wp = "(select w.code,c.created_at,c.count_quantity,wp.quantity,c.product_id
              FROM warehouses_products wp inner join warehouses w right join count_products c on w.id=wp.warehouse_id
              and c.product_id=wp.product_id and c.warehouse_id=wp.warehouse_id where c.created_at
              between '{$sDate}' and '{$eDate}' and c.product_id='{$product}' and c.warehouse_id='{$wh}') pd";
