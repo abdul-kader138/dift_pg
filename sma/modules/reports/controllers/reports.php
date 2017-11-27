@@ -199,6 +199,7 @@ class Reports extends MX_Controller
             ->group_by('sales.id');
 
 
+
         if ($user) {
             $this->datatables->like('sales.user', $user);
         }
