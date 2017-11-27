@@ -79,18 +79,30 @@
 <?php if($message) { echo "<div class=\"alert alert-error\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>" . $message . "</div>"; } ?>
 <?php if($success_message) { echo "<div class=\"alert alert-success\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>" . $success_message . "</div>"; } ?>
 
-<div class="btn-group pull-right" style="margin-left: 25px;">
-<a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><?php echo $this->lang->line("all_warehouses"); ?>
-<span class="caret"></span>
-</a>
-<ul class="dropdown-menu">
-    <?php
-	foreach($warehouses as $warehouse) {
-		echo "<li><a href='index.php?module=inventories&view=warehouse&warehouse_id=".$warehouse->id."'>".$warehouse->name."</a></li>";	
-	}
-	?>
-    </ul>
-    </div>
+
+
+
+
+<!--This option currently not used-   Abdul Kader ->
+<!---->
+<!--<div class="btn-group pull-right" style="margin-left: 25px;">-->
+<!--<a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">--><?php //echo $this->lang->line("all_warehouses"); ?>
+<!--<span class="caret"></span>-->
+<!--</a>-->
+<!--<ul class="dropdown-menu">-->
+<!--    --><?php
+//	foreach($warehouses as $warehouse) {
+//		echo "<li><a href='index.php?module=inventories&view=warehouse&warehouse_id=".$warehouse->id."'>".$warehouse->name."</a></li>";
+//	}
+//	?>
+<!--    </ul>-->
+<!--    </div>-->
+
+
+
+<!---->
+
+
     <h3 class="title"><?php echo $page_title; ?></h3>
 	<p class="introtext"><?php echo $this->lang->line("list_results"); ?></p>
    <?php $attrib = array('class' => 'form-horizontal', 'id' => 'addSale_form');

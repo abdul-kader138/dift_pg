@@ -83,7 +83,7 @@ class Products extends MX_Controller
     function getdatatableajaxcost()
     {
 
-        $userHasAuthority=$this->ion_auth->in_group(array('admin', 'owner'));
+        $userHasAuthority = $this->ion_auth->in_group(array('admin', 'owner'));
 
         $this->load->library('datatables');
         $this->datatables
@@ -97,8 +97,7 @@ class Products extends MX_Controller
         if ($userHasAuthority) {
             $this->datatables->add_column("Actions",
                 "<center><a id='$4 - $3' href='index.php?module=products&view=gen_barcode&code=$3&height=200' title='" . $this->lang->line("view_barcode") . "' class='barcode tip'><i class='icon-barcode'></i></a> <a href='#' onClick=\"MyWindow=window.open('index.php?module=products&view=product_details&id=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=600,height=600'); return false;\" class='tip' title='" . $this->lang->line("product_details") . "'><i class='icon-fullscreen'></i></a> <a class='image tip' id='$4 - $3' href='" . $this->config->base_url() . "assets/uploads/$2' title='" . $this->lang->line("view_image") . "'><i class='icon-picture'></i></a> <a href='index.php?module=products&view=add_damage&product_id=$1' class='tip' title='" . $this->lang->line("add_damage_qty") . "'><i class='icon-filter'></i></a> <a href='index.php?module=products&view=edit&id=$1' class='tip' title='" . $this->lang->line("edit_product") . "'><i class='icon-edit'></i></a> <a href='index.php?module=products&view=delete&id=$1' onClick=\"return confirm('" . $this->lang->line('alert_x_product') . "')\" class='tip' title='" . $this->lang->line("delete_product") . "'><i class='icon-trash'></i></a></center>", "productid, image, code, name");
-        }
-        else{
+        } else {
             $this->datatables->add_column("Actions",
                 "<center><a id='$4 - $3' href='index.php?module=products&view=gen_barcode&code=$3&height=200' title='" . $this->lang->line("view_barcode") . "' class='barcode tip'><i class='icon-barcode'></i></a> <a href='#' onClick=\"MyWindow=window.open('index.php?module=products&view=product_details&id=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=600,height=600'); return false;\" class='tip' title='" . $this->lang->line("product_details") . "'><i class='icon-fullscreen'></i></a> <a class='image tip' id='$4 - $3' href='" . $this->config->base_url() . "assets/uploads/$2' title='" . $this->lang->line("view_image") . "'><i class='icon-picture'></i></a>", "productid, image, code, name");
         }
@@ -351,14 +350,6 @@ class Products extends MX_Controller
     function warehouse($warehouse = DEFAULT_WAREHOUSE)
     {
 
-        $groups = array('purchaser', 'salesman', 'viewer','checker');
-        if ($this->ion_auth->in_group($groups)) {
-            $this->session->set_flashdata('message', $this->lang->line("access_denied"));
-            $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
-            redirect('module=products', 'refresh');
-        }
-
-
         if ($this->input->get('warehouse_id')) {
             $warehouse = $this->input->get('warehouse_id');
         }
@@ -381,24 +372,47 @@ class Products extends MX_Controller
             $warehouse_id = $this->input->get('warehouse_id');
         }
 
+        $groups = array('purchaser', 'salesman', 'viewer', 'checker');
+        $hasUserAccess = ($this->ion_auth->in_group($groups));
+
         $this->load->library('datatables');
-        $this->datatables
-            ->select("warehouses_products.warehouse_id as wh, warehouses_products.product_id as productid, products.image as image, products.code as code, products.name as name, products.unit, products.price, warehouses_products.quantity, alert_quantity", FALSE)
-            ->from('warehouses_products')
-            ->join('products', 'products.id=warehouses_products.product_id', 'left')
-            ->where('warehouses_products.warehouse_id', $warehouse_id)
-            ->where('warehouses_products.quantity !=', 0)
-            ->group_by("products.id")
-            ->add_column("Actions",
-                "<center><a id='$4 - $3' href='index.php?module=products&view=gen_barcode&code=$3&height=200' title='" . $this->lang->line("view_barcode") . "' class='barcode tip'><i class='icon-barcode'></i></a>
+
+        if ($hasUserAccess) {
+            $this->datatables
+                ->select("warehouses_products.warehouse_id as wh, warehouses_products.product_id as productid, products.image as image, products.code as code, products.name as name, products.unit, products.price, warehouses_products.quantity, alert_quantity", FALSE)
+                ->from('warehouses_products')
+                ->join('products', 'products.id=warehouses_products.product_id', 'left')
+                ->where('warehouses_products.warehouse_id', $warehouse_id)
+                ->where('warehouses_products.quantity !=', 0)
+                ->group_by("products.id")
+                ->add_column("Actions",
+                    "<center><a id='$4 - $3' href='index.php?module=products&view=gen_barcode&code=$3&height=200' title='" . $this->lang->line("view_barcode") . "' class='barcode tip'><i class='icon-barcode'></i></a>
+			<a href='#' onClick=\"MyWindow=window.open('index.php?module=products&view=product_details&id=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=600,height=500'); return false;\" class='tip' title='" . $this->lang->line("product_details") . "'><i class='icon-fullscreen'></i></a>
+			<a class='image tip' id='$4 - $3' href='" . $this->config->base_url() . "assets/uploads/$2' title='" . $this->lang->line("view_image") . "'><i class='icon-picture'></i></a>"
+                    , "productid, image, code, name,wh")
+                ->unset_column('productid')
+                ->unset_column('wh')
+                ->unset_column('image');
+
+        } else {
+            $this->datatables
+                ->select("warehouses_products.warehouse_id as wh, warehouses_products.product_id as productid, products.image as image, products.code as code, products.name as name, products.unit, products.price, warehouses_products.quantity, alert_quantity", FALSE)
+                ->from('warehouses_products')
+                ->join('products', 'products.id=warehouses_products.product_id', 'left')
+                ->where('warehouses_products.warehouse_id', $warehouse_id)
+                ->where('warehouses_products.quantity !=', 0)
+                ->group_by("products.id")
+                ->add_column("Actions",
+                    "<center><a id='$4 - $3' href='index.php?module=products&view=gen_barcode&code=$3&height=200' title='" . $this->lang->line("view_barcode") . "' class='barcode tip'><i class='icon-barcode'></i></a>
 			<a href='#' onClick=\"MyWindow=window.open('index.php?module=products&view=product_details&id=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=600,height=500'); return false;\" class='tip' title='" . $this->lang->line("product_details") . "'><i class='icon-fullscreen'></i></a>
 			<a class='image tip' id='$4 - $3' href='" . $this->config->base_url() . "assets/uploads/$2' title='" . $this->lang->line("view_image") . "'><i class='icon-picture'></i></a>
 			<a href='index.php?module=products&view=add_damage&product_id=$1&warehouse_id=$5' class='tip' title='" . $this->lang->line("add_damage_qty") . "'><i class='icon-filter'></i></a>
 			<a href='index.php?module=products&view=edit&id=$1' class='tip' title='" . $this->lang->line("edit_product") . "'><i class='icon-edit'></i></a>
 			<a href='index.php?module=products&view=save_adjust_inventory&id=$1&warehouse_id=$5' class='tip' title='Adjustment Quantity ADD'><i class='icon-list'></i></a></center>", "productid, image, code, name,wh")
-            ->unset_column('productid')
-            ->unset_column('wh')
-            ->unset_column('image');
+                ->unset_column('productid')
+                ->unset_column('wh')
+                ->unset_column('image');
+        }
 
 
         echo $this->datatables->generate();
@@ -772,7 +786,7 @@ class Products extends MX_Controller
         }
     }
 
-    function save_adjust_inventory($id=null,$warehouse_id=null)
+    function save_adjust_inventory($id = null, $warehouse_id = null)
     {
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
@@ -1048,7 +1062,7 @@ class Products extends MX_Controller
                 }
                 $titles = array_shift($arrResult);
 
-                $keys = array('code', 'name','cost','price');
+                $keys = array('code', 'name', 'cost', 'price');
 
                 $final = array();
 
