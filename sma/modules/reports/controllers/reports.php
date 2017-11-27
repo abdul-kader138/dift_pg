@@ -548,7 +548,7 @@ class Reports extends MX_Controller
 
             // get All Sales return Data
             $sr = "( SELECT sir.product_id,sum(sir.return_qty) as return_qty FROM `sale_items` si inner join sales_item_return sir on si.product_id=sir.product_id  and si.sale_id=sir.sales_id where
-            sir.return_date BETWEEN '{$s_date}' and '{$e_date}' and sir.warehouse_id='{$warehouse_id}' ) SalesReturn";
+            sir.return_date BETWEEN '{$s_date}' and '{$e_date}' and sir.warehouse_id='{$warehouse_id}' group by sir.product_id ) SalesReturn";
 
 
             // get All Adjustment Data
@@ -571,7 +571,7 @@ class Reports extends MX_Controller
             $sp = "( SELECT si.product_id, SUM( si.quantity ) soldQty, SUM( si.gross_total ) totalSale from sale_items si inner join sales s on s.id = si.sale_id where s.warehouse_id='{$warehouse_id}' group by si.product_id ) PSales";
 
             // get All Sales return Data
-            $sr = "( SELECT sir.product_id,sum(sir.return_qty) as return_qty FROM `sale_items` si inner join sales_item_return sir on si.product_id=sir.product_id and si.sale_id=sir.sales_id where sir.warehouse_id='{$warehouse_id}') SalesReturn";
+            $sr = "( SELECT sir.product_id,sum(sir.return_qty) as return_qty FROM `sale_items` si inner join sales_item_return sir on si.product_id=sir.product_id and si.sale_id=sir.sales_id where sir.warehouse_id='{$warehouse_id}' group by sir.product_id) SalesReturn";
 
 
             // get All Adjustment Data
@@ -618,7 +618,6 @@ class Reports extends MX_Controller
             $this->datatables->where('p.id', $product);
         }
         echo $this->datatables->generate();
-//        echo $sr;
     }
 
     function getCP()
@@ -722,22 +721,22 @@ class Reports extends MX_Controller
 
         if ($product != NULL & $start_date != NULL) {
 
-            $wp = "(select w.code,c.created_at,c.count_quantity,wp.quantity,c.product_id
+            $wp = "(select w.code,c.created_at,c.count_quantity,c.actual_quantity,wp.quantity,c.product_id
              FROM warehouses_products wp inner join warehouses w right join count_products c on w.id=wp.warehouse_id
              and c.product_id=wp.product_id and c.warehouse_id=wp.warehouse_id where c.created_at
              between '{$sDate}' and '{$eDate}' and c.product_id='{$product}' and c.warehouse_id='{$wh}') pd";
         } elseif ($product != NULL & $start_date == NULL) {
-            $wp = "(select w.code,c.created_at,c.count_quantity,wp.quantity,c.product_id
+            $wp = "(select w.code,c.created_at,c.count_quantity,c.actual_quantity,wp.quantity,c.product_id
              FROM warehouses_products wp inner join warehouses w right join count_products c on w.id=wp.warehouse_id
              and c.product_id=wp.product_id and c.warehouse_id=wp.warehouse_id where c.product_id='{$product}'
              and c.warehouse_id='{$wh}') pd";
         } elseif ($product == NULL & $start_date != NULL) {
-            $wp = "(select w.code,c.created_at,c.count_quantity,wp.quantity,c.product_id
+            $wp = "(select w.code,c.created_at,c.count_quantity,c.actual_quantity,wp.quantity,c.product_id
              FROM warehouses_products wp inner join warehouses w right join count_products c on w.id=wp.warehouse_id
              and c.product_id=wp.product_id and c.warehouse_id=wp.warehouse_id where c.created_at
              between '{$sDate}' and '{$eDate}' and c.warehouse_id='{$wh}') pd";
         } else {
-            $wp = "(select w.code,c.created_at,c.count_quantity,wp.quantity,c.product_id
+            $wp = "(select w.code,c.created_at,c.count_quantity,c.actual_quantity,wp.quantity,c.product_id
              FROM warehouses_products wp inner join warehouses w right join count_products c on w.id=wp.warehouse_id
              and c.product_id=wp.product_id and c.warehouse_id=wp.warehouse_id and c.warehouse_id='{$wh}') pd";
         }
@@ -745,8 +744,8 @@ class Reports extends MX_Controller
 
         $this->load->library('datatables');
         $this->datatables
-            ->select("p.code, p.name,pd.code as c ,pd.created_at as count_date, p.unit, pd.count_quantity as cun_quantity, COALESCE( pd.quantity, 0 ) as quantity,
-            (COALESCE( pd.quantity,0) - COALESCE( pd.count_quantity, 0 )) as variance", FALSE)
+            ->select("p.code, p.name,pd.code as c ,pd.created_at as count_date, p.unit, pd.count_quantity as cun_quantity, COALESCE( pd.actual_quantity, 0 ) as quantity,
+            (COALESCE( pd.actual_quantity,0) - COALESCE( pd.count_quantity, 0 )) as variance", FALSE)
             ->from('products p', false)
             ->join($wp, 'p.id = pd.product_id', 'right');
 
