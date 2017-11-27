@@ -67,9 +67,12 @@
 //
 //
 //                             }
-                             
+
+
+                            if ($this->ion_auth->in_group(array('owner', 'admin','salesman'))){
                             if (file_exists('sma/modules/pos/controllers/pos.php') && is_dir('sma/modules/pos')) {
                                 echo '<li><a href="index.php?module=pos" class="btn btn-success hbtn">Point of Sale</a></li>';
+                            }
                             }
                             if (ALERT_NO > 0) {
                                 echo "<li><a class=\"btn btn-warning hbtn\" href=\"index.php?module=reports&view=products\">" . ALERT_NO . " " . $this->lang->line('product_alerts') . "</a></li>";
