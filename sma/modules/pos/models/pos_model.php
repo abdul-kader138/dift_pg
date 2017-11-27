@@ -893,6 +893,21 @@ class Pos_model extends CI_Model
     }
 
 
+//    public function getTodaySalesReturn()
+//    {
+//        $date = date('Y-m-d');
+//
+//        $myQuery = "SELECT DATE_FORMAT( date,  '%W, %D %M %Y' ) AS date, *
+//			FROM sales_item_return
+//			WHERE DATE(return_date) LIKE '{$date}'";
+//        $q = $this->db->query($myQuery, false);
+//        if ($q->num_rows() > 0) {
+//            return $q->row();
+//        }
+//
+//        var_dump(array($myQuery));
+//    }
+
 //    a.kader
 
     public function get_default_customer()
@@ -925,6 +940,51 @@ class Pos_model extends CI_Model
             return $q->row();
         }
     }
+
+
+    public function getTodayCashFromCardCashSales()
+    {
+        $date = date('Y-m-d');
+        $myQuery = "SELECT (sum(COALESCE( paid, 0 )) + (SUM( COALESCE( total, 0 ) ) - (SUM(COALESCE( paid, 0 )) + SUM(COALESCE( paid_card, 0 ))))) AS total
+			FROM sales
+			WHERE DATE(date) =  '{$date}' AND paid_by = 'CC_cash'
+			GROUP BY date";
+        $q = $this->db->query($myQuery, false);
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+    }
+
+
+    public function getTodaySalesReturn()
+    {
+        $date = date('Y-m-d');
+        $myQuery = "SELECT * FROM sales_item_return
+			WHERE DATE(return_date) LIKE  '{$date}'";
+        $q = $this->db->query($myQuery, false);
+        if ($q->num_rows() > 0) {
+            foreach (($q->result()) as $row) {
+                $data[] = $row;
+            }
+            return $data;
+        }
+
+    }
+
+
+    public function getTodayCardFromCardCashSales()
+    {
+        $date = date('Y-m-d');
+        $myQuery = "SELECT sum(COALESCE(paid_card, 0 )) AS total
+			FROM sales
+			WHERE DATE(date) =  '{$date}' AND paid_by = 'CC_cash'
+			GROUP BY date";
+        $q = $this->db->query($myQuery, false);
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+    }
+
 
     public function getTodayCashSales()
     {

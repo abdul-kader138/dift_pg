@@ -924,8 +924,32 @@ class Pos extends MX_Controller
             $data['chsales'] = "0.00";
         }
 
+        if ($cash_sale = $this->pos_model->getTodayCashFromCardCashSales()) {
+            $data['cc_cash'] = $cash_sale->total;
+        } else {
+            $data['cc_cash'] = "0.00";
+        }
+
+        if ($card_sale = $this->pos_model->getTodayCardFromCardCashSales()) {
+            $data['cc_card'] = $card_sale->total;
+        } else {
+            $data['cc_card'] = "0.00";
+        }
+
+        if ($val = $this->pos_model->getTodaySalesReturn()) {
+            foreach ($val as $obj) {
+                $data['sale_return'] += $obj->price * $obj->return_qty;
+
+            }
+        } else {
+            $data['sale_return'] = 0;
+        }
+
         $data['totalsales'] = $this->pos_model->getTodaySales();
+        $data['todayReturn'] = $this->pos_model->getTodaySales();
         $meta['page_title'] = $this->lang->line('today_sale');
+
+
         echo $this->load->view('sales', $data, TRUE);
     }
 
