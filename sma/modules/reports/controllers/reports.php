@@ -264,59 +264,77 @@ class Reports extends MX_Controller
             $supplier = NULL;
         }
         if ($this->input->get('warehouse')) {
-            $warehouse = $this->input->get('warehouse');
+            $warehouse_id = $this->input->get('warehouse');
         } else {
-            $warehouse = NULL;
+            $warehouse_id = NULL;
         }
         if ($this->input->get('reference_no')) {
             $reference_no = $this->input->get('reference_no');
         } else {
             $reference_no = NULL;
         }
-        if ($this->input->get('start_date')) {
-            $start_date = $this->input->get('start_date');
-        } else {
-            $start_date = NULL;
-        }
+
         if ($this->input->get('end_date')) {
             $end_date = $this->input->get('end_date');
         } else {
             $end_date = NULL;
         }
+        if ($this->input->get('start_date')) {
+            $start_date = $this->input->get('start_date');
+        } else {
+            $start_date = NULL;
+        }
+
         if ($start_date) {
             $start_date = $this->ion_auth->fsd($start_date);
             $end_date = $this->ion_auth->fsd($end_date);
         }
+
+
+
+
+        $pp = "(SELECT mm.purchase_id, mm.id, mm.received_qty purchasedQty, mm.inv_val  purchasedVal from purchase_items p JOIN make_mrr mm on mm.purchase_id=p.purchase_id and mm.purchase_item_id=p.product_id where mm.mrr_date between
+        '{$start_date}' and '{$end_date}' and mm.wh_id='{$warehouse_id}'
+                      group by mm.purchase_id) PCosts";
+
+        $mp = "(select mp.id,mp.supplier_name,mp.reference_no,pi.product_name,mp.purchase_id,pi.quantity,mp.warehouse_id,mp.supplier_id,mp.inv_total from make_purchases mp inner join purchase_items pi on pi.purchase_id=mp.purchase_id  WHERE date BETWEEN
+         '{$start_date}' and '{$end_date}' and mp.warehouse_id='{$warehouse_id}'
+                         group by mp.supplier_id,mp.warehouse_id,mp.purchase_id,mp.id ) mPurchase";
+
+
         $this->load->library('datatables');
         $this->datatables
-            ->select("purchases.id as id, date, reference_no, warehouses.name as wname, supplier_name, GROUP_CONCAT(CONCAT(purchase_items.product_name, ' (', purchase_items.quantity, ')') SEPARATOR ', <br>') as iname, COALESCE(inv_total, 0), COALESCE(total_tax, 0), total", FALSE)
-            ->from('purchases')
-            ->join('purchase_items', 'purchase_items.purchase_id=purchases.id', 'left')
-            ->join('warehouses', 'warehouses.id=purchases.warehouse_id', 'left')
-            ->group_by('purchases.id');
+            ->select("make_purchases.id as id, date, mPurchase.reference_no, warehouses.name as wname, mPurchase.supplier_name, GROUP_CONCAT(CONCAT(mPurchase.product_name, ' (', mPurchase.quantity, ')') SEPARATOR ', <br>') as iname, COALESCE(mPurchase.inv_total, 0), COALESCE(PCosts.purchasedQty, 0), COALESCE(PCosts.purchasedVal, 0)", FALSE)
+            ->from('make_purchases')
+            ->join($mp, 'mPurchase.id=make_purchases.id', 'inner')
+            ->join('warehouses', 'warehouses.id=make_purchases.warehouse_id', 'left')
+            ->join($pp, 'PCosts.purchase_id=make_purchases.purchase_id', 'inner')
+            ->group_by('make_purchases.supplier_id');
 
-        if ($user) {
-            $this->datatables->like('purchases.user', $user);
-        }
-        //if($name) { $this->datatables->like('purchase_items.product_name', $name); }
-        if ($supplier) {
-            $this->datatables->like('purchases.supplier_id', $supplier);
-        }
-        if ($warehouse) {
-            $this->datatables->like('purchases.warehouse_id', $warehouse);
-        }
-        if ($reference_no) {
-            $this->datatables->like('purchases.reference_no', $reference_no, 'both');
-        }
-        if ($start_date) {
-            $this->datatables->where('purchases.date BETWEEN "' . $start_date . '" and "' . $end_date . '"');
-        }
+//        if ($user) {
+//            $this->datatables->like('purchases.user', $user);
+//        }
+//        //if($name) { $this->datatables->like('purchase_items.product_name', $name); }
+//        if ($supplier) {
+//            $this->datatables->like('purchases.supplier_id', $supplier);
+//        }
+//        if ($warehouse_id) {
+//            $this->datatables->like('purchases.warehouse_id', $warehouse_id);
+//        }
+//        if ($reference_no) {
+//            $this->datatables->like('purchases.reference_no', $reference_no, 'both');
+//        }
+//        if ($start_date) {
+//            $this->datatables->where('purchases.date BETWEEN "' . $start_date . '" and "' . $end_date . '"');
+//        }
+
 
         $this->datatables->add_column("Actions",
             "<center><a href='#' onClick=\"MyWindow=window.open('index.php?module=inventories&view=view_inventory&id=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=1000,height=600'); return false;\" title='" . $this->lang->line("view_inventory") . "' class='tip'><i class='icon-fullscreen'></i></a> <a href='index.php?module=inventories&view=pdf&id=$1' title='" . $this->lang->line("download_pdf") . "' class='tip'><i class='icon-file'></i></a> <a href='index.php?module=inventories&view=email_inventory&id=$1' title='" . $this->lang->line("email_inventory") . "' class='tip'><i class='icon-envelope'></i></a> <a href='index.php?module=inventories&amp;view=edit&amp;id=$1' title='" . $this->lang->line("edit_inventory") . "' class='tip'><i class='icon-edit'></i></a> <a href='index.php?module=inventories&amp;view=delete&amp;id=$1' onClick=\"return confirm('" . $this->lang->line('alert_x_inventory') . "')\" title='" . $this->lang->line("delete_inventory") . "' class='tip'><i class='icon-trash'></i></a></center>", "id")
             ->unset_column('id');
 
         echo $this->datatables->generate();
+//        echo $pp;
     }
 
     function daily_sales()

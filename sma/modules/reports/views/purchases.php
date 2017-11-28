@@ -172,7 +172,7 @@ if($this->input->post('submit')) {
 <div class="control-group">
   <label class="control-label" for="warehouse"><?php echo $this->lang->line("warehouse"); ?></label>
   <div class="controls"> <?php 
-	   		$wh[""] = "";
+//	   		$wh[""] = "";
 	   		foreach($warehouses as $warehouse){
 				$wh[$warehouse->id] = $warehouse->name;
 			}
@@ -206,8 +206,8 @@ if($this->input->post('submit')) {
             <th><?php echo $this->lang->line("supplier"); ?></th>
             <th><?php echo $this->lang->line("product_qty"); ?></th>
             <th><?php echo $this->lang->line("total"); ?></th>
-            <th><?php echo $this->lang->line("product_tax"); ?></th>
-            <th><?php echo $this->lang->line("grand_total"); ?></th>
+            <th><?php echo $this->lang->line("received_qty"); ?></th>
+            <th><?php echo $this->lang->line("mrr_total"); ?></th>
 	</tr>
         </thead>
 		<tbody>
