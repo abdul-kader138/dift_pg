@@ -151,6 +151,9 @@ class Products_model extends CI_Model
 
     }
 
+
+
+
     public function addProduct($code, $name, $photo, $data = array())
     {
 
@@ -222,6 +225,16 @@ class Products_model extends CI_Model
     {
 
         if ($this->db->update_batch('products', $data, 'code')) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    public function updateQty($data = array())
+    {
+        if ($this->db->insert_batch('warehouses_products', $data)) {
             return true;
         } else {
             return false;

@@ -1062,7 +1062,7 @@ class Products extends MX_Controller
                 }
                 $titles = array_shift($arrResult);
 
-                $keys = array('code', 'name', 'cost', 'price');
+                $keys = array('code', 'name', 'cost', 'price','quantity','alert_quantity','track_quantity');
 
                 $final = array();
 
@@ -1102,6 +1102,102 @@ class Products extends MX_Controller
             $data['page_title'] = $this->lang->line("update_price_csv");
             $this->load->view('commons/header', $meta);
             $this->load->view('update_price', $data);
+            $this->load->view('commons/footer');
+
+        }
+    }
+
+
+
+
+    function update_warehouse_qty()
+    {
+        $groups = array('purchaser', 'salesman', 'viewer');
+        if ($this->ion_auth->in_group($groups)) {
+            $this->session->set_flashdata('message', $this->lang->line("access_denied"));
+            $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
+            redirect('module=products', 'refresh');
+        }
+
+        $this->form_validation->set_rules('userfile', $this->lang->line("upload_file"), 'xss_clean');
+
+        if ($this->form_validation->run() == true) {
+
+            if (DEMO) {
+                $this->session->set_flashdata('message', $this->lang->line("disabled_in_demo"));
+                redirect('module=home', 'refresh');
+            }
+
+            if (isset($_FILES["userfile"])) /*if($_FILES['userfile']['size'] > 0)*/ {
+
+                $this->load->library('upload_photo');
+
+                $config['upload_path'] = 'assets/uploads/csv/';
+                $config['allowed_types'] = 'csv';
+                $config['max_size'] = '400';
+                $config['overwrite'] = TRUE;
+
+                $this->upload_photo->initialize($config);
+
+                if (!$this->upload_photo->do_upload()) {
+
+                    $error = $this->upload_photo->display_errors();
+                    $this->session->set_flashdata('message', $error);
+                    redirect("module=products&view=update_warehouse_qty", 'refresh');
+                }
+
+                $csv = $this->upload_photo->file_name;
+
+                $arrResult = array();
+                $handle = fopen("assets/uploads/csv/" . $csv, "r");
+                if ($handle) {
+                    while (($row = fgetcsv($handle, 6000, ",")) !== FALSE) {
+                        $arrResult[] = $row;
+                    }
+                    fclose($handle);
+                }
+                $titles = array_shift($arrResult);
+
+                $keys = array('id', 'product_id', 'warehouse_id','quantity');
+
+                $final = array();
+
+                foreach ($arrResult as $key => $value) {
+                    $final[] = array_combine($keys, $value);
+                }
+                $rw = 2;
+                foreach ($final as $csv_pr) {
+                    if (!$this->products_model->getProductById($csv_pr['id'])) {
+                        $this->session->set_flashdata('message', $this->lang->line("check_product_id") . " (" . $csv_pr['code'] . "). " . $this->lang->line("code_x_exist") . " " . $this->lang->line("line_no") . " " . $rw);
+                        redirect("module=products&view=update_warehouse_qty", 'refresh');
+                    }
+                    $rw++;
+                }
+            }
+
+            $final = $this->mres($final);
+            //$data['final'] = $final;
+        }
+
+        if ($this->form_validation->run() == true && isset($_POST['submit'])) {
+            $this->products_model->updateQty($final);
+            $this->session->set_flashdata('success_message', $this->lang->line("price_updated"));
+            redirect('module=products', 'refresh');
+        } else {
+
+            $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
+
+            $data['userfile'] = array('name' => 'userfile',
+                'id' => 'userfile',
+                'type' => 'text',
+                'value' => $this->form_validation->set_value('userfile')
+            );
+
+
+            $meta['page_title'] = $this->lang->line("update_warehouse_qty");
+            $data['page_title'] = $this->lang->line("update_warehouse_qty");
+            $this->load->view('commons/header', $meta);
+            $this->load->view('update_warehouse_qty', $data);
             $this->load->view('commons/footer');
 
         }
