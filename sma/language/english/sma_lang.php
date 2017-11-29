@@ -734,6 +734,7 @@ $lang['product_details_for_invoice']			= "Product Detail for Invoice";
 $lang['purchased']					= "Purchased";
 $lang['grand_total']					= "Grand Total";
 $lang['unit_price']				    	= "Unit Price";
+$lang['mrr_date']				    	= "MRR Date";
 $lang['mrr_total']					    = "MRR Total";
 $lang['product_qty']					= "Product (Qty)";
 $lang['check_tax_rate']					= "Please check tax rate";

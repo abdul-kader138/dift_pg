@@ -98,13 +98,14 @@ if($this->input->post('submit')) {
 								"print"
 						]
 					},
-					"aoColumns": [ 
-					  { "mRender": format_date },
-					  null,
+					"aoColumns": [
+                        { "bSearchable": true },
+                        { "mRender": format_date },
 					  null,
 					  null,
 					  { "bSearchable": false },
 					  { "mRender": currencyFormate },
+                        { "mRender": format_date },
 					  { "mRender": currencyFormate },
                                           { "mRender": currencyFormate }
 					],
@@ -200,12 +201,13 @@ if($this->input->post('submit')) {
  
 	<thead>
         <tr>
-            <th><?php echo $this->lang->line("date"); ?></th>
             <th><?php echo $this->lang->line("ref_no"); ?></th>
+            <th><?php echo $this->lang->line("date"); ?></th>
             <th><?php echo $this->lang->line("warehouse"); ?></th>
             <th><?php echo $this->lang->line("supplier"); ?></th>
             <th><?php echo $this->lang->line("product_qty"); ?></th>
             <th><?php echo $this->lang->line("total"); ?></th>
+            <th><?php echo $this->lang->line("mrr_date"); ?></th>
             <th><?php echo $this->lang->line("received_qty"); ?></th>
             <th><?php echo $this->lang->line("mrr_total"); ?></th>
 	</tr>
@@ -217,12 +219,13 @@ if($this->input->post('submit')) {
         </tbody>
         <tfoot>
         <tr>
-            <th>[<?php echo $this->lang->line("date"); ?>]</th>
             <th>[<?php echo $this->lang->line("ref_no"); ?>]</th>
+            <th>[<?php echo $this->lang->line("date"); ?>]</th>
             <th>[<?php echo $this->lang->line("warehouse"); ?>]</th>
             <th>[<?php echo $this->lang->line("supplier"); ?>]</th>
             <th><?php echo $this->lang->line("product_qty"); ?></th>
             <th><?php echo $this->lang->line("total"); ?></th>
+            <th><?php echo $this->lang->line("mrr_date"); ?></th>
             <th><?php echo $this->lang->line("product_tax"); ?></th>
             <th><?php echo $this->lang->line("grand_total"); ?></th>
 	</tr>

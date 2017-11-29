@@ -293,40 +293,34 @@ class Reports extends MX_Controller
 
 
 
-        $pp = "(SELECT mm.purchase_id, mm.id, mm.received_qty purchasedQty, mm.inv_val  purchasedVal from purchase_items p JOIN make_mrr mm on mm.purchase_id=p.purchase_id and mm.purchase_item_id=p.product_id where mm.mrr_date between
+        $pp = "(SELECT mm.purchase_id,mm.make_purchase_id, mm.mrr_date,mm.id, mm.received_qty purchasedQty, mm.inv_val  purchasedVal from purchase_items p JOIN make_mrr mm on mm.purchase_id=p.purchase_id and mm.make_purchase_id=p.make_purchase_id where mm.mrr_date between
         '{$start_date}' and '{$end_date}' and mm.wh_id='{$warehouse_id}'
-                      group by mm.purchase_id) PCosts";
+                      group by mm.make_purchase_id,mm.mrr_date) PCosts";
 
-        $mp = "(select mp.id,mp.supplier_name,mp.reference_no,pi.product_name,mp.purchase_id,pi.quantity,mp.warehouse_id,mp.supplier_id,mp.inv_total from make_purchases mp inner join purchase_items pi on pi.purchase_id=mp.purchase_id  WHERE date BETWEEN
+        $mp = "(select mp.id,mp.supplier_name,mp.reference_no,pi.product_name,mp.purchase_id,pi.quantity,mp.warehouse_id,mp.supplier_id,mp.inv_total from make_purchases mp inner join purchase_items pi on pi.make_purchase_id=mp.id  WHERE date BETWEEN
          '{$start_date}' and '{$end_date}' and mp.warehouse_id='{$warehouse_id}'
-                         group by mp.supplier_id,mp.warehouse_id,mp.purchase_id,mp.id ) mPurchase";
+                         group by pi.make_purchase_id) mPurchase";
 
 
         $this->load->library('datatables');
         $this->datatables
-            ->select("make_purchases.id as id, date, mPurchase.reference_no, warehouses.name as wname, mPurchase.supplier_name, GROUP_CONCAT(CONCAT(mPurchase.product_name, ' (', mPurchase.quantity, ')') SEPARATOR ', <br>') as iname, COALESCE(mPurchase.inv_total, 0), COALESCE(PCosts.purchasedQty, 0), COALESCE(PCosts.purchasedVal, 0)", FALSE)
+            ->select("make_purchases.id as id,mPurchase.reference_no, date,  warehouses.name as wname, mPurchase.supplier_name, GROUP_CONCAT(CONCAT(mPurchase.product_name, ' (', mPurchase.quantity, ')') SEPARATOR ', <br>') as iname, COALESCE(mPurchase.inv_total, 0),PCosts.mrr_date, COALESCE(PCosts.purchasedQty, 0), COALESCE(PCosts.purchasedVal, 0)", FALSE)
             ->from('make_purchases')
+            ->join($pp, 'PCosts.make_purchase_id=make_purchases.id', 'inner')
             ->join($mp, 'mPurchase.id=make_purchases.id', 'inner')
-            ->join('warehouses', 'warehouses.id=make_purchases.warehouse_id', 'left')
-            ->join($pp, 'PCosts.purchase_id=make_purchases.purchase_id', 'inner')
-            ->group_by('make_purchases.supplier_id');
+            ->join('warehouses', 'warehouses.id=make_purchases.warehouse_id', 'inner')
+            ->group_by('make_purchases.supplier_id')
+            ->group_by('make_purchases.date');
 
-//        if ($user) {
-//            $this->datatables->like('purchases.user', $user);
-//        }
-//        //if($name) { $this->datatables->like('purchase_items.product_name', $name); }
-//        if ($supplier) {
-//            $this->datatables->like('purchases.supplier_id', $supplier);
-//        }
-//        if ($warehouse_id) {
-//            $this->datatables->like('purchases.warehouse_id', $warehouse_id);
-//        }
-//        if ($reference_no) {
-//            $this->datatables->like('purchases.reference_no', $reference_no, 'both');
-//        }
-//        if ($start_date) {
-//            $this->datatables->where('purchases.date BETWEEN "' . $start_date . '" and "' . $end_date . '"');
-//        }
+        if ($supplier) {
+            $this->datatables->like('make_purchases.supplier_id', $supplier);
+        }
+        if ($warehouse_id) {
+            $this->datatables->like('make_purchases.warehouse_id', $warehouse_id);
+        }
+        if ($reference_no) {
+            $this->datatables->like('make_purchases.reference_no', $reference_no, 'both');
+        }
 
 
         $this->datatables->add_column("Actions",
@@ -334,7 +328,6 @@ class Reports extends MX_Controller
             ->unset_column('id');
 
         echo $this->datatables->generate();
-//        echo $pp;
     }
 
     function daily_sales()
