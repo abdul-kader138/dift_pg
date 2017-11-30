@@ -32,7 +32,7 @@ class Suppliers extends MX_Controller {
 			redirect('auth/login');
 	  	}
 		
-		$groups = array('owner', 'admin', 'purchaser');
+		$groups = array('owner', 'admin');
 		if (!$this->ion_auth->in_group($groups))
 		{
 			$this->session->set_flashdata('message', $this->lang->line("access_denied"));

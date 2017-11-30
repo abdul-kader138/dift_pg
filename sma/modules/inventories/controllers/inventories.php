@@ -70,7 +70,7 @@ class Inventories extends MX_Controller
     {
 //	   echo 'hello world';
 
-        if ($this->ion_auth->in_group('salesman')) {
+        if ($this->ion_auth->in_group('salesman','viewer','purchaser')) {
             $this->session->set_flashdata('message', $this->lang->line("access_denied"));
             $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
             redirect('module=home', 'refresh');
@@ -127,7 +127,11 @@ class Inventories extends MX_Controller
         } else {
             $search_term = false;
         }
+
+
+        $userHasAuthority = $this->ion_auth->in_group(array('admin', 'owner','checker'));
         $this->load->library('datatables');
+
 
         $this->datatables
             ->select("purchases.id as id, date, reference_no, supplier_name, COALESCE(inv_total, 0), COALESCE(total_tax, 0), total,  CASE WHEN approved = '1' THEN 'Approved' WHEN verify_status = '1' THEN 'Verified'  WHEN checked = '1' THEN 'Checked' END AS approved", FALSE)
@@ -140,12 +144,14 @@ class Inventories extends MX_Controller
 //            ->unset_column('id');
 
 
-
-        $this->datatables->add_column("Actions",
-            "<center><a href='index.php?module=inventories&amp;view=edit&amp;id=$1' title='Process' class='tip'><i class='icon-list'></i></a>
+        if ($userHasAuthority) {
+            $this->datatables->add_column("Actions",
+                "<center><a href='index.php?module=inventories&amp;view=edit&amp;id=$1' title='Process' class='tip'><i class='icon-list'></i></a>
 			 &nbsp;<a href='index.php?module=inventories&amp;view=delete&amp;id=$1' onClick=\"return confirm('" . $this->lang->line('alert_x_inventory') . "')\" title='" . $this->lang->line("delete_inventory") . "' class='tip'><i class='icon-trash'></i></a>&nbsp; </center>", "id")
-            ->unset_column('id');
-
+                ->unset_column('id');
+        }else{
+            $this->datatables->add_column("Actions","")->unset_column('id');
+        }
 
         echo $this->datatables->generate();
 
@@ -599,7 +605,7 @@ class Inventories extends MX_Controller
     function pdf_mrr()
     {
 
-        if (!$this->ion_auth->in_group(array('admin', 'owner', 'approver'))) {
+        if (!$this->ion_auth->in_group(array('admin', 'owner', 'checker'))) {
             $this->session->set_flashdata('message', $this->lang->line("access_denied"));
             $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
             redirect('module=inventories&view=mrr_list', 'refresh');
@@ -1073,8 +1079,7 @@ class Inventories extends MX_Controller
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
         }
-        $groups = array('salesman', 'viewer');
-        $editGroups = array('purchaser', 'verify', 'checker');
+        $groups = array('salesman', 'viewer','purchaser');
         if ($this->ion_auth->in_group($groups)) {
             $this->session->set_flashdata('message', $this->lang->line("access_denied"));
             $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
@@ -1393,7 +1398,7 @@ class Inventories extends MX_Controller
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
         }
-        $groups = array('salesman', 'viewer');
+        $groups = array('salesman', 'viewer','purchaser','verify','approver');
         if ($this->ion_auth->in_group($groups)) {
             $this->session->set_flashdata('message', $this->lang->line("access_denied"));
             $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));

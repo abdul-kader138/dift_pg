@@ -61,23 +61,34 @@ class Sales extends MX_Controller {
    
    function getdatatableajax()
    {
+
+       $userHasAuthority = $this->ion_auth->in_group(array('admin', 'owner'));
  		if($this->input->get('search_term')) { $search_term = $this->input->get('search_term'); } else { $search_term = false;}
 		
 	   $this->load->library('datatables');
 	   $this->datatables
 			->select("sales.id as sid, date, reference_no, biller_name, customer_name, total_tax, total_tax2, (total-return_amount) as total, internal_note")
 			->from('sales');
-			$this->datatables->add_column("Actions", 
-			"<center><a href='#' onClick=\"MyWindow=window.open('index.php?module=sales&view=view_invoice&id=$1', 'MyWindow','toolbar=0,location=0,directories=0,status=0,menubar=yes,scrollbars=yes,resizable=yes,width=1000,height=600'); return false;\" title='".$this->lang->line("view_invoice")."' class='tip'><i class='icon-fullscreen'></i></a>
+
+       if ($userHasAuthority) {
+
+           $this->datatables->add_column("Actions",
+               "<center><a href='#' onClick=\"MyWindow=window.open('index.php?module=sales&view=view_invoice&id=$1', 'MyWindow','toolbar=0,location=0,directories=0,status=0,menubar=yes,scrollbars=yes,resizable=yes,width=1000,height=600'); return false;\" title='" . $this->lang->line("view_invoice") . "' class='tip'><i class='icon-fullscreen'></i></a>
             <a href='#' onClick=\"MyWindow=window.open('index.php?module=sales&view=view_invoice_print&id=$1', 'MyWindow','toolbar=0,location=0,directories=0,status=0,menubar=yes,scrollbars=yes,resizable=yes,width=1000,height=600'); return false;\" title='Small Invoice' class='tip'><i class='icon-print'></i></a>			
-			<a href='index.php?module=sales&view=add_delivery&id=$1' title='".$this->lang->line("add_delivery_order")."' class='tip'><i class='icon-road'></i></a>
-			<a href='index.php?module=sales&view=pdf&id=$1' title='".$this->lang->line("download_pdf")."' class='tip'><i class='icon-file'></i></a> 
-			<!-- <a href='index.php?module=sales&view=email_invoice&id=$1' title='".$this->lang->line("email_invoice")."' class='tip'><i class='icon-envelope'></i></a> -->
-			<a href='index.php?module=sales&amp;view=edit&amp;id=$1' title='".$this->lang->line("edit_invoice")."' class='tip'><i class='icon-edit'></i></a>
-			<a href='index.php?module=sales&amp;view=delete&amp;id=$1' onClick=\"return confirm('". $this->lang->line('alert_x_invoice') ."')\" title='".$this->lang->line("delete_invoice")."' class='tip'><i class='icon-trash'></i></a></center>", "sid, internal_note")
-		
-		->unset_column('sid')
-		->unset_column('internal_note');
+			<a href='index.php?module=sales&view=add_delivery&id=$1' title='" . $this->lang->line("add_delivery_order") . "' class='tip'><i class='icon-road'></i></a>
+			<a href='index.php?module=sales&view=pdf&id=$1' title='" . $this->lang->line("download_pdf") . "' class='tip'><i class='icon-file'></i></a>
+			<!-- <a href='index.php?module=sales&view=email_invoice&id=$1' title='" . $this->lang->line("email_invoice") . "' class='tip'><i class='icon-envelope'></i></a> -->
+			<a href='index.php?module=sales&amp;view=edit&amp;id=$1' title='" . $this->lang->line("edit_invoice") . "' class='tip'><i class='icon-edit'></i></a>
+			<a href='index.php?module=sales&amp;view=delete&amp;id=$1' onClick=\"return confirm('" . $this->lang->line('alert_x_invoice') . "')\" title='" . $this->lang->line("delete_invoice") . "' class='tip'><i class='icon-trash'></i></a></center>", "sid, internal_note")
+               ->unset_column('sid')
+               ->unset_column('internal_note');
+       }else{
+           $this->datatables->add_column("Actions",
+               "<center><a href='#' onClick=\"MyWindow=window.open('index.php?module=sales&view=view_invoice&id=$1', 'MyWindow','toolbar=0,location=0,directories=0,status=0,menubar=yes,scrollbars=yes,resizable=yes,width=1000,height=600'); return false;\" title='" . $this->lang->line("view_invoice") . "' class='tip'><i class='icon-fullscreen'></i></a>
+            <a href='#' onClick=\"MyWindow=window.open('index.php?module=sales&view=view_invoice_print&id=$1', 'MyWindow','toolbar=0,location=0,directories=0,status=0,menubar=yes,scrollbars=yes,resizable=yes,width=1000,height=600'); return false;\" title='Small Invoice' class='tip'><i class='icon-print'></i></a>", "sid, internal_note")
+               ->unset_column('sid')
+               ->unset_column('internal_note');
+       }
 		
 	   echo $this->datatables->generate();
 

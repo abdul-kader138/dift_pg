@@ -113,6 +113,7 @@ class Products extends MX_Controller
     function getdatatableajaxadjustment()
     {
 
+        $userHasAuthority = $this->ion_auth->in_group(array('admin', 'owner'));
         $this->load->library('datatables');
         $this->datatables
             ->select("products.id as productid, products.code as code, products.name as name,  COALESCE(quantity, 0) as quantity, products.adjust_qnt", FALSE)
@@ -132,6 +133,8 @@ class Products extends MX_Controller
     function getdatatableajax()
     {
 
+        $userHasAuthority = $this->ion_auth->in_group(array('admin', 'owner'));
+
         $this->load->library('datatables');
         $this->datatables
             ->select("products.id as productid, products.image as image, products.code as code, products.name as name, categories.name as cname, products.price, COALESCE(quantity, 0) as quantity,  promotion.promo_title, alert_quantity, products.cf4 as barcode", FALSE);
@@ -139,8 +142,17 @@ class Products extends MX_Controller
         $this->datatables->join('categories', 'products.category_id=categories.id', 'left');
         $this->datatables->join('promotion', 'products.discount_id=promotion.promo_id', 'left');
         $this->datatables->group_by("products.id");
-        $this->datatables->add_column("Actions",
-            "<center><a id='$4 - $3' href='index.php?module=products&view=gen_barcode&code=$3&height=200' title='" . $this->lang->line("view_barcode") . "' class='barcode tip'><i class='icon-barcode'></i></a> <a href='#' onClick=\"MyWindow=window.open('index.php?module=products&view=product_details&id=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=600,height=600'); return false;\" class='tip' title='" . $this->lang->line("product_details") . "'><i class='icon-fullscreen'></i></a> <a class='image tip' id='$4 - $3' href='" . $this->config->base_url() . "assets/uploads/$2' title='" . $this->lang->line("view_image") . "'><i class='icon-picture'></i></a> <a href='index.php?module=products&view=add_damage&product_id=$1' class='tip' title='" . $this->lang->line("add_damage_qty") . "'><i class='icon-filter'></i></a> <a href='index.php?module=products&view=edit&id=$1' class='tip' title='" . $this->lang->line("edit_product") . "'><i class='icon-edit'></i></a> <a href='index.php?module=products&view=delete&id=$1' onClick=\"return confirm('" . $this->lang->line('alert_x_product') . "')\" class='tip' title='" . $this->lang->line("delete_product") . "'><i class='icon-trash'></i></a></center>", "productid, image, code, name");
+
+        if ($userHasAuthority) {
+            $this->datatables->add_column("Actions",
+                "<center><a id='$4 - $3' href='index.php?module=products&view=gen_barcode&code=$3&height=200' title='" . $this->lang->line("view_barcode") . "' class='barcode tip'><i class='icon-barcode'></i></a> <a href='#' onClick=\"MyWindow=window.open('index.php?module=products&view=product_details&id=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=600,height=600'); return false;\" class='tip' title='" . $this->lang->line("product_details") . "'><i class='icon-fullscreen'></i></a> <a class='image tip' id='$4 - $3' href='" . $this->config->base_url() . "assets/uploads/$2' title='" . $this->lang->line("view_image") . "'><i class='icon-picture'></i></a> <a href='index.php?module=products&view=add_damage&product_id=$1' class='tip' title='" . $this->lang->line("add_damage_qty") . "'><i class='icon-filter'></i></a> <a href='index.php?module=products&view=edit&id=$1' class='tip' title='" . $this->lang->line("edit_product") . "'><i class='icon-edit'></i></a> <a href='index.php?module=products&view=delete&id=$1' onClick=\"return confirm('" . $this->lang->line('alert_x_product') . "')\" class='tip' title='" . $this->lang->line("delete_product") . "'><i class='icon-trash'></i></a></center>", "productid, image, code, name");
+        } else {
+            $this->datatables->add_column("Actions",
+                "<center><a id='$4 - $3' href='index.php?module=products&view=gen_barcode&code=$3&height=200' title='" . $this->lang->line("view_barcode") . "' class='barcode tip'><i class='icon-barcode'></i></a> <a href='#' onClick=\"MyWindow=window.open('index.php?module=products&view=product_details&id=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=600,height=600'); return false;\" class='tip' title='" . $this->lang->line("product_details") . "'><i class='icon-fullscreen'></i></a> <a class='image tip' id='$4 - $3' href='" . $this->config->base_url() . "assets/uploads/$2' title='" . $this->lang->line("view_image") . "'><i class='icon-picture'></i></a>", "productid, image, code, name");
+        }
+
+//        $this->datatables->add_column("Actions",
+//            "<center><a id='$4 - $3' href='index.php?module=products&view=gen_barcode&code=$3&height=200' title='" . $this->lang->line("view_barcode") . "' class='barcode tip'><i class='icon-barcode'></i></a> <a href='#' onClick=\"MyWindow=window.open('index.php?module=products&view=product_details&id=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=600,height=600'); return false;\" class='tip' title='" . $this->lang->line("product_details") . "'><i class='icon-fullscreen'></i></a> <a class='image tip' id='$4 - $3' href='" . $this->config->base_url() . "assets/uploads/$2' title='" . $this->lang->line("view_image") . "'><i class='icon-picture'></i></a> <a href='index.php?module=products&view=add_damage&product_id=$1' class='tip' title='" . $this->lang->line("add_damage_qty") . "'><i class='icon-filter'></i></a> <a href='index.php?module=products&view=edit&id=$1' class='tip' title='" . $this->lang->line("edit_product") . "'><i class='icon-edit'></i></a> <a href='index.php?module=products&view=delete&id=$1' onClick=\"return confirm('" . $this->lang->line('alert_x_product') . "')\" class='tip' title='" . $this->lang->line("delete_product") . "'><i class='icon-trash'></i></a></center>", "productid, image, code, name");
 
         $this->datatables->unset_column('productid');
         $this->datatables->unset_column('image');
@@ -487,7 +499,7 @@ class Products extends MX_Controller
 
     function add()
     {
-        $groups = array('purchaser', 'salesman', 'viewer');
+        $groups = array('purchaser', 'salesman', 'viewer','checker');
         if ($this->ion_auth->in_group($groups)) {
             $this->session->set_flashdata('message', $this->lang->line("access_denied"));
             $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
@@ -895,7 +907,7 @@ class Products extends MX_Controller
 
     function upload_csv()
     {
-        $groups = array('purchaser', 'salesman', 'viewer');
+        $groups = array('purchaser', 'salesman', 'viewer','checker');
         if ($this->ion_auth->in_group($groups)) {
             $this->session->set_flashdata('message', $this->lang->line("access_denied"));
             $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
@@ -1016,7 +1028,7 @@ class Products extends MX_Controller
 
     function update_price()
     {
-        $groups = array('purchaser', 'salesman', 'viewer');
+        $groups = array('purchaser', 'salesman', 'viewer','checker');
         if ($this->ion_auth->in_group($groups)) {
             $this->session->set_flashdata('message', $this->lang->line("access_denied"));
             $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
@@ -1112,7 +1124,7 @@ class Products extends MX_Controller
 
     function update_warehouse_qty()
     {
-        $groups = array('purchaser', 'salesman', 'viewer');
+        $groups = array('purchaser', 'salesman', 'viewer','checker');
         if ($this->ion_auth->in_group($groups)) {
             $this->session->set_flashdata('message', $this->lang->line("access_denied"));
             $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
@@ -1215,7 +1227,7 @@ class Products extends MX_Controller
             redirect('module=home', 'refresh');
         }
 
-        $groups = array('admin', 'purchaser', 'salesman', 'viewer');
+        $groups = array('admin', 'purchaser', 'salesman', 'viewer','checker');
         if ($this->ion_auth->in_group($groups)) {
             $this->session->set_flashdata('message', $this->lang->line("access_denied"));
             $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
@@ -1278,7 +1290,7 @@ class Products extends MX_Controller
             $data['warehouse_id'] = NULL;
         }
 
-        $groups = array('purchaser', 'salesman', 'viewer');
+        $groups = array('purchaser', 'salesman', 'viewer','checker');
         if ($this->ion_auth->in_group($groups)) {
             $this->session->set_flashdata('message', $this->lang->line("access_denied"));
             $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
@@ -1326,7 +1338,7 @@ class Products extends MX_Controller
         if ($this->input->get('product_id')) {
             $product_id = $this->input->get('product_id');
         }
-        $groups = array('purchaser', 'salesman', 'viewer');
+        $groups = array('purchaser', 'salesman', 'viewer','checker');
         if ($this->ion_auth->in_group($groups)) {
             $this->session->set_flashdata('message', $this->lang->line("access_denied"));
             $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));

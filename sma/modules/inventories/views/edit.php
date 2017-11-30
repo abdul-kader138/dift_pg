@@ -504,7 +504,7 @@ echo form_open("module=inventories&view=edit&id=" . $id, $attrib);
         }
 
 
-        if($inv->checked == 1 && $inv->checked_by >0 && $this->ion_auth->in_group(array('admin', 'owner', 'checker'))){
+        if($inv->checked == 1 && $inv->checked_by >0 && $this->ion_auth->in_group(array('admin', 'owner', 'checker','approver','verify'))){
 
             echo form_submit('submit', 'Edit PO', 'class="btn btn-primary" style="padding: 6px 15px;"');
         }

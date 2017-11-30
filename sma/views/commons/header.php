@@ -109,7 +109,8 @@
                             style="margin-top:-1px" align="middle"></a>
                     <ul class="dropdown-menu pull-right" style="min-width: 60px;" role="menu" aria-labelledby="dLabel">
                         <?php $scanned_lang_dir = array_diff(scandir('sma/language/'), array('..', '.', 'index.html'));
-                        foreach ($scanned_lang_dir as $entry) { ?>
+                        foreach ($scanned_lang_dir as $entry) {
+                            ?>
                             <li><a href="<?php echo site_url('module=home&view=language&lang=' . $entry); ?>"><img
                                         src="<?php echo base_url(); ?>assets/img/<?php echo $entry; ?>.png"
                                         class="language-img"> &nbsp;&nbsp;<?php if ($entry == 'bportuguese') {
@@ -170,372 +171,394 @@
     </div>
 </div>
 <div id="col_1">
-    <div id="mainmanu">
-        <?php if ($this->ion_auth->in_group(array('owner', 'admin'))) { ?>
-            <ul class="menu nav nav-tabs nav-stacked">
-                <li class="dropdown"><a class="showSubMenus" href="#productsMenu"><i
-                            class="icon-barcode icon-white"></i> <?php echo $this->lang->line('products'); ?> <b
-                            class="caret"></b></a>
-                    <ul class="nav nav-tabs nav-stacked sub-menu" id="productsMenu">
-                        <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=products"><?php echo $this->lang->line('list_products'); ?></a>
-                        </li>
-                        <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=products&amp;view=add"><?php echo $this->lang->line('new_product'); ?></a>
-                        </li>
-                        <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=products&amp;view=sheet"><?php echo $this->lang->line('print_barcodes'); ?></a>
-                        </li>
-                        <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=products&amp;view=labels"><?php echo $this->lang->line('print_labels'); ?></a>
-                        </li>
-                        <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=products&amp;view=upload_csv"><?php echo $this->lang->line('add_by_csv'); ?></a>
-                        </li>
-                        <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=products&amp;view=update_price"><?php echo $this->lang->line('update_price'); ?></a>
-                        </li>
-                        <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=products&amp;view=update_warehouse_qty"><?php echo $this->lang->line('update_warehouse_qty'); ?></a>
-                        </li>
-                        <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=products&amp;view=damage_products"><?php echo $this->lang->line('damage_products'); ?></a>
-                        </li>
-                    </ul>
+
+<!--  Start Owner & Admin permission section-->
+
+<div id="mainmanu">
+<?php if ($this->ion_auth->in_group(array('owner', 'admin'))) { ?>
+    <ul class="menu nav nav-tabs nav-stacked">
+    <li class="dropdown"><a class="showSubMenus" href="#productsMenu"><i
+                class="icon-barcode icon-white"></i> <?php echo $this->lang->line('products'); ?> <b
+                class="caret"></b></a>
+        <ul class="nav nav-tabs nav-stacked sub-menu" id="productsMenu">
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=products"><?php echo $this->lang->line('list_products'); ?></a>
+            </li>
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=products&amp;view=add"><?php echo $this->lang->line('new_product'); ?></a>
+            </li>
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=products&amp;view=sheet"><?php echo $this->lang->line('print_barcodes'); ?></a>
+            </li>
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=products&amp;view=labels"><?php echo $this->lang->line('print_labels'); ?></a>
+            </li>
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=products&amp;view=upload_csv"><?php echo $this->lang->line('add_by_csv'); ?></a>
+            </li>
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=products&amp;view=update_price"><?php echo $this->lang->line('update_price'); ?></a>
+            </li>
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=products&amp;view=update_warehouse_qty"><?php echo $this->lang->line('update_warehouse_qty'); ?></a>
+            </li>
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=products&amp;view=damage_products"><?php echo $this->lang->line('damage_products'); ?></a>
+            </li>
+        </ul>
+    </li>
+
+    <li class="dropdown"><a class="showSubMenus" href="#transfersMenu"><i
+                class="icon-random icon-white"></i> Inventories <b class="caret"></b></a>
+        <ul class="nav nav-tabs nav-stacked sub-menu" id="transfersMenu">
+            <li><a href="<?php echo base_url(); ?>index.php?module=reports&view=custom_products">Current
+                    Stock</a></li>
+            <li><a href="<?php echo base_url(); ?>index.php?module=reports&view=opening_stock">Opening &
+                    Closing Stock</a></li>
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=transfers"><?php echo $this->lang->line('list_transfers'); ?></a>
+            </li>
+
+
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=transfers&amp;view=add"><?php echo $this->lang->line('transfer_products'); ?></a>
+            </li>
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=transfers&amp;view=transfer_csv"><?php echo $this->lang->line('transfer_products_by_csv'); ?></a>
+            </li>
+            <li><a href="<?php echo base_url(); ?>index.php?module=products&view=view_adjustment">Adjustment
+                    Quantity</a></li>
+            <li><a href="<?php echo base_url(); ?>index.php?module=inventories&view=add_quantity">Count
+                    Quantity</a></li>
+            <li><a href="<?php echo base_url(); ?>index.php?module=reports&view=quantity_variance">Count
+                    Variance Quantity</a></li>
+        </ul>
+    </li>
+    <li class="dropdown"><a class="showSubMenus" href="#purchasesMenu"><i
+                class="icon-star icon-white"></i> <?php echo $this->lang->line('purchases'); ?> <b
+                class="caret"></b></a>
+        <ul class="nav nav-tabs nav-stacked sub-menu" id="purchasesMenu">
+            <li><a href="<?php echo base_url(); ?>index.php?module=inventories">List Purchases
+                    Requisition</a></li>
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=inventories&amp;view=add"><?php echo $this->lang->line('add_purchase'); ?></a>
+            </li>
+            <li><a href="<?php echo base_url(); ?>index.php?module=inventories&view=po_content">Purchases
+                    Order</a></li>
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=inventories&amp;view=csv_inventory"><?php echo $this->lang->line('csv_inventory'); ?></a>
+            </li>
+            <li><a href="<?php echo base_url(); ?>index.php?module=inventories&amp;view=mrr_list">List Of
+                    MRR</a></li>
+        </ul>
+    </li>
+
+    <li class="dropdown"><a class="showSubMenus" href="#salesMenu"><i
+                class="icon-heart  icon-white"></i> <?php echo $this->lang->line('sales'); ?> <b
+                class="caret"></b></a>
+        <ul class="nav nav-tabs nav-stacked sub-menu" id="salesMenu">
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=sales"><?php echo $this->lang->line('list_invoices'); ?></a>
+            </li>
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=sales&amp;view=add"><?php echo $this->lang->line('add_invoice'); ?></a>
+            </li>
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=sales&amp;view=deliveries"><?php echo $this->lang->line('list_deliveries'); ?></a>
+            </li>
+        </ul>
+    </li>
+
+    <li class="dropdown"><a class="showSubMenus" href="#quotesMenu"><i
+                class="icon-exclamation-sign icon-white"></i> <?php echo $this->lang->line('quotes'); ?> <b
+                class="caret"></b></a>
+        <ul class="nav nav-tabs nav-stacked sub-menu" id="quotesMenu">
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=quotes"><?php echo $this->lang->line('list_quotes'); ?></a>
+            </li>
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=quotes&amp;view=add"><?php echo $this->lang->line('add_quote'); ?></a>
+            </li>
+        </ul>
+    </li>
+    <li class="dropdown"><a class="showSubMenus" href="#peopleMenu"><i
+                class="icon-user  icon-white"></i> <?php echo $this->lang->line('people'); ?> <b
+                class="caret"></b></a>
+        <ul class="nav nav-tabs nav-stacked sub-menu" id="peopleMenu">
+            <?php if ($this->ion_auth->in_group('owner')) { ?>
+                <li>
+                    <a href="<?php echo base_url(); ?>index.php?module=auth&amp;view=users"><?php echo $this->lang->line('list_users'); ?></a>
+                </li>
+                <li>
+                    <a href="<?php echo base_url(); ?>index.php?module=auth&amp;view=create_user"><?php echo $this->lang->line('new_user'); ?></a>
+                </li>
+                <li class="divider"></li>
+            <?php } ?>
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=billers"><?php echo $this->lang->line('list_billers'); ?></a>
+            </li>
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=billers&amp;view=add"><?php echo $this->lang->line('new_biller'); ?></a>
+            </li>
+            <li class="divider"></li>
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=suppliers"><?php echo $this->lang->line('list_suppliers'); ?></a>
+            </li>
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=suppliers&amp;view=add"><?php echo $this->lang->line('new_supplier'); ?></a>
+            </li>
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=suppliers&amp;view=add_by_csv"><?php echo $this->lang->line('add_suppliers_by_csv'); ?></a>
+            </li>
+            <li class="divider"></li>
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=customers"><?php echo $this->lang->line('list_customers'); ?></a>
+            </li>
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=customers&amp;view=add"><?php echo $this->lang->line('new_customer'); ?></a>
+            </li>
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=customers&amp;view=add_by_csv"><?php echo $this->lang->line('add_customers_by_csv'); ?></a>
+            </li>
+        </ul>
+    </li>
+    <?php if ($this->ion_auth->in_group('owner')) { ?>
+        <li class="dropdown"><a class="showSubMenus" href="#settingsMenu"><i
+                    class="icon-cog  icon-white"></i> <?php echo $this->lang->line('settings'); ?> <b
+                    class="caret"></b></a>
+            <ul class="nav nav-tabs nav-stacked sub-menu" id="settingsMenu">
+                <li>
+                    <a href="<?php echo base_url(); ?>index.php?module=settings&amp;view=system_setting"><?php echo $this->lang->line('system_setting'); ?></a>
+                </li>
+                <li>
+                    <a href="<?php echo base_url(); ?>index.php?module=settings&amp;view=change_logo"><?php echo $this->lang->line('chnage_logo'); ?></a>
+                </li>
+                <li>
+                    <a href="<?php echo base_url(); ?>index.php?module=settings&amp;view=upload_biller_logo"><?php echo $this->lang->line('upload_biller_logo'); ?></a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                    <a href="<?php echo base_url(); ?>index.php?module=shelfs"><?php echo $this->lang->line('list_shelfs'); ?></a>
+                </li>
+                <li>
+                    <a href="<?php echo base_url(); ?>index.php?module=shelfs&amp;view=add"><?php echo $this->lang->line('new_shelf'); ?></a>
+                </li>
+                <li class="divider"></li>
+
+                <li><a href="<?php echo base_url(); ?>index.php?module=shelfs&view=racks">Rack List</a></li>
+                <li><a href="<?php echo base_url(); ?>index.php?module=shelfs&view=add_rack">Add New
+                        Rack</a></li>
+                <li class="divider"></li>
+
+                <li>
+                    <a href="<?php echo base_url(); ?>index.php?module=categories"><?php echo $this->lang->line('list_categories'); ?></a>
+                </li>
+                <li>
+                    <a href="<?php echo base_url(); ?>index.php?module=categories&amp;view=add"><?php echo $this->lang->line('new_category'); ?></a>
+                </li>
+                <li>
+                    <a href="<?php echo base_url(); ?>index.php?module=categories&view=subcategories"><?php echo $this->lang->line('list_subcategories'); ?></a>
+                </li>
+                <li>
+                    <a href="<?php echo base_url(); ?>index.php?module=categories&amp;view=add_subcategory"><?php echo $this->lang->line('new_subcategory'); ?></a>
                 </li>
 
-                <li class="dropdown"><a class="showSubMenus" href="#transfersMenu"><i
-                            class="icon-random icon-white"></i> Inventories <b class="caret"></b></a>
-                    <ul class="nav nav-tabs nav-stacked sub-menu" id="transfersMenu">
-                        <li><a href="<?php echo base_url(); ?>index.php?module=reports&view=custom_products">Current
-                                Stock</a></li>
-                        <li><a href="<?php echo base_url(); ?>index.php?module=reports&view=opening_stock">Opening &
-                                Closing Stock</a></li>
-                        <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=transfers"><?php echo $this->lang->line('list_transfers'); ?></a>
-                        </li>
+
+                <li>
+                    <a href="<?php echo base_url(); ?>index.php?module=categories&amp;view=subsubcategories">List
+                        Of Sub Subcategory</a></li>
+
+                <li>
+                    <a href="<?php echo base_url(); ?>index.php?module=categories&amp;view=add_subsubcategory">Add
+                        Sub Subcategory</a></li>
 
 
-                        <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=transfers&amp;view=add"><?php echo $this->lang->line('transfer_products'); ?></a>
-                        </li>
-                        <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=transfers&amp;view=transfer_csv"><?php echo $this->lang->line('transfer_products_by_csv'); ?></a>
-                        </li>
-                        <li><a href="<?php echo base_url(); ?>index.php?module=products&view=view_adjustment">Adjustment
-                                Quantity</a></li>
-                        <li><a href="<?php echo base_url(); ?>index.php?module=inventories&view=add_quantity">Count
-                                Quantity</a></li>
-                        <li><a href="<?php echo base_url(); ?>index.php?module=reports&view=quantity_variance">Count
-                                Variance Quantity</a></li>
-                    </ul>
+                <li class="divider"></li>
+                <li>
+                    <a href="<?php echo base_url(); ?>index.php?module=settings&amp;view=warehouses"><?php echo $this->lang->line('warehouses'); ?></a>
                 </li>
-                <li class="dropdown"><a class="showSubMenus" href="#purchasesMenu"><i
-                            class="icon-star icon-white"></i> <?php echo $this->lang->line('purchases'); ?> <b
-                            class="caret"></b></a>
-                    <ul class="nav nav-tabs nav-stacked sub-menu" id="purchasesMenu">
-                        <li><a href="<?php echo base_url(); ?>index.php?module=inventories">List Purchases
-                                Requisition</a></li>
-                        <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=inventories&amp;view=add"><?php echo $this->lang->line('add_purchase'); ?></a>
-                        </li>
-                        <li><a href="<?php echo base_url(); ?>index.php?module=inventories&view=po_content">Purchases
-                                Order</a></li>
-                        <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=inventories&amp;view=csv_inventory"><?php echo $this->lang->line('csv_inventory'); ?></a>
-                        </li>
-                        <li><a href="<?php echo base_url(); ?>index.php?module=inventories&amp;view=mrr_list">List Of
-                                MRR</a></li>
-                    </ul>
+                <li>
+                    <a href="<?php echo base_url(); ?>index.php?module=settings&amp;view=add_warehouse"><?php echo $this->lang->line('add_warehouse'); ?></a>
                 </li>
+                <li class="divider"></li>
+                <li>
+                    <a href="<?php echo base_url(); ?>index.php?module=settings&amp;view=tax_rates"><?php echo $this->lang->line('tax_rates'); ?></a>
+                </li>
+                <li>
+                    <a href="<?php echo base_url(); ?>index.php?module=settings&amp;view=add_tax_rate"><?php echo $this->lang->line('add_tax_rate'); ?></a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                    <a href="<?php echo base_url(); ?>index.php?module=settings&amp;view=discounts"><?php echo $this->lang->line('discounts'); ?></a>
+                </li>
+                <li>
+                    <a href="<?php echo base_url(); ?>index.php?module=settings&amp;view=add_discount"><?php echo $this->lang->line('add_discount'); ?></a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                    <a href="<?php echo base_url(); ?>index.php?module=settings&amp;view=backup_database"><?php echo $this->lang->line('backup_database'); ?></a>
+                </li>
+            </ul>
+        </li>
+    <?php } ?>
 
-                <li class="dropdown"><a class="showSubMenus" href="#salesMenu"><i
-                            class="icon-heart  icon-white"></i> <?php echo $this->lang->line('sales'); ?> <b
-                            class="caret"></b></a>
-                    <ul class="nav nav-tabs nav-stacked sub-menu" id="salesMenu">
-                        <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=sales"><?php echo $this->lang->line('list_invoices'); ?></a>
-                        </li>
-                        <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=sales&amp;view=add"><?php echo $this->lang->line('add_invoice'); ?></a>
-                        </li>
-                        <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=sales&amp;view=deliveries"><?php echo $this->lang->line('list_deliveries'); ?></a>
-                        </li>
-                    </ul>
-                </li>
+    <li class="dropdown"><a class="showSubMenus" href="#reportsMenu"><i
+                class="icon-tasks  icon-white"></i> <?php echo $this->lang->line('reports'); ?> <b
+                class="caret"></b></a>
+        <ul class="nav nav-tabs nav-stacked sub-menu" id="reportsMenu">
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=reports&view=overview"><?php echo $this->lang->line('overview_chart'); ?></a>
+            </li>
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=reports&view=warehouse_stock"><?php echo $this->lang->line('warehouse_stock_value'); ?></a>
+            </li>
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=reports&view=products"><?php echo $this->lang->line('product_alerts'); ?></a>
+            </li>
 
-                <li class="dropdown"><a class="showSubMenus" href="#quotesMenu"><i
-                            class="icon-exclamation-sign icon-white"></i> <?php echo $this->lang->line('quotes'); ?> <b
-                            class="caret"></b></a>
-                    <ul class="nav nav-tabs nav-stacked sub-menu" id="quotesMenu">
-                        <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=quotes"><?php echo $this->lang->line('list_quotes'); ?></a>
-                        </li>
-                        <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=quotes&amp;view=add"><?php echo $this->lang->line('add_quote'); ?></a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="dropdown"><a class="showSubMenus" href="#peopleMenu"><i
-                            class="icon-user  icon-white"></i> <?php echo $this->lang->line('people'); ?> <b
-                            class="caret"></b></a>
-                    <ul class="nav nav-tabs nav-stacked sub-menu" id="peopleMenu">
-                        <?php if ($this->ion_auth->in_group('owner')) { ?>
-                            <li>
-                                <a href="<?php echo base_url(); ?>index.php?module=auth&amp;view=users"><?php echo $this->lang->line('list_users'); ?></a>
-                            </li>
-                            <li>
-                                <a href="<?php echo base_url(); ?>index.php?module=auth&amp;view=create_user"><?php echo $this->lang->line('new_user'); ?></a>
-                            </li>
-                            <li class="divider"></li>
-                        <?php } ?>
-                        <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=billers"><?php echo $this->lang->line('list_billers'); ?></a>
-                        </li>
-                        <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=billers&amp;view=add"><?php echo $this->lang->line('new_biller'); ?></a>
-                        </li>
-                        <li class="divider"></li>
-                        <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=suppliers"><?php echo $this->lang->line('list_suppliers'); ?></a>
-                        </li>
-                        <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=suppliers&amp;view=add"><?php echo $this->lang->line('new_supplier'); ?></a>
-                        </li>
-                        <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=suppliers&amp;view=add_by_csv"><?php echo $this->lang->line('add_suppliers_by_csv'); ?></a>
-                        </li>
-                        <li class="divider"></li>
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=reports&view=purchases"><?php echo $this->lang->line('purchase_report'); ?></a>
+            </li>
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=reports&view=daily_sales"><?php echo $this->lang->line('daily_sales'); ?></a>
+            </li>
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=reports&view=monthly_sales"><?php echo $this->lang->line('monthly_sales'); ?></a>
+            </li>
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=reports&view=sales"><?php echo $this->lang->line('sales_report'); ?></a>
+            </li>
+        </ul>
+    </li>
+    </ul>
+<?php } ?>
+
+<!--  End Owner & Admin permission section-->
+
+
+<!--  Start salesman,purchaser,approver,checker,verify permission section-->
+
+<?php if ($this->ion_auth->in_group(array('salesman', 'purchaser', 'approver', 'checker', 'verify'))) { ?>
+    <ul class="menu nav nav-tabs nav-stacked">
+        <li class="dropdown"><a class="showSubMenus" href="#userMenu"><i
+                    class="icon-tasks  icon-white"></i> <?php echo $this->lang->line('menus'); ?> <b
+                    class="caret"></b></a>
+            <ul class="nav nav-tabs nav-stacked sub-menu" id="userMenu" style="display:block;">
+                <?php if ($this->ion_auth->in_group(array('purchaser', 'approver', 'checker', 'verify'))) { ?>
+                    <li>
+                        <a href="<?php echo base_url(); ?>index.php?module=products"><?php echo $this->lang->line('list_products'); ?></a>
+                    </li>
+                    <?php if ($this->ion_auth->in_group(array('purchaser', 'checker'))) { ?>
+
                         <li>
                             <a href="<?php echo base_url(); ?>index.php?module=customers"><?php echo $this->lang->line('list_customers'); ?></a>
                         </li>
+                        <li><a href="<?php echo base_url(); ?>index.php?module=inventories">List Purchases
+                                Requisition</a></li>
                         <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=customers&amp;view=add"><?php echo $this->lang->line('new_customer'); ?></a>
-                        </li>
                         <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=customers&amp;view=add_by_csv"><?php echo $this->lang->line('add_customers_by_csv'); ?></a>
+                            <a href="<?php echo base_url(); ?>index.php?module=inventories&amp;view=add"><?php echo $this->lang->line('add_purchase'); ?></a>
                         </li>
-                    </ul>
-                </li>
-                <?php if ($this->ion_auth->in_group('owner')) { ?>
-                    <li class="dropdown"><a class="showSubMenus" href="#settingsMenu"><i
-                                class="icon-cog  icon-white"></i> <?php echo $this->lang->line('settings'); ?> <b
-                                class="caret"></b></a>
-                        <ul class="nav nav-tabs nav-stacked sub-menu" id="settingsMenu">
-                            <li>
-                                <a href="<?php echo base_url(); ?>index.php?module=settings&amp;view=system_setting"><?php echo $this->lang->line('system_setting'); ?></a>
-                            </li>
-                            <li>
-                                <a href="<?php echo base_url(); ?>index.php?module=settings&amp;view=change_logo"><?php echo $this->lang->line('chnage_logo'); ?></a>
-                            </li>
-                            <li>
-                                <a href="<?php echo base_url(); ?>index.php?module=settings&amp;view=upload_biller_logo"><?php echo $this->lang->line('upload_biller_logo'); ?></a>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
-                                <a href="<?php echo base_url(); ?>index.php?module=shelfs"><?php echo $this->lang->line('list_shelfs'); ?></a>
-                            </li>
-                            <li>
-                                <a href="<?php echo base_url(); ?>index.php?module=shelfs&amp;view=add"><?php echo $this->lang->line('new_shelf'); ?></a>
-                            </li>
-                            <li class="divider"></li>
+                    <?php } ?>
 
-                            <li><a href="<?php echo base_url(); ?>index.php?module=shelfs&view=racks">Rack List</a></li>
-                            <li><a href="<?php echo base_url(); ?>index.php?module=shelfs&view=add_rack">Add New
-                                    Rack</a></li>
-                            <li class="divider"></li>
-
-                            <li>
-                                <a href="<?php echo base_url(); ?>index.php?module=categories"><?php echo $this->lang->line('list_categories'); ?></a>
-                            </li>
-                            <li>
-                                <a href="<?php echo base_url(); ?>index.php?module=categories&amp;view=add"><?php echo $this->lang->line('new_category'); ?></a>
-                            </li>
-                            <li>
-                                <a href="<?php echo base_url(); ?>index.php?module=categories&view=subcategories"><?php echo $this->lang->line('list_subcategories'); ?></a>
-                            </li>
-                            <li>
-                                <a href="<?php echo base_url(); ?>index.php?module=categories&amp;view=add_subcategory"><?php echo $this->lang->line('new_subcategory'); ?></a>
-                            </li>
-
-
-                            <li>
-                                <a href="<?php echo base_url(); ?>index.php?module=categories&amp;view=subsubcategories">List
-                                    Of Sub Subcategory</a></li>
-
-                            <li>
-                                <a href="<?php echo base_url(); ?>index.php?module=categories&amp;view=add_subsubcategory">Add
-                                    Sub Subcategory</a></li>
-
-
-                            <li class="divider"></li>
-                            <li>
-                                <a href="<?php echo base_url(); ?>index.php?module=settings&amp;view=warehouses"><?php echo $this->lang->line('warehouses'); ?></a>
-                            </li>
-                            <li>
-                                <a href="<?php echo base_url(); ?>index.php?module=settings&amp;view=add_warehouse"><?php echo $this->lang->line('add_warehouse'); ?></a>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
-                                <a href="<?php echo base_url(); ?>index.php?module=settings&amp;view=tax_rates"><?php echo $this->lang->line('tax_rates'); ?></a>
-                            </li>
-                            <li>
-                                <a href="<?php echo base_url(); ?>index.php?module=settings&amp;view=add_tax_rate"><?php echo $this->lang->line('add_tax_rate'); ?></a>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
-                                <a href="<?php echo base_url(); ?>index.php?module=settings&amp;view=discounts"><?php echo $this->lang->line('discounts'); ?></a>
-                            </li>
-                            <li>
-                                <a href="<?php echo base_url(); ?>index.php?module=settings&amp;view=add_discount"><?php echo $this->lang->line('add_discount'); ?></a>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
-                                <a href="<?php echo base_url(); ?>index.php?module=settings&amp;view=backup_database"><?php echo $this->lang->line('backup_database'); ?></a>
-                            </li>
-                        </ul>
+                    <li><a href="<?php echo base_url(); ?>index.php?module=inventories&view=po_content">Purchases
+                            Order</a></li>
+                    <li><a href="<?php echo base_url(); ?>index.php?module=inventories&amp;view=mrr_list">List
+                            Of MRR</a></li>
+                    <li><a href="<?php echo base_url(); ?>index.php?module=reports&amp;view=custom_products">Current
+                            Stock Report</a></li>
+                    <li><a href="<?php echo base_url(); ?>index.php?module=reports&amp;view=opening_stock">Opening
+                            & Closing Stock Report</a></li>
+                    <li><a href="<?php echo base_url(); ?>index.php?module=reports&amp;view=quantity_variance">Count
+                            Variance Quantity Report</a></li>
+                    <li><a href="<?php echo base_url(); ?>index.php?module=reports&amp;view=sales">Sales
+                            Report</a></li>
+                    <li>
+                        <a href="<?php echo base_url(); ?>index.php?module=reports&view=purchases"><?php echo $this->lang->line('purchase_report'); ?></a>
                     </li>
+
+
                 <?php } ?>
 
-                <li class="dropdown"><a class="showSubMenus" href="#reportsMenu"><i
-                            class="icon-tasks  icon-white"></i> <?php echo $this->lang->line('reports'); ?> <b
-                            class="caret"></b></a>
-                    <ul class="nav nav-tabs nav-stacked sub-menu" id="reportsMenu">
-                        <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=reports&view=overview"><?php echo $this->lang->line('overview_chart'); ?></a>
-                        </li>
-                        <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=reports&view=warehouse_stock"><?php echo $this->lang->line('warehouse_stock_value'); ?></a>
-                        </li>
-                        <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=reports&view=products"><?php echo $this->lang->line('product_alerts'); ?></a>
-                        </li>
+                <?php if ($this->ion_auth->in_group('salesman')) { ?>
+                    <li>
+                        <a href="<?php echo base_url(); ?>index.php?module=products"><?php echo $this->lang->line('list_products'); ?></a>
+                    </li>
 
-                        <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=reports&view=purchases"><?php echo $this->lang->line('purchase_report'); ?></a>
-                        </li>
-                        <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=reports&view=daily_sales"><?php echo $this->lang->line('daily_sales'); ?></a>
-                        </li>
-                        <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=reports&view=monthly_sales"><?php echo $this->lang->line('monthly_sales'); ?></a>
-                        </li>
-                        <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=reports&view=sales"><?php echo $this->lang->line('sales_report'); ?></a>
-                        </li>
-                    </ul>
+                    <li>
+                        <a href="<?php echo base_url(); ?>index.php?module=sales"><?php echo $this->lang->line('list_invoices'); ?></a>
+                    </li>
+
+                    <li>
+                        <a href="<?php echo base_url(); ?>index.php?module=customers"><?php echo $this->lang->line('list_customers'); ?></a>
+                    </li>
+
+                    <li><a href="<?php echo base_url(); ?>index.php?module=reports&amp;view=custom_products">Current
+                            Stock Report</a></li>
+                    <li><a href="<?php echo base_url(); ?>index.php?module=reports&amp;view=opening_stock">Opening
+                            & Closing Stock Report</a></li>
+                    <li><a href="<?php echo base_url(); ?>index.php?module=reports&amp;view=quantity_variance">Count
+                            Variance Quantity Report</a></li>
+                    <li>
+                        <a href="<?php echo base_url(); ?>index.php?module=reports&view=sales"><?php echo $this->lang->line('sales_report'); ?></a>
+                    </li>
+
+                    <li>
+                        <a href="<?php echo base_url(); ?>index.php?module=reports&view=purchases"><?php echo $this->lang->line('purchase_report'); ?></a>
+                    </li>
+
+                    <li>
+                        <a href="<?php echo base_url(); ?>index.php?module=reports&view=products"><?php echo $this->lang->line('product_alerts'); ?></a>
+                    </li>
+                <?php } ?>
+            </ul>
+        </li>
+    </ul>
+<?php
+}
+
+//<!--  End salesman,purchaser,approver,checker,verify permission section-->
+
+
+//start view section
+
+if ($this->ion_auth->in_group('viewer')) {
+    ?>
+    <ul class="menu nav nav-tabs nav-stacked">
+        <li class="dropdown"><a class="showSubMenus" href="#userMenu"><i
+                    class="icon-tasks  icon-white"></i> <?php echo $this->lang->line('menus'); ?> <b
+                    class="caret"></b></a>
+            <ul class="nav nav-tabs nav-stacked sub-menu" id="userMenu" style="display:block;">
+                <li>
+                    <a href="<?php echo base_url(); ?>index.php?module=products"><?php echo $this->lang->line('list_products'); ?></a>
+                </li>
+                <li>
+                    <a href="<?php echo base_url(); ?>index.php?module=sales">
+                        <?php echo $this->lang->line('list_invoices'); ?></a>
+                </li>
+                <li><a href="<?php echo base_url(); ?>index.php?module=reports&amp;view=custom_products">Current
+                        Stock Report</a></li>
+                <li><a href="<?php echo base_url(); ?>index.php?module=reports&amp;view=opening_stock">Opening
+                        & Closing Stock Report</a></li>
+                <li><a href="<?php echo base_url(); ?>index.php?module=reports&amp;view=quantity_variance">Count
+                        Variance Quantity Report</a></li>
+                <li>
+                <li>
+                    <a href="<?php echo base_url(); ?>index.php?module=reports&view=sales"><?php echo $this->lang->line('sales_report'); ?></a>
+                </li>
+
+                <li>
+                    <a href="<?php echo base_url(); ?>index.php?module=reports&view=purchases"><?php echo $this->lang->line('purchase_report'); ?></a>
                 </li>
             </ul>
-        <?php } ?>
+        </li>
+    </ul>
+<?php } ?>
 
 
-        <?php if ($this->ion_auth->in_group(array('salesman', 'purchaser', 'approver', 'checker', 'verify'))) { ?>
-            <ul class="menu nav nav-tabs nav-stacked">
-                <li class="dropdown"><a class="showSubMenus" href="#userMenu"><i
-                            class="icon-tasks  icon-white"></i> <?php echo $this->lang->line('menus'); ?> <b
-                            class="caret"></b></a>
-                    <ul class="nav nav-tabs nav-stacked sub-menu" id="userMenu" style="display:block;">
-                        <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=products"><?php echo $this->lang->line('list_products'); ?></a>
-                        </li>
-                        <?php if ($this->ion_auth->in_group(array('purchaser', 'checker'))) { ?>
-                            <li><a href="<?php echo base_url(); ?>index.php?module=inventories">List Purchases
-                                    Requisition</a></li>
-                            <li>
-                                <a href="<?php echo base_url(); ?>index.php?module=inventories&amp;view=add"><?php echo $this->lang->line('add_purchase'); ?></a>
-                            </li>
-                            <!-- <li><a href="<?php echo base_url(); ?>index.php?module=inventories&amp;view=csv_inventory"><?php echo $this->lang->line('csv_inventory'); ?></a></li> -->
-                        <?php }
-                        if ($this->ion_auth->in_group('salesman')) { ?>
-                            <li>
-                                <a href="<?php echo base_url(); ?>index.php?module=sales"><?php echo $this->lang->line('list_invoices'); ?></a>
-                            </li>
-                            <li>
-                                <a href="<?php echo base_url(); ?>index.php?module=sales&amp;view=add"><?php echo $this->lang->line('add_invoice'); ?></a>
-                            </li>
-                            <li>
-                                <a href="<?php echo base_url(); ?>index.php?module=quotes"><?php echo $this->lang->line('list_quotes'); ?></a>
-                            </li>
-                            <li>
-                                <a href="<?php echo base_url(); ?>index.php?module=quotes&amp;view=add"><?php echo $this->lang->line('add_quote'); ?></a>
-                            </li>
-                        <?php } ?>
-                        <?php if ($this->ion_auth->in_group(array('purchaser', 'approver', 'verify', 'checker'))) { ?>
+<!--//End viewer section-->
 
-                            <li><a href="<?php echo base_url(); ?>index.php?module=inventories&view=po_content">Purchases
-                                    Order</a></li>
-                            <li><a href="<?php echo base_url(); ?>index.php?module=inventories&amp;view=mrr_list">List
-                                    Of MRR</a></li>
-                            <li><a href="<?php echo base_url(); ?>index.php?module=reports&amp;view=custom_products">Current
-                                    Stock Report</a></li>
-                            <li><a href="<?php echo base_url(); ?>index.php?module=reports&amp;view=opening_stock">Opening
-                                    & Closing Stock Report</a></li>
-                            <li><a href="<?php echo base_url(); ?>index.php?module=reports&amp;view=quantity_variance">Count
-                                    Variance Quantity Report</a></li>
-                            <li><a href="<?php echo base_url(); ?>index.php?module=reports&amp;view=sales">Sales
-                                    Report</a></li>
-
-                        <?php } ?>
-                        <?php if ($this->ion_auth->in_group('purchaser')) { ?>
-                            <li>
-                                <a href="<?php echo base_url(); ?>index.php?module=suppliers"><?php echo $this->lang->line('list_suppliers'); ?></a>
-                            </li>
-                            <li>
-                                <a href="<?php echo base_url(); ?>index.php?module=suppliers&amp;view=add"><?php echo $this->lang->line('new_supplier'); ?></a>
-                            </li>
-                        <?php }
-                        if ($this->ion_auth->in_group('salesman')) { ?>
-                            <li>
-                                <a href="<?php echo base_url(); ?>index.php?module=customers"><?php echo $this->lang->line('list_customers'); ?></a>
-                            </li>
-                            <li>
-                                <a href="<?php echo base_url(); ?>index.php?module=customers&amp;view=add"><?php echo $this->lang->line('new_customer'); ?></a>
-                            </li>
-                        <?php } ?>
-                        <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=reports&view=products"><?php echo $this->lang->line('product_alerts'); ?></a>
-                        </li>
-                        <?php if ($this->ion_auth->in_group(array('purchaser', 'checker'))) { ?>
-                            <li>
-                                <a href="<?php echo base_url(); ?>index.php?module=reports&view=purchases"><?php echo $this->lang->line('purchase_report'); ?></a>
-                            </li>
-                        <?php }
-                        if ($this->ion_auth->in_group('salesman')) { ?>
-                            <li>
-                                <a href="<?php echo base_url(); ?>index.php?module=reports&view=sales"><?php echo $this->lang->line('sales_report'); ?></a>
-                            </li>
-                        <?php } ?>
-                    </ul>
-                </li>
-            </ul>
-        <?php } elseif ($this->ion_auth->in_group('viewer')) { ?>
-            <ul class="menu nav nav-tabs nav-stacked">
-                <li class="dropdown"><a class="showSubMenus" href="#userMenu"><i
-                            class="icon-tasks  icon-white"></i> <?php echo $this->lang->line('menus'); ?> <b
-                            class="caret"></b></a>
-                    <ul class="nav nav-tabs nav-stacked sub-menu" id="userMenu" style="display:block;">
-                        <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=products"><?php echo $this->lang->line('list_products'); ?></a>
-                        </li>
-                        <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=inventories"><?php echo $this->lang->line('list_purchases'); ?></a>
-                        </li>
-                        <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=sales"><?php echo $this->lang->line('list_invoices'); ?></a>
-                        </li>
-                        <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=auth&view=change_password"><?php echo $this->lang->line('change_password'); ?></a>
-                        </li>
-                        <li>
-                            <a href="<?php echo base_url(); ?>index.php?module=auth&view=logout"><?php echo $this->lang->line('logout'); ?></a>
-                        </li>
-
-                    </ul>
-                </li>
-            </ul>
-        <?php } ?>
-    </div>
+</div>
 </div>
 <div id="contenitore_col_2">
     <div id="col_2">

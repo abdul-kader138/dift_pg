@@ -102,15 +102,20 @@
 <?php if($message) { echo "<div class=\"alert alert-danger\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>" . $message . "</div>"; } ?>
 <?php if($success_message) { echo "<div class=\"alert alert-success\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>" . $success_message . "</div>"; } ?>
 
+<!--warehouse uses later-  Abdul Kader->
+
 <div class="btn-group pull-right" style="margin-left: 25px;"> <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><?php echo $this->lang->line("all_warehouses"); ?> <span class="caret"></span> </a>
   <ul class="dropdown-menu">
-    <?php
-	foreach($warehouses as $warehouse) {
-		echo "<li><a href='index.php?module=sales&view=warehouse&warehouse_id=".$warehouse->id."'>".$warehouse->name."</a></li>";	
-	}
-	?>
-  </ul>
-</div>
+<!--    --><?php
+//	foreach($warehouses as $warehouse) {
+//		echo "<li><a href='index.php?module=sales&view=warehouse&warehouse_id=".$warehouse->id."'>".$warehouse->name."</a></li>";
+//	}
+//	?>
+<!--  </ul>-->
+<!--</div>-->
+
+<!--end-->
+
 <h3 class="title"><?php echo $page_title; ?></h3>
 <p class="introtext"><?php echo $this->lang->line("list_results"); ?></p>
 <table id="slData" class="table table-bordered table-hover table-striped table-condensed" style="margin-bottom: 5px;">
