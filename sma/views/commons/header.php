@@ -69,7 +69,7 @@
     <script src="<?php echo base_url(); ?>assets/js/html5shiv.js"></script>
     <![endif]-->
     <?php
-    if (!$this->ion_auth->in_group(array('owner', 'admin'))) {
+    if (!$this->ion_auth->in_group(array('owner', 'admin','verify','purchaser','approver','salesman'))) {
         echo '<style>table tfoot { display: none !important; }</style>';
     }
     ?>
@@ -465,14 +465,15 @@
                             Order</a></li>
                     <li><a href="<?php echo base_url(); ?>index.php?module=inventories&amp;view=mrr_list">List
                             Of MRR</a></li>
-                    <li><a href="<?php echo base_url(); ?>index.php?module=reports&amp;view=custom_products">Current
+                    <li><a href="<?php echo base_url(); ?>index.php?module=reports&view=custom_products">Current
                             Stock Report</a></li>
-                    <li><a href="<?php echo base_url(); ?>index.php?module=reports&amp;view=opening_stock">Opening
+                    <li><a href="<?php echo base_url(); ?>index.php?module=reports&view=opening_stock">Opening
                             & Closing Stock Report</a></li>
                     <li><a href="<?php echo base_url(); ?>index.php?module=reports&amp;view=quantity_variance">Count
                             Variance Quantity Report</a></li>
-                    <li><a href="<?php echo base_url(); ?>index.php?module=reports&amp;view=sales">Sales
-                            Report</a></li>
+                    <li>
+                        <a href="<?php echo base_url(); ?>index.php?module=reports&view=sales"><?php echo $this->lang->line('sales_report'); ?></a>
+                    </li>
                     <li>
                         <a href="<?php echo base_url(); ?>index.php?module=reports&view=purchases"><?php echo $this->lang->line('purchase_report'); ?></a>
                     </li>
@@ -484,7 +485,13 @@
                     <li>
                         <a href="<?php echo base_url(); ?>index.php?module=products"><?php echo $this->lang->line('list_products'); ?></a>
                     </li>
+                    <li><a href="<?php echo base_url(); ?>index.php?module=inventories">List Purchases
+                            Requisition</a></li>
+                    <li>
 
+                    <li>
+                        <a href="<?php echo base_url(); ?>index.php?module=inventories&amp;view=add"><?php echo $this->lang->line('add_purchase'); ?></a>
+                    </li>
                     <li>
                         <a href="<?php echo base_url(); ?>index.php?module=sales"><?php echo $this->lang->line('list_invoices'); ?></a>
                     </li>

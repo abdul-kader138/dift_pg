@@ -119,9 +119,12 @@ if($this->input->post('submit')) {
 						}
 						
 						var nCells = nRow.getElementsByTagName('th');
+                        console.log(aaData);
+                        console.log(nCells);
 						nCells[5].innerHTML = currencyFormate(parseFloat(tax_total).toFixed(2));
 						nCells[6].innerHTML = currencyFormate(parseFloat(tax2_total).toFixed(2));
 						nCells[7].innerHTML = currencyFormate(parseFloat(row_total).toFixed(2));
+                        console.log(nCells);
 					}
 					
                 } ).columnFilter({ aoColumns: [

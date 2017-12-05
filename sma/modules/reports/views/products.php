@@ -119,17 +119,21 @@ if ($this->input->post('submit')) {
             },
 
             "fnFooterCallback": function (nRow, aaData, iStart, iEnd, aiDisplay) {
-                var income = 0;
+                var pVal = 0;
+                var sVal = 0;
                 var profit = 0;
                 for (var i = 0; i < aaData.length; i++) {
-                    income += parseFloat(aaData[aiDisplay[i]][5]);
-                    profit += parseFloat(aaData[aiDisplay[i]][6]);
+                    pVal += parseFloat(aaData[aiDisplay[i]][3]);
+                    sVal += parseFloat(aaData[aiDisplay[i]][4]);
+                    profit += parseFloat(aaData[aiDisplay[i]][7]);
 
                 }
 
                 var nCells = nRow.getElementsByTagName('th');
-//						nCells[4].innerHTML = parseFloat(income).toFixed(2);
-//						nCells[5].innerHTML = parseFloat(profit).toFixed(2);
+//						nCells[5].innerHTML = parseFloat(income).toFixed(2);
+						nCells[3].innerHTML = parseFloat(pVal).toFixed(2);
+						nCells[4].innerHTML = parseFloat(sVal).toFixed(2);
+						nCells[7].innerHTML = parseFloat(profit).toFixed(2);
             }
 
         }).columnFilter({
@@ -245,6 +249,7 @@ if ($this->input->post('submit')) {
         <tr class="active">
             <th><?php echo $this->lang->line("product_code"); ?></th>
             <th><?php echo $this->lang->line("product_name"); ?></th>
+            <th>UM</th>
             <th>Total Purchased Quantity</th>
             <th> Total Sold Quantity</th>
             <th>Current Stock Quantity</th>
@@ -261,10 +266,11 @@ if ($this->input->post('submit')) {
         <tr>
             <th><?php echo $this->lang->line("product_code"); ?></th>
             <th><?php echo $this->lang->line("product_name"); ?></th>
+            <th>UM</th>
             <th>Total Purchased Quantity</th>
             <th> Total Sold Quantity</th>
-            <th>Current Stock Quantity</th>
-            <th>Unit Price</th>
+            <th></th>
+            <th></th>
             <th>Current Stock Value</th>
 
         </tr>

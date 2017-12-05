@@ -674,7 +674,7 @@ class Reports extends MX_Controller
 
         $this->load->library('datatables');
         $this->datatables
-            ->select("p.code, p.name,
+            ->select("p.code, p.name,p.unit,
                 COALESCE( PCosts.purchasedQty, 0 ) as PurchasedQty,
                 COALESCE( PSales.soldQty, 0 ) as SoldQty,
                   wProducts.quantity as quantity,
@@ -683,7 +683,8 @@ class Reports extends MX_Controller
             ->from('products p', FALSE)
             ->join($wh_qty, 'p.id = wProducts.product_id', 'inner')
             ->join($sp, 'p.id = PSales.product_id', 'left')
-            ->join($pp, 'p.id = PCosts.purchase_item_id', 'left');
+            ->join($pp, 'p.id = PCosts.purchase_item_id', 'left')
+            ->where('p.quantity > 0',null);
 
         if ($product) {
             $this->datatables->where('p.id', $product);

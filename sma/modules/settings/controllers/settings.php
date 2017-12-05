@@ -373,7 +373,7 @@ class Settings extends MX_Controller {
 		$config['allowed_types'] = 'gif|jpg|png'; 
 		$config['max_size'] = '300';
 		$config['max_width'] = '200';
-		$config['max_height'] = '30';
+		$config['max_height'] = '40';
 		$config['overwrite'] = FALSE; 
 		
 			$this->upload_photo->initialize($config);
