@@ -15,13 +15,3 @@ Item Purchased can be exchange within 24 hours with receipt.
 Item purchased can not be refunded for cash.
 
 Frozen item will not be returned or replaced.
-
-
-=====================================================================================
-
-
-ALTER TABLE  softmart_fresh.warehouses_products MODIFY COLUMN quantity decimal(15,2)
-
-ALTER TABLE softmart_fresh.sales ADD COLUMN paid_amount decimal(25,2) DEFAULT null;
-
-ALTER TABLE  softmart_fresh.count_products  CHANGE COLUMN quantity count_quantity decimal(15,2)
