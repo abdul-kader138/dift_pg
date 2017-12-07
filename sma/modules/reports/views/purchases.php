@@ -87,13 +87,13 @@ if($this->input->post('submit')) {
 								{
 									"sExtends": "csv",
 									"sFileName": "<?php echo $this->lang->line("purchases"); ?>.csv",
-                   		 			"mColumns": [ 0, 1, 2, 3, 4, 5 ]
+                   		 			"mColumns": [ 0, 1, 2, 3, 4, 5,6,7,8 ]
 								},
 								{
 									"sExtends": "pdf",
 									"sFileName": "<?php echo $this->lang->line("purchases"); ?>.pdf",
 									"sPdfOrientation": "landscape",
-                   		 			"mColumns": [ 0, 1, 2, 3, 4, 5 ]
+                   		 			"mColumns": [ 0, 1, 2, 3, 4, 5,6,7,8 ]
 								},
 								"print"
 						]

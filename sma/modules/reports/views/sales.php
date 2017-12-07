@@ -94,13 +94,13 @@ if($this->input->post('submit')) {
 								{
 									"sExtends": "csv",
 									"sFileName": "<?php echo $this->lang->line("sales"); ?>.csv",
-                   		 			"mColumns": [ 0, 1, 2, 3, 4, 5, 6, 7 ]
+                   		 			"mColumns": [ 0, 1, 2, 3, 4, 5, 6, 7,8,9,10 ]
 								},
 								{
 									"sExtends": "pdf",
 									"sFileName": "<?php echo $this->lang->line("sales"); ?>.pdf",
 									"sPdfOrientation": "landscape",
-                   		 			"mColumns": [ 0, 1, 2, 3, 4, 5, 6, 7 ]
+                   		 			"mColumns": [ 0, 1, 2, 3, 4, 5, 6, 7,8,9,10 ]
 								},
 								"print"
 						]
@@ -136,7 +136,7 @@ if($this->input->post('submit')) {
 						{ type: "text", bRegex:true },
 						{ type: "text", bRegex:true },
 						{ type: "text", bRegex:true },
-						null, null, null, null,null,null,null
+						null, null, null, null,null,null
                      ]});
 				
             } );
