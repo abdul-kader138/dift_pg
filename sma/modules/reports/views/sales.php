@@ -105,26 +105,29 @@ if($this->input->post('submit')) {
 								"print"
 						]
 					},
-					"aoColumns": [ 
-					  { "mRender": format_date },  null,  null, null, { "bSearchable": false }, { "mRender": currencyFormate }, { "mRender": currencyFormate }, { "mRender": currencyFormate }
+					"aoColumns": [
+					  { "mRender": format_date },  null,  null, null, { "bSearchable": false }, { "mRender": currencyFormate }, { "mRender": currencyFormate }, { "mRender": currencyFormate },{ "mRender": currencyFormate },{ "mRender": currencyFormate }, { "mRender": currencyFormate }
 					],
 					
 					"fnFooterCallback": function ( nRow, aaData, iStart, iEnd, aiDisplay ) {
-						var row_total = 0; tax_total =0; tax2_total = 0;
+						var row_total = 0.0; var tax_total =0; var tax2_total = 0; var return_total=0.0;var discount_total=0.0;var gross_total=0.0;
 						for ( var i=0 ; i<aaData.length ; i++ )
 						{
-							tax_total += parseFloat(aaData[ aiDisplay[i] ][5]);
-							tax2_total += parseFloat(aaData[ aiDisplay[i] ][6]);
-							row_total += parseFloat(aaData[ aiDisplay[i] ][7]);
+							tax_total += parseFloat(aaData[ aiDisplay[i] ][6]);
+							tax2_total += parseFloat(aaData[ aiDisplay[i] ][7]);
+                            if(aaData[ aiDisplay[i] ][5] !=null || aaData[ aiDisplay[i] ][5] != undefined) row_total += parseFloat(aaData[ aiDisplay[i] ][5]);
+                            if(aaData[ aiDisplay[i] ][8] !=null || aaData[ aiDisplay[i] ][8] != undefined)return_total += parseFloat(aaData[ aiDisplay[i] ][8]);
+                            if(aaData[ aiDisplay[i] ][9] !=null || aaData[ aiDisplay[i] ][9] != undefined) discount_total += parseFloat(aaData[ aiDisplay[i] ][9]);
+                            if(aaData[ aiDisplay[i] ][10] !=null || aaData[ aiDisplay[i] ][10] != undefined) gross_total += parseFloat(aaData[ aiDisplay[i] ][10]);
 						}
-						
+
 						var nCells = nRow.getElementsByTagName('th');
-                        console.log(aaData);
-                        console.log(nCells);
-						nCells[5].innerHTML = currencyFormate(parseFloat(tax_total).toFixed(2));
-						nCells[6].innerHTML = currencyFormate(parseFloat(tax2_total).toFixed(2));
-						nCells[7].innerHTML = currencyFormate(parseFloat(row_total).toFixed(2));
-                        console.log(nCells);
+						nCells[5].innerHTML = currencyFormate(parseFloat(row_total).toFixed(2));
+						nCells[6].innerHTML = currencyFormate(parseFloat(tax_total).toFixed(2));
+						nCells[7].innerHTML = currencyFormate(parseFloat(tax2_total).toFixed(2));
+						nCells[8].innerHTML = currencyFormate(parseFloat(return_total).toFixed(2));
+						nCells[9].innerHTML = currencyFormate(parseFloat(discount_total).toFixed(2));
+						nCells[10].innerHTML = currencyFormate(parseFloat(gross_total).toFixed(2));
 					}
 					
                 } ).columnFilter({ aoColumns: [
@@ -133,7 +136,7 @@ if($this->input->post('submit')) {
 						{ type: "text", bRegex:true },
 						{ type: "text", bRegex:true },
 						{ type: "text", bRegex:true },
-						null, null, null, null
+						null, null, null, null,null,null,null
                      ]});
 				
             } );
@@ -187,7 +190,7 @@ if($this->input->post('submit')) {
 <div class="control-group">
   <label class="control-label" for="warehouse"><?php echo $this->lang->line("warehouse"); ?></label>
   <div class="controls"> <?php 
-	   		$wh[""] = "";
+//	   		$wh[""] = "";
 	   		foreach($warehouses as $warehouse){
 				$wh[$warehouse->id] = $warehouse->name;
 			}
@@ -235,9 +238,12 @@ if($this->input->post('submit')) {
             <th><?php echo $this->lang->line("customer"); ?></th>
             <th><?php echo $this->lang->line("product_qty"); ?></th>
             
+            <th><?php echo $this->lang->line("total"); ?></th>
             <th><?php echo $this->lang->line("tax1"); ?></th>
             <th><?php echo $this->lang->line("tax2"); ?></th>
-            <th><?php echo $this->lang->line("total"); ?></th>
+            <th>Return Amount</th>
+            <th>Discount Amount</th>
+            <th>Gross Total</th>
 	</tr>
         </thead>
 		<tbody>
@@ -254,9 +260,12 @@ if($this->input->post('submit')) {
             <th>[<?php echo $this->lang->line("biller"); ?>]</th>
             <th>[<?php echo $this->lang->line("customer"); ?>]</th>
             <th><?php echo $this->lang->line("product_qty"); ?></th>
+            <th><?php echo $this->lang->line("total"); ?></th>
             <th><?php echo $this->lang->line("tax1"); ?></th>
             <th><?php echo $this->lang->line("tax2"); ?></th>
-            <th><?php echo $this->lang->line("total"); ?></th>
+            <th>Return Amount</th>
+            <th>Discount Amount</th>
+            <th>Gross Total</th>
 	</tr>
 	</tfoot>
 	</table>

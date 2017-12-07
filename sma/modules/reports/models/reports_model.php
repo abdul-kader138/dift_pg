@@ -206,8 +206,8 @@ class Reports_model extends CI_Model
 	public function getDailySales($year, $month) 
 	{
 		
-		$myQuery = "SELECT DATE_FORMAT( date,  '%e' ) AS date, SUM( COALESCE( total_tax, 0 ) ) AS tax1, SUM( COALESCE( total_tax2, 0 ) ) AS tax2, SUM( COALESCE( total, 0 ) ) AS total, SUM( COALESCE( inv_discount, 0 ) ) AS discount
-			FROM sales
+		$myQuery = "SELECT DATE_FORMAT( date,  '%e' ) AS date, SUM( COALESCE( total_tax, 0 ) ) AS tax1, SUM( COALESCE( total_tax2, 0 ) ) AS tax2, COALESCE((SUM( COALESCE( total, 0 )) -(SUM( (COALESCE( sales_item_return.return_qty, 0 ) *COALESCE( sales_item_return.price, 0 )) )) ),0) AS total, SUM( COALESCE( inv_discount, 0 ) ) AS discount,SUM( (COALESCE( sales_item_return.return_qty, 0 ) *COALESCE( sales_item_return.price, 0 )) ) AS return_quantity
+			FROM sales left join sales_item_return on sales.id=sales_item_return.sales_id
 			WHERE DATE_FORMAT( date,  '%Y-%m' ) =  '{$year}-{$month}'
 			GROUP BY DATE_FORMAT( date,  '%e' )";
 		$q = $this->db->query($myQuery, false);

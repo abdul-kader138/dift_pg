@@ -40,9 +40,8 @@ class Inventories extends MX_Controller
 
     function index()
     {
-//	   echo 'hello world';
 
-        if ($this->ion_auth->in_group('salesman')) {
+        if ($this->ion_auth->in_group('viewer')) {
             $this->session->set_flashdata('message', $this->lang->line("access_denied"));
             $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
             redirect('module=home', 'refresh');
@@ -68,9 +67,8 @@ class Inventories extends MX_Controller
 
     function po_content()
     {
-//	   echo 'hello world';
 
-        if ($this->ion_auth->in_group('salesman','viewer','purchaser')) {
+        if ($this->ion_auth->in_group('salesman','viewer')) {
             $this->session->set_flashdata('message', $this->lang->line("access_denied"));
             $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
             redirect('module=home', 'refresh');
@@ -129,7 +127,7 @@ class Inventories extends MX_Controller
         }
 
 
-        $userHasAuthority = $this->ion_auth->in_group(array('admin', 'owner','checker'));
+        $userHasAuthority = $this->ion_auth->in_group(array('admin', 'owner','checker','salesman'));
         $this->load->library('datatables');
 
 
@@ -523,7 +521,7 @@ class Inventories extends MX_Controller
 //        $mpdf->WriteHTML($stylesheet, 1);
 //
 //        $search = array("<div class=\"row-fluid\">", "<div class=\"span6\">");
-//        $replace = array("<div style='width: 100%;'>", "<div style='width: 48%; float: left;'>");
+//        $replace = array("<divz style='width: 100%;'>", "<div style='width: 48%; float: left;'>");
 //        $html = str_replace($search, $replace, $html);
 //
 //
@@ -543,10 +541,10 @@ class Inventories extends MX_Controller
     function pdf_purchase()
     {
 
-        if (!$this->ion_auth->in_group(array('admin', 'owner', 'approver'))) {
+        if (!$this->ion_auth->in_group(array('admin', 'owner', 'approver','checker'))) {
             $this->session->set_flashdata('message', $this->lang->line("access_denied"));
             $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
-            redirect('module=inventories', 'refresh');
+            redirect('module=inventories&view=po_content', 'refresh');
         }
 
         if ($this->input->get('id')) {
@@ -1079,7 +1077,7 @@ class Inventories extends MX_Controller
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
         }
-        $groups = array('salesman', 'viewer','purchaser');
+        $groups = array('viewer');
         if ($this->ion_auth->in_group($groups)) {
             $this->session->set_flashdata('message', $this->lang->line("access_denied"));
             $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));

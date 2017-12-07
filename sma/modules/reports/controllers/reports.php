@@ -143,6 +143,21 @@ class Reports extends MX_Controller
         $this->load->view('commons/footer');
     }
 
+    function customer_sales()
+    {
+        $data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
+        $data['users'] = $this->reports_model->getAllUsers();
+        $data['warehouses'] = $this->reports_model->getAllWarehouses();
+        $data['customers'] = $this->reports_model->getAllCustomers();
+        $data['billers'] = $this->reports_model->getAllBillers();
+
+        $meta['page_title'] = $this->lang->line("sale_reports");
+        $data['page_title'] = $this->lang->line("sale_reports");
+        $this->load->view('commons/header', $meta);
+        $this->load->view('customer_sales', $data);
+        $this->load->view('commons/footer');
+    }
+
     function getSales()
     {
         //if($this->input->get('name')){ $name = $this->input->get('name'); } else { $name = NULL; }
@@ -190,13 +205,19 @@ class Reports extends MX_Controller
             $start_date = $this->ion_auth->fsd($start_date);
             $end_date = $this->ion_auth->fsd($end_date);
         }
+
+        $sr = "( select sir.sales_id, sum((COALESCE( sir.return_qty, 0 )* COALESCE( sir.price, 0 ))) as return_val  from sales_item_return sir where sir.warehouse_id='{$warehouse}' group by sir.sales_id,sir.product_id) sReturn";
+//        $sr = "( SELECT sale_items.sale_id,sale_items.product_id,  (COALESCE((COALESCE( sales_item_return.return_qty, 0 )* COALESCE( sales_item_return.price, 0 )),0))  as return_val FROM `sale_items` inner join sales_item_return on sale_items.sale_id=sales_item_return.sales_id and sale_items.product_id=sales_item_return.product_id and  sale_items.id=sales_item_return.sales_item_id where sales_item_return.warehouse_id='{$warehouse}' group by sale_items.product_id,sale_items.id) sReturn";
+
+
         $this->load->library('datatables');
         $this->datatables
-            ->select("sales.id as sid,date, reference_no, biller_name, customer_name, GROUP_CONCAT(CONCAT(sale_items.product_name, ' (Qty-', sale_items.quantity, ' ,Price-', sale_items.unit_price, ')') SEPARATOR ', <br>') as iname, total_tax, total_tax2, total", FALSE)
+            ->select("sales.id as sid,date, reference_no, biller_name, customer_name, GROUP_CONCAT(CONCAT(sale_items.product_name, ' (Qty-', sale_items.quantity, ' ,Price-', sale_items.unit_price, ')') SEPARATOR ', <br>') as iname, (total +sum( (COALESCE( discount_val, 0)))) as gTotal ,total_tax, total_tax2,(COALESCE( sReturn.return_val, 0)) as return_val ,sum( (COALESCE( discount_val, 0))) as discount, (total -(COALESCE( sReturn.return_val, 0))) as totaol_val", FALSE)
             ->from('sales')
             ->join('sale_items', 'sale_items.sale_id=sales.id', 'left')
             ->join('warehouses', 'warehouses.id=sales.warehouse_id', 'left')
-            ->group_by('sales.id');
+            ->join($sr, 'sales.id=sReturn.sales_id', 'left')
+            ->group_by('sales.id,sales.reference_no');
 
 
 
@@ -231,6 +252,81 @@ class Reports extends MX_Controller
             <a href='index.php?module=sales&amp;view=delete&amp;id=$1' onClick=\"return confirm('". $this->lang->line('alert_x_invoice') ."')\" title='".$this->lang->line("delete_invoice")."' class='tip'><i class='icon-trash'></i></a></center>", "sid");*/
 
         $this->datatables->unset_column('sid');
+
+
+        echo $this->datatables->generate();
+//        echo $sr;
+    }
+
+
+    function getSalesByCustomer()
+    {
+        if ($this->input->get('customer')) {
+            $customer = $this->input->get('customer');
+        } else {
+            $customer = NULL;
+        }
+        if ($this->input->get('warehouse')) {
+            $warehouse = $this->input->get('warehouse');
+        } else {
+            $warehouse = NULL;
+        }
+        if ($this->input->get('reference_no')) {
+            $reference_no = $this->input->get('reference_no');
+        } else {
+            $reference_no = NULL;
+        }
+        if ($this->input->get('start_date')) {
+            $start_date = $this->input->get('start_date');
+        } else {
+            $start_date = NULL;
+        }
+        if ($this->input->get('end_date')) {
+            $end_date = $this->input->get('end_date');
+        } else {
+            $end_date = NULL;
+        }
+        if ($this->input->get('paid_by')) {
+            $paid_by = $this->input->get('paid_by');
+        } else {
+            $paid_by = NULL;
+        }
+        if ($start_date) {
+            $start_date = $this->ion_auth->fsd($start_date);
+            $end_date = $this->ion_auth->fsd($end_date);
+        }
+
+        $sr = "( SELECT sale_items.sale_id,sale_items.product_id,  (COALESCE((COALESCE( sales_item_return.return_qty, 0 )* COALESCE( sales_item_return.price, 0 )),0))  as return_val FROM `sale_items` inner join sales_item_return on sale_items.sale_id=sales_item_return.sales_id and sale_items.product_id=sales_item_return.product_id and  sale_items.id=sales_item_return.sales_item_id where sales_item_return.warehouse_id='{$warehouse}' group by sale_items.product_id,sale_items.id) sReturn";
+
+
+        $this->load->library('datatables');
+        $this->datatables
+            ->select("sale_items.product_id as pid,sales.customer_name,sale_items.product_code,sale_items.product_name,sale_items.product_unit,sum(sale_items.quantity),sale_items.unit_price,sum((COALESCE( sale_items.unit_price, 0))*(COALESCE( sale_items.quantity, 0))) as val, COALESCE( sale_items.discount_val, 0) as discount_value,COALESCE( sReturn.return_val, 0) as return_value, (COALESCE(sum((COALESCE( sale_items.unit_price, 0))*(COALESCE( sale_items.quantity, 0))) -COALESCE( sReturn.return_val, 0) - COALESCE( sale_items.discount_val, 0),0)) as gross_total", FALSE)
+            ->from('sales')
+            ->join('sale_items', 'sale_items.sale_id=sales.id', 'left')
+            ->join($sr, 'sReturn.sale_id=sale_items.sale_id and sReturn.product_id=sale_items.product_id', 'left')
+            ->group_by('sale_items.product_id','sale_items.customer_id');
+
+
+
+        if ($customer) {
+            $this->datatables->like('sales.customer_id', $customer);
+        }
+        if ($warehouse) {
+            $this->datatables->like('sales.warehouse_id', $warehouse);
+        }
+        if ($start_date) {
+            $this->datatables->where('sales.date BETWEEN "' . $start_date . '" and "' . $end_date . '"');
+        }
+
+        /*$this->datatables->add_column("Actions",
+            "<center><a href='#' onClick=\"MyWindow=window.open('index.php?module=sales&view=view_invoice&id=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=1000,height=600'); return false;\" title='".$this->lang->line("view_invoice")."' class='tip'><i class='icon-fullscreen'></i></a>
+            <a href='index.php?module=sales&view=pdf&id=$1' title='".$this->lang->line("download_pdf")."' class='tip'><i class='icon-file'></i></a>
+            <a href='index.php?module=sales&view=email_invoice&id=$1' title='".$this->lang->line("email_invoice")."' class='tip'><i class='icon-envelope'></i></a>
+            <a href='index.php?module=sales&amp;view=edit&amp;id=$1' title='".$this->lang->line("edit_invoice")."' class='tip'><i class='icon-edit'></i></a>
+            <a href='index.php?module=sales&amp;view=delete&amp;id=$1' onClick=\"return confirm('". $this->lang->line('alert_x_invoice') ."')\" title='".$this->lang->line("delete_invoice")."' class='tip'><i class='icon-trash'></i></a></center>", "sid");*/
+
+        $this->datatables->unset_column('pid');
 
 
         echo $this->datatables->generate();
@@ -396,7 +492,7 @@ class Reports extends MX_Controller
 
         if (!empty($sales)) {
             foreach ($sales as $sale) {
-                $daily_sale[$sale->date] = "<table class='table table-bordered table-hover table-striped table-condensed data' style='margin:0;'><tr><td>" . $this->lang->line("discount") . "</td><td>" . $this->ion_auth->formatMoney($sale->discount) . "</td></tr><tr><td>" . $this->lang->line("tax1") . "</td><td>" . $this->ion_auth->formatMoney($sale->tax1) . "</td></tr><tr><td>" . $this->lang->line("tax2") . "</td><td>" . $this->ion_auth->formatMoney($sale->tax2) . "</td></tr><tr><td>" . $this->lang->line("total") . "</td><td>" . $this->ion_auth->formatMoney($sale->total) . "</td></tr></table>";
+                $daily_sale[$sale->date] = "<table class='table table-bordered table-hover table-striped table-condensed data' style='margin:0;'><tr><td>" . $this->lang->line("discount") . "</td><td>" . $this->ion_auth->formatMoney($sale->discount) . "</td></tr><tr><td>" . $this->lang->line("return") . "</td><td>" . $this->ion_auth->formatMoney($sale->return_quantity) . "</td></tr><tr><td>" . $this->lang->line("tax1") . "</td><td>" . $this->ion_auth->formatMoney($sale->tax1) . "</td></tr><tr><td>" . $this->lang->line("tax2") . "</td><td>" . $this->ion_auth->formatMoney($sale->tax2) . "</td></tr><tr><td>" . $this->lang->line("total") . "</td><td>" . $this->ion_auth->formatMoney($sale->total) . "</td></tr></table>";
             }
 
             /*for ($i = 1; $i <= $num; $i++){

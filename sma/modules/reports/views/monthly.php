@@ -39,7 +39,7 @@
 	if(!empty($sales)) {
 		
 		foreach($sales as $value) {
-			$array[$value->date] ="<table class='table table-bordered table-hover table-striped table-condensed data' style='margin:0;'><tr><td>".$this->lang->line("tax1")."</td></tr><tr><td>". $this->ion_auth->formatMoney($value->tax1)."</td></tr><tr><td>".$this->lang->line("tax2")."</td></tr><tr><td>".$this->ion_auth->formatMoney($value->tax2)."</td></tr><tr><td>".$this->lang->line("total")."</td></tr><tr><td>".$this->ion_auth->formatMoney($value->total)."</td></tr></table>";
+			$array[$value->date] ="<table class='table table-bordered table-hover table-striped table-condensed data' style='margin:0;'><tr><td>" . $this->lang->line("discount") . "</td><td>" . $this->ion_auth->formatMoney($sale->discount) . "</td></tr><tr><td>" . $this->lang->line("return") . "</td><td>" . $this->ion_auth->formatMoney($sale->return_quantity) . "</td></tr><tr><tr><td>".$this->lang->line("tax1")."</td></tr><tr><td>". $this->ion_auth->formatMoney($value->tax1)."</td></tr><tr><td>".$this->lang->line("tax2")."</td></tr><tr><td>".$this->ion_auth->formatMoney($value->tax2)."</td></tr><tr><td>".$this->lang->line("total")."</td></tr><tr><td>".$this->ion_auth->formatMoney($value->total)."</td></tr></table>";
 		}
 
 		for ($i = 1; $i <= 12; $i++){

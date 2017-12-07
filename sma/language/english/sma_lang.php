@@ -615,6 +615,7 @@ $lang['menus'] 							= "Menus";
 $lang['serial_no'] 						= "Serial No";
 $lang['product_serial'] 				= "Product Serial";
 $lang['discounts'] 						= "Discounts";
+$lang['return'] 						= "Return";
 $lang['discount'] 						= "Discount";
 $lang['list_discounts'] 				= "List Discounts";
 $lang['new_discount'] 					= "Add New Discount";

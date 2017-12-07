@@ -32,7 +32,7 @@ class Settings extends MX_Controller {
 			redirect('module=auth&view=login');
 	  	}
 		
-		$groups = array('admin', 'purchaser', 'salesman', 'viewer');
+		$groups = array('admin', 'purchaser', 'salesman');
 		if ($this->ion_auth->in_group($groups))
 		{
 			$this->session->set_flashdata('message', $this->lang->line('access_denied'));
@@ -539,10 +539,13 @@ class Settings extends MX_Controller {
    
    function backup_database()
    {
-	   		if(DEMO) { 
-				$this->session->set_flashdata('message', $this->lang->line('disabled_in_demo'));
-				redirect("module=home", 'refresh');
-			}
+
+       var_dump(array(DEMO));
+//	   		if(DEMO) {
+//				$this->session->set_flashdata('message', $this->lang->line('disabled_in_demo'));
+//				redirect("module=home", 'refresh');
+//			}
+       var_dump(array(true));
 	  
 		$this->load->dbutil();
 		

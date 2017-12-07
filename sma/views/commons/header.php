@@ -69,7 +69,7 @@
     <script src="<?php echo base_url(); ?>assets/js/html5shiv.js"></script>
     <![endif]-->
     <?php
-    if (!$this->ion_auth->in_group(array('owner', 'admin','verify','purchaser','approver','salesman'))) {
+    if (!$this->ion_auth->in_group(array('owner', 'admin','verify','purchaser','approver','salesman','viewer'))) {
         echo '<style>table tfoot { display: none !important; }</style>';
     }
     ?>
@@ -431,6 +431,8 @@
         </ul>
     </li>
     </ul>
+
+
 <?php } ?>
 
 <!--  End Owner & Admin permission section-->
@@ -475,6 +477,9 @@
                         <a href="<?php echo base_url(); ?>index.php?module=reports&view=sales"><?php echo $this->lang->line('sales_report'); ?></a>
                     </li>
                     <li>
+                        <a href="<?php echo base_url(); ?>index.php?module=reports&view=daily_sales"><?php echo $this->lang->line('daily_sales'); ?></a>
+                    </li>
+                    <li>
                         <a href="<?php echo base_url(); ?>index.php?module=reports&view=purchases"><?php echo $this->lang->line('purchase_report'); ?></a>
                     </li>
 
@@ -511,11 +516,15 @@
                     </li>
 
                     <li>
-                        <a href="<?php echo base_url(); ?>index.php?module=reports&view=purchases"><?php echo $this->lang->line('purchase_report'); ?></a>
+                        <a href="<?php echo base_url(); ?>index.php?module=reports&view=daily_sales"><?php echo $this->lang->line('daily_sales'); ?></a>
                     </li>
 
                     <li>
-                        <a href="<?php echo base_url(); ?>index.php?module=reports&view=products"><?php echo $this->lang->line('product_alerts'); ?></a>
+                        <a href="<?php echo base_url(); ?>index.php?module=reports&view=customer_sales">Sales Report (Product wise)</a>
+                    </li>
+
+                    <li>
+                        <a href="<?php echo base_url(); ?>index.php?module=reports&view=purchases"><?php echo $this->lang->line('purchase_report'); ?></a>
                     </li>
                 <?php } ?>
             </ul>
@@ -556,6 +565,9 @@ if ($this->ion_auth->in_group('viewer')) {
 
                 <li>
                     <a href="<?php echo base_url(); ?>index.php?module=reports&view=purchases"><?php echo $this->lang->line('purchase_report'); ?></a>
+                </li>
+                <li>
+                    <a href="<?php echo base_url(); ?>index.php?module=settings&amp;view=backup_database"><?php echo $this->lang->line('backup_database'); ?></a>
                 </li>
             </ul>
         </li>
