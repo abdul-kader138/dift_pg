@@ -428,6 +428,9 @@
             <li>
                 <a href="<?php echo base_url(); ?>index.php?module=reports&view=sales"><?php echo $this->lang->line('sales_report'); ?></a>
             </li>
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=reports&view=customer_sales">Sales Report (Customer Wise)</a>
+            </li>
         </ul>
     </li>
     </ul>
@@ -477,6 +480,9 @@
                         <a href="<?php echo base_url(); ?>index.php?module=reports&view=sales"><?php echo $this->lang->line('sales_report'); ?></a>
                     </li>
                     <li>
+                        <a href="<?php echo base_url(); ?>index.php?module=reports&view=customer_sales">Sales Report (Customer Wise)</a>
+                    </li>
+                    <li>
                         <a href="<?php echo base_url(); ?>index.php?module=reports&view=daily_sales"><?php echo $this->lang->line('daily_sales'); ?></a>
                     </li>
                     <li>
@@ -520,7 +526,7 @@
                     </li>
 
                     <li>
-                        <a href="<?php echo base_url(); ?>index.php?module=reports&view=customer_sales">Sales Report (Product wise)</a>
+                        <a href="<?php echo base_url(); ?>index.php?module=reports&view=customer_sales">Sales Report (Customer Wise)</a>
                     </li>
 
                     <li>

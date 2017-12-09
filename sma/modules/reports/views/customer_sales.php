@@ -29,7 +29,15 @@ if($this->input->post('submit')) {
     if($this->input->post('end_date')) {
         $v .= "&end_date=".$this->input->post('end_date');
     }
+    ?>
+    <script type="application/javascript">
+        $(document).ready(function(){
+            $("#whName").text();
+            $("#whName").text("Warehouse - "+$("#warehouse option:selected").text());
+        })
 
+    </script>
+<?php
 }
 ?>
 <script src="<?php echo base_url(); ?>assets/media/js/jquery.dataTables.columnFilter.js" type="text/javascript"></script>
@@ -91,16 +99,12 @@ if($this->input->post('submit')) {
             "oTableTools": {
                 "sSwfPath": "assets/media/swf/copy_csv_xls_pdf.swf",
                 "aButtons": [
-                    {
-                        "sExtends": "csv",
-                        "sFileName": "<?php echo $this->lang->line("sales"); ?>.csv",
-                        "mColumns": [ 0, 1, 2, 3, 4, 5, 6, 7 ]
-                    },
+                    "csv",
+                    "xls",
                     {
                         "sExtends": "pdf",
-                        "sFileName": "<?php echo $this->lang->line("sales"); ?>.pdf",
                         "sPdfOrientation": "landscape",
-                        "mColumns": [ 0, 1, 2, 3, 4, 5, 6, 7 ]
+                        "sPdfMessage": ""
                     },
                     "print"
                 ]
@@ -143,7 +147,12 @@ if($this->input->post('submit')) {
 
 <link href="<?php echo $this->config->base_url(); ?>assets/css/datepicker.css" rel="stylesheet">
 
-<h3 class="title"><?php echo $page_title; ?> <a href="#" class="btn btn-mini toggle_form"><?php echo $this->lang->line("show_hide"); ?></a></h3>
+<h3><?php echo $page_title; ?> <?php if ($this->input->post('start_date')) {
+        echo" # ". $this->input->post('start_date') . " - " . $this->input->post('end_date');}
+    ?>&nbsp; &nbsp;&nbsp;<a href="#" class="btn btn-default btn-sm toggle_form"><?php echo $this->lang->line("show_hide"); ?></a>
+    <br/>
+    <div id="whName"></div>
+</h3>
 
 <div class="form">
     <p>Please customise the report below.</p>
@@ -161,7 +170,7 @@ if($this->input->post('submit')) {
     <div class="control-group">
         <label class="control-label" for="customer"><?php echo $this->lang->line("customer"); ?></label>
         <div class="controls"> <?php
-//            $cu[""] = "";
+            $cu[""] = "";
             foreach($customers as $customer){
                 $cu[$customer->id] = $customer->name;
             }

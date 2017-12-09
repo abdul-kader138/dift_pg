@@ -151,8 +151,8 @@ class Reports extends MX_Controller
         $data['customers'] = $this->reports_model->getAllCustomers();
         $data['billers'] = $this->reports_model->getAllBillers();
 
-        $meta['page_title'] = $this->lang->line("sale_reports");
-        $data['page_title'] = $this->lang->line("sale_reports");
+        $meta['page_title'] = $this->lang->line("sale_report_customer");
+        $data['page_title'] = $this->lang->line("sale_report_customer");
         $this->load->view('commons/header', $meta);
         $this->load->view('customer_sales', $data);
         $this->load->view('commons/footer');
@@ -301,11 +301,11 @@ class Reports extends MX_Controller
 
         $this->load->library('datatables');
         $this->datatables
-            ->select("sale_items.product_id as pid,sales.customer_name,sale_items.product_code,sale_items.product_name,sale_items.product_unit,sum(sale_items.quantity),sale_items.unit_price,sum((COALESCE( sale_items.unit_price, 0))*(COALESCE( sale_items.quantity, 0))) as val, COALESCE( sale_items.discount_val, 0) as discount_value,COALESCE( sReturn.return_val, 0) as return_value, (COALESCE(sum((COALESCE( sale_items.unit_price, 0))*(COALESCE( sale_items.quantity, 0))) -COALESCE( sReturn.return_val, 0) - COALESCE( sale_items.discount_val, 0),0)) as gross_total", FALSE)
+            ->select("sale_items.product_id as pid,sales.customer_name,sale_items.product_code,sale_items.product_name,sale_items.product_unit,sum(sale_items.quantity),sale_items.unit_price,sum((COALESCE( sale_items.unit_price, 0))*(COALESCE( sale_items.quantity, 0))) as val, COALESCE( sale_items.discount_val, 0) as discount_value,COALESCE( sum(sReturn.return_val), 0) as return_value, (COALESCE(sum((COALESCE( sale_items.unit_price, 0))*(COALESCE( sale_items.quantity, 0))) -COALESCE( sReturn.return_val, 0) - COALESCE( sale_items.discount_val, 0),0)) as gross_total", FALSE)
             ->from('sales')
-            ->join('sale_items', 'sale_items.sale_id=sales.id', 'left')
-            ->join($sr, 'sReturn.sale_id=sale_items.sale_id and sReturn.product_id=sale_items.product_id', 'left')
-            ->group_by('sale_items.product_id','sale_items.customer_id');
+            ->join('sale_items', 'sales.id=sale_items.sale_id', 'left')
+            ->join($sr, 'sale_items.sale_id=sReturn.sale_id and  sale_items.product_id=sReturn.product_id', 'left')
+            ->group_by('sale_items.product_id','sale_items.sale_id');
 
 
 
@@ -318,7 +318,6 @@ class Reports extends MX_Controller
         if ($start_date) {
             $this->datatables->where('sales.date BETWEEN "' . $start_date . '" and "' . $end_date . '"');
         }
-
         /*$this->datatables->add_column("Actions",
             "<center><a href='#' onClick=\"MyWindow=window.open('index.php?module=sales&view=view_invoice&id=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=1000,height=600'); return false;\" title='".$this->lang->line("view_invoice")."' class='tip'><i class='icon-fullscreen'></i></a>
             <a href='index.php?module=sales&view=pdf&id=$1' title='".$this->lang->line("download_pdf")."' class='tip'><i class='icon-file'></i></a>
