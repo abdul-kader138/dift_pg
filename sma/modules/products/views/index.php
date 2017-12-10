@@ -12,7 +12,7 @@
                     <?php if(BSTATESAVE) { echo '"bStateSave": true,'; } ?>
 			'bProcessing'    : true,
 			'bServerSide'    : true,
-			<?php $no_cost = array('salesman', 'viewer'); 
+			<?php $no_cost = array('viewer');
                             if (!$this->ion_auth->in_group($no_cost)) { 
 			?>
                     'sAjaxSource'    : '<?php echo base_url(); ?>index.php?module=products&view=getdatatableajaxcost',
@@ -52,7 +52,7 @@
 					},
 					"aoColumns": [ 
 					  null, null, null, null, null, null, null,
-					  <?php $no_cost = array('salesman', 'viewer'); 
+					  <?php $no_cost = array( 'viewer');
 					  		if (!$this->ion_auth->in_group($no_cost)) { 
 					  
 					  echo "null,";
@@ -150,7 +150,7 @@
 			<th>[<?php echo $this->lang->line("product_code"); ?>]</th>
             <th>[<?php echo $this->lang->line("product_name"); ?>]</th>
             <th>[<?php echo $this->lang->line("category"); ?>]</th>
-            <?php $no_cost = array('salesman', 'viewer'); 
+            <?php $no_cost = array('viewer');
 				  if (!$this->ion_auth->in_group($no_cost)) { 
             echo "<th>[".$this->lang->line("product_cost")."]</th>";
             } ?>
