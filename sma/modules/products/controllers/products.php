@@ -83,7 +83,7 @@ class Products extends MX_Controller
     function getdatatableajaxcost()
     {
 
-        $userHasAuthority = $this->ion_auth->in_group(array('admin', 'owner','salesman'));
+        $userHasAuthority = $this->ion_auth->in_group(array('admin', 'owner'));
 
         $this->load->library('datatables');
         $this->datatables
