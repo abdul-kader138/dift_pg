@@ -1196,6 +1196,7 @@ class Inventories extends MX_Controller
         }
 
 
+
         $checkedBy = $this->inventories_model->checkedByStatus($id);
 
         if ($this->form_validation->run() == true && $checkedBy->checked == 0 && $this->inventories_model->makePurchaseOrder($id, $invDetails, $items, $warehouse_id)) {
