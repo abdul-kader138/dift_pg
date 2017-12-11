@@ -781,7 +781,8 @@ class Inventories_model extends CI_Model
 
                     foreach ($value as $data) {
 
-                        $this->db->update('purchase_items', array('make_purchase_id' => $make_purchase_id, 'supplier_id' => $key), array('id' => $data['p_item_id']));
+                        $this->db->update('purchase_items', array('make_purchase_id' => $make_purchase_id, 'supplier_id' => $key,'unit_price'=>$data['unit_price'],'quantity'=>$data['quantity'],'gross_total'=>($data['quantity']*$data['unit_price'])), array('id' => $data['p_item_id']));
+//                        $this->db->update('purchase_items', $items, array('id' => $data['p_item_id']));
                     }
 
                 }
