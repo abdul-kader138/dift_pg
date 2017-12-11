@@ -206,17 +206,16 @@ class Reports extends MX_Controller
             $end_date = $this->ion_auth->fsd($end_date);
         }
 
-        $sr = "( select sir.sales_id, sum((COALESCE( sir.return_qty, 0 )* COALESCE( sir.price, 0 ))) as return_val  from sales_item_return sir where sir.warehouse_id='{$warehouse}' group by sir.sales_id,sir.product_id) sReturn";
+ //       $sr = "( select sir.sales_id, sum((COALESCE( sir.return_qty, 0 )* COALESCE( sir.price, 0 ))) as return_val  from sales_item_return sir where sir.warehouse_id='{$warehouse}' group by sir.sales_id,sir.product_id) sReturn";
 //        $sr = "( SELECT sale_items.sale_id,sale_items.product_id,  (COALESCE((COALESCE( sales_item_return.return_qty, 0 )* COALESCE( sales_item_return.price, 0 )),0))  as return_val FROM `sale_items` inner join sales_item_return on sale_items.sale_id=sales_item_return.sales_id and sale_items.product_id=sales_item_return.product_id and  sale_items.id=sales_item_return.sales_item_id where sales_item_return.warehouse_id='{$warehouse}' group by sale_items.product_id,sale_items.id) sReturn";
 
 
         $this->load->library('datatables');
         $this->datatables
-            ->select("sales.id as sid,date, reference_no, biller_name, customer_name, GROUP_CONCAT(CONCAT(sale_items.product_name, ' (Qty-', sale_items.quantity, ' ,Price-', sale_items.unit_price, ')') SEPARATOR ', <br>') as iname, (total +sum( (COALESCE( discount_val, 0)))) as gTotal ,total_tax, total_tax2,(COALESCE( sReturn.return_val, 0)) as return_val ,sum( (COALESCE( discount_val, 0))) as discount, (total -(COALESCE( sReturn.return_val, 0))) as totaol_val", FALSE)
+            ->select("sales.id as sid,date, reference_no, biller_name, customer_name, GROUP_CONCAT(CONCAT(sale_items.product_name, ' (Qty-', sale_items.quantity, ' ,Price-', sale_items.unit_price, ')') SEPARATOR ', <br>') as iname, (total +sum( (COALESCE( discount_val, 0)))) as gTotal ,total_tax, total_tax2,return_ref,(COALESCE( return_amount, 0)) as return_val ,sum( (COALESCE( discount_val, 0))) as discount, (total - (COALESCE( return_amount, 0))) as totaol_val", FALSE)
             ->from('sales')
             ->join('sale_items', 'sale_items.sale_id=sales.id', 'left')
             ->join('warehouses', 'warehouses.id=sales.warehouse_id', 'left')
-            ->join($sr, 'sales.id=sReturn.sales_id', 'left')
             ->group_by('sales.id,sales.reference_no');
 
 

@@ -94,19 +94,19 @@ if($this->input->post('submit')) {
 								{
 									"sExtends": "csv",
 									"sFileName": "<?php echo $this->lang->line("sales"); ?>.csv",
-                   		 			"mColumns": [ 0, 1, 2, 3, 4, 5, 6, 7,8,9,10 ]
+                   		 			"mColumns": [ 0, 1, 2, 3, 4, 5, 6, 7,8,9,10,11 ]
 								},
 								{
 									"sExtends": "pdf",
 									"sFileName": "<?php echo $this->lang->line("sales"); ?>.pdf",
 									"sPdfOrientation": "landscape",
-                   		 			"mColumns": [ 0, 1, 2, 3, 4, 5, 6, 7,8,9,10 ]
+                   		 			"mColumns": [ 0, 1, 2, 3, 4, 5, 6, 7,8,9,10,11 ]
 								},
 								"print"
 						]
 					},
 					"aoColumns": [
-					  { "mRender": format_date },  null,  null, null, { "bSearchable": false }, { "mRender": currencyFormate }, { "mRender": currencyFormate }, { "mRender": currencyFormate },{ "mRender": currencyFormate },{ "mRender": currencyFormate }, { "mRender": currencyFormate }
+					  { "mRender": format_date },  null,  null, null, { "bSearchable": false }, { "mRender": currencyFormate }, { "mRender": currencyFormate }, { "mRender": currencyFormate }, null ,{ "mRender": currencyFormate },{ "mRender": currencyFormate }, { "mRender": currencyFormate }
 					],
 					
 					"fnFooterCallback": function ( nRow, aaData, iStart, iEnd, aiDisplay ) {
@@ -116,18 +116,18 @@ if($this->input->post('submit')) {
 							tax_total += parseFloat(aaData[ aiDisplay[i] ][6]);
 							tax2_total += parseFloat(aaData[ aiDisplay[i] ][7]);
                             if(aaData[ aiDisplay[i] ][5] !=null || aaData[ aiDisplay[i] ][5] != undefined) row_total += parseFloat(aaData[ aiDisplay[i] ][5]);
-                            if(aaData[ aiDisplay[i] ][8] !=null || aaData[ aiDisplay[i] ][8] != undefined)return_total += parseFloat(aaData[ aiDisplay[i] ][8]);
-                            if(aaData[ aiDisplay[i] ][9] !=null || aaData[ aiDisplay[i] ][9] != undefined) discount_total += parseFloat(aaData[ aiDisplay[i] ][9]);
-                            if(aaData[ aiDisplay[i] ][10] !=null || aaData[ aiDisplay[i] ][10] != undefined) gross_total += parseFloat(aaData[ aiDisplay[i] ][10]);
+                            if(aaData[ aiDisplay[i] ][9] !=null || aaData[ aiDisplay[i] ][9] != undefined)return_total += parseFloat(aaData[ aiDisplay[i] ][9]);
+                            if(aaData[ aiDisplay[i] ][10] !=null || aaData[ aiDisplay[i] ][10] != undefined) discount_total += parseFloat(aaData[ aiDisplay[i] ][10]);
+                            if(aaData[ aiDisplay[i] ][11] !=null || aaData[ aiDisplay[i] ][11] != undefined) gross_total += parseFloat(aaData[ aiDisplay[i] ][11]);
 						}
 
 						var nCells = nRow.getElementsByTagName('th');
 						nCells[5].innerHTML = currencyFormate(parseFloat(row_total).toFixed(2));
 						nCells[6].innerHTML = currencyFormate(parseFloat(tax_total).toFixed(2));
 						nCells[7].innerHTML = currencyFormate(parseFloat(tax2_total).toFixed(2));
-						nCells[8].innerHTML = currencyFormate(parseFloat(return_total).toFixed(2));
-						nCells[9].innerHTML = currencyFormate(parseFloat(discount_total).toFixed(2));
-						nCells[10].innerHTML = currencyFormate(parseFloat(gross_total).toFixed(2));
+						nCells[9].innerHTML = currencyFormate(parseFloat(return_total).toFixed(2));
+						nCells[10].innerHTML = currencyFormate(parseFloat(discount_total).toFixed(2));
+						nCells[11].innerHTML = currencyFormate(parseFloat(gross_total).toFixed(2));
 					}
 					
                 } ).columnFilter({ aoColumns: [
@@ -241,6 +241,7 @@ if($this->input->post('submit')) {
             <th><?php echo $this->lang->line("total"); ?></th>
             <th><?php echo $this->lang->line("tax1"); ?></th>
             <th><?php echo $this->lang->line("tax2"); ?></th>
+            <th>Return Ref</th>
             <th>Return Amount</th>
             <th>Discount Amount</th>
             <th>Gross Total</th>
@@ -263,6 +264,7 @@ if($this->input->post('submit')) {
             <th><?php echo $this->lang->line("total"); ?></th>
             <th><?php echo $this->lang->line("tax1"); ?></th>
             <th><?php echo $this->lang->line("tax2"); ?></th>
+            <th></th>
             <th>Return Amount</th>
             <th>Discount Amount</th>
             <th>Gross Total</th>
