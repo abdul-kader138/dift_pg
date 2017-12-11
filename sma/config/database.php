@@ -37,7 +37,7 @@
 // The following values will probably need to be changed.
 $db['default']['username'] = "root";
 $db['default']['password'] = "";
-$db['default']['database'] = "softmart_fresh";
+$db['default']['database'] = "dift_pg";
 
 // The following values can probably stay the same.
 $db['default']['hostname'] = "localhost";
