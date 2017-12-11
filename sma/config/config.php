@@ -14,7 +14,7 @@
 | path to your installation.
 |
 */
-$config['base_url']	= 'http://localhost/freashmart';
+$config['base_url']	= 'http://localhost/dift_pg/dift_pg/';
 
 /*
 |--------------------------------------------------------------------------
