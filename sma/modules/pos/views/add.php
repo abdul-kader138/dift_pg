@@ -189,7 +189,7 @@
                         <?php if (TAX1 && !TAX2) { ?>
                             <td></td>
                             <td></td>
-                            <td style="padding-left:10px; text-align:left; font-weight:normal;"><?php echo $this->lang->line('tax1'); ?></td>
+                            <td style="padding-left:10px; text-align:left; font-weight:normal;"><?php echo $this->lang->line('vat'); ?></td>
                             <td style="text-align:right; padding-right:10px; font-size: 14px; font-weight:bold;">
                                 <span id="tax">0.00</span></td>
                         <?php } ?>

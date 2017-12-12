@@ -28,6 +28,7 @@ $lang['qty'] 						= "Qty";
 $lang['total_items'] 				= "Total Items";
 $lang['total_payable'] 				= "Total Payable";
 $lang['total_sales'] 				= "Total Sales";
+$lang['vat'] 						= "Vat";
 $lang['tax1'] 						= "Tax 1";
 $lang['total_x_tax'] 				= "Total";
 $lang['cancel'] 					= "Cancel";

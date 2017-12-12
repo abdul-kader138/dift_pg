@@ -82,7 +82,7 @@ h3 { margin: 5px 0; }
     </tr>
     <tr>
     <?php if($inv->total_tax != 0 && TAX1) { ?>
-    <td style="text-align:left;"><?php echo $this->lang->line("product_tax"); ?></td><td style="text-align:right; padding-right:1.5%; border-right: 1px solid #999;font-weight:bold;"><?php echo $this->ion_auth->formatMoney($inv->total_tax); ?></td>
+    <td style="text-align:left;"><?php echo $this->lang->line("product_vat"); ?></td><td style="text-align:right; padding-right:1.5%; border-right: 1px solid #999;font-weight:bold;"><?php echo $this->ion_auth->formatMoney($inv->total_tax); ?></td>
     <?php } else { echo '<td></td>'; } ?>
     <?php if($inv->total_tax2 != 0 && TAX2) { ?>
     <td style="text-align:left; padding-left:1.5%;"><?php echo $this->lang->line("invoice_tax"); ?></td><td style="text-align:right;font-weight:bold;"><?php echo $this->ion_auth->formatMoney($inv->total_tax2); ?></td>

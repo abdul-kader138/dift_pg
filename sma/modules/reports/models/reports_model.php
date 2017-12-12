@@ -236,6 +236,33 @@ class Reports_model extends CI_Model
 			return $data;
 		}
 	}
-	
-	
+
+    public function getAllInvoiceItemsWithDetails($sDate,$eDate)
+    {
+
+        $myQuery = "select sales.id, sale_items.product_name, sale_items.product_code, sum(sale_items.quantity) as quantity, sale_items.serial_no, sale_items.tax, sale_items.unit_price, sum(sale_items.val_tax) as val_tax, sum(sale_items.discount_val) as discount_val, sum(sale_items.gross_total) as gross_total FROM sales left join sale_items on sales.id=sale_items.sale_id WHERE sales.date between  '{$sDate}' and  '{$eDate}' GROUP BY sale_items.product_code ORDER BY sale_items.product_code ASC";
+        $q = $this->db->query($myQuery, false);
+        if($q->num_rows() > 0) {
+            foreach (($q->result()) as $row) {
+                $data[] = $row;
+            }
+
+            return $data;
+        }
+    }
+
+    public function getInvoiceBySaleID($sDate,$eDate)
+    {
+
+        $myQuery = "select sales.id as total_count ,sum(sales.total_tax) as val_tax, sum(sales.inv_discount) as discount_val, sum(sales.total) as gross_total FROM sales WHERE sales.date between  '{$sDate}' and  '{$eDate}'";
+        $q = $this->db->query($myQuery, false);
+        if($q->num_rows() > 0) {
+            foreach (($q->result()) as $row) {
+                $data[] = $row;
+            }
+
+            return $data;
+        }
+    }
+
 }

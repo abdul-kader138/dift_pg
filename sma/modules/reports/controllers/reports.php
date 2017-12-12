@@ -33,6 +33,7 @@ class Reports extends MX_Controller
         }
 
         $this->load->model('reports_model');
+//        $this->load->model('sales_model');
 
     }
 
@@ -71,7 +72,7 @@ class Reports extends MX_Controller
         $this->datatables
             ->select('p.id as product_id, p.image as image, p.code as code, p.name as name, p.unit, p.price, pAlert.quantity, p.alert_quantity')
             ->from('products p')
-            ->join($sp,'pAlert.product_id=p.id','inner')
+            ->join($sp, 'pAlert.product_id=p.id', 'inner')
             ->where('p.alert_quantity >= pAlert.quantity', NULL)
             ->where('p.track_quantity', 1);
 
@@ -206,7 +207,7 @@ class Reports extends MX_Controller
             $end_date = $this->ion_auth->fsd($end_date);
         }
 
- //       $sr = "( select sir.sales_id, sum((COALESCE( sir.return_qty, 0 )* COALESCE( sir.price, 0 ))) as return_val  from sales_item_return sir where sir.warehouse_id='{$warehouse}' group by sir.sales_id,sir.product_id) sReturn";
+        //       $sr = "( select sir.sales_id, sum((COALESCE( sir.return_qty, 0 )* COALESCE( sir.price, 0 ))) as return_val  from sales_item_return sir where sir.warehouse_id='{$warehouse}' group by sir.sales_id,sir.product_id) sReturn";
 //        $sr = "( SELECT sale_items.sale_id,sale_items.product_id,  (COALESCE((COALESCE( sales_item_return.return_qty, 0 )* COALESCE( sales_item_return.price, 0 )),0))  as return_val FROM `sale_items` inner join sales_item_return on sale_items.sale_id=sales_item_return.sales_id and sale_items.product_id=sales_item_return.product_id and  sale_items.id=sales_item_return.sales_item_id where sales_item_return.warehouse_id='{$warehouse}' group by sale_items.product_id,sale_items.id) sReturn";
 
 
@@ -217,7 +218,6 @@ class Reports extends MX_Controller
             ->join('sale_items', 'sale_items.sale_id=sales.id', 'left')
             ->join('warehouses', 'warehouses.id=sales.warehouse_id', 'left')
             ->group_by('sales.id,sales.reference_no');
-
 
 
         if ($user) {
@@ -304,8 +304,7 @@ class Reports extends MX_Controller
             ->from('sales')
             ->join('sale_items', 'sales.id=sale_items.sale_id', 'left')
             ->join($sr, 'sale_items.sale_id=sReturn.sale_id and  sale_items.product_id=sReturn.product_id', 'left')
-            ->group_by('sale_items.product_id','sale_items.sale_id');
-
+            ->group_by('sale_items.product_id', 'sale_items.sale_id');
 
 
         if ($customer) {
@@ -383,8 +382,6 @@ class Reports extends MX_Controller
             $start_date = $this->ion_auth->fsd($start_date);
             $end_date = $this->ion_auth->fsd($end_date);
         }
-
-
 
 
         $pp = "(SELECT mm.purchase_id,mm.make_purchase_id, mm.mrr_date,mm.id, mm.received_qty purchasedQty, mm.inv_val  purchasedVal from purchase_items p JOIN make_mrr mm on mm.purchase_id=p.purchase_id and mm.make_purchase_id=p.make_purchase_id where mm.mrr_date between
@@ -778,7 +775,7 @@ class Reports extends MX_Controller
             ->join($wh_qty, 'p.id = wProducts.product_id', 'inner')
             ->join($sp, 'p.id = PSales.product_id', 'left')
             ->join($pp, 'p.id = PCosts.purchase_item_id', 'left')
-            ->where('p.quantity > 0',null);
+            ->where('p.quantity > 0', null);
 
         if ($product) {
             $this->datatables->where('p.id', $product);
@@ -861,6 +858,69 @@ class Reports extends MX_Controller
 
 
     }
+
+
+    function pos_sales_report()
+    {
+
+
+        $data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
+        $data['users'] = $this->reports_model->getAllUsers();
+        $data['warehouses'] = $this->reports_model->getAllWarehouses();
+        $data['customers'] = $this->reports_model->getAllCustomers();
+        $data['billers'] = $this->reports_model->getAllBillers();
+
+        $meta['page_title'] = $this->lang->line("sale_reports");
+        $data['page_title'] = $this->lang->line("sale_reports");
+        $this->load->view('commons/header', $meta);
+        $this->load->view('pos_sales_report', $data);
+        $this->load->view('commons/footer');
+
+    }
+
+
+    function pos_view()
+    {
+
+
+        if ($this->input->get('sDate')) {
+            $startDate = $this->input->get('sDate');
+            $sale_start_date=$this->input->get('sDate');
+            $startDate = $this->ion_auth->fsd($startDate);
+        } else {
+            $startDate = NULL;
+        }
+        if ($this->input->get('eDate')) {
+            $endDate = $this->input->get('eDate');
+            $sale_end_date=$this->input->get('eDate');
+            $endDate = $this->ion_auth->fsd($endDate);
+        } else {
+            $endDate = NULL;
+        }
+
+        $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
+        $data['rows'] = $this->reports_model->getAllInvoiceItemsWithDetails($startDate, $endDate);
+        $inv = $this->reports_model->getInvoiceBySaleID($startDate, $endDate);
+//        $biller_id = $inv[0]->biller_id;
+//        $customer_id = $inv->customer_id;
+//        $invoice_type_id = $inv->invoice_type;
+//        $data['biller'] = $this->sales_model->getBillerByID($biller_id);
+//        $data['customer'] = $this->sales_model->getCustomerByID($customer_id);
+//        $data['invoice_types_details'] = $this->sales_model->getInvoiceTypeByID($invoice_type_id);
+        $data['inv'] = $inv;
+        $data['sale_start_date'] = $sale_start_date;
+        $data['sale_end_date'] = $sale_end_date;
+        $data['inv'] = $inv;
+
+
+        $data['page_title'] = $this->lang->line("invoice");
+//        $data['sid'] = $sale_id;
+
+
+        $this->load->view('pos_view', $data);
+
+    }
+
 
 }
 
