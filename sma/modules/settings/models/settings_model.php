@@ -359,4 +359,128 @@ class Settings_model extends CI_Model
 	return FALSE;
 	}
 
+//    abdulkader
+
+
+    public function getAllPackage()
+    {
+        $this->db->select('id,package_code,package_name');
+        $this->db->group_by('package_name');
+        $q = $this->db->get('item_package');
+        if($q->num_rows() > 0) {
+            foreach (($q->result()) as $row) {
+                $data[] = $row;
+            }
+
+            return $data;
+        }
+    }
+
+
+    public function getAllItems()
+    {
+        $q = $this->db->get("products");
+        if($q->num_rows() > 0) {
+            foreach (($q->result()) as $row) {
+                $data[] = $row;
+            }
+
+            return $data;
+        }
+    }
+
+
+    public function addPackage($itemList, $name, $code)
+    {
+
+        foreach ($itemList as $item) {
+            $product_details=$this->getProductById($item);
+           $item_package[]=array(
+                "product_id" => $product_details->id,
+                "product_code"=>$product_details->code,
+                "package_code"=>$code,
+                "product_um"=>$product_details->unit,
+                "package_name"=>$name,
+                "product_name"=>$product_details->name,
+                "product_qty"=>1);
+
+        }
+
+        if($this->db->insert_batch("item_package", $item_package)) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+
+    public function getProductById($id)
+    {
+        $q = $this->db->get_where('products', array('id' => $id), 1);
+        if ($q->num_rows() > 0) {
+                return $q->row();
+        }
+
+        return FALSE;
+    }
+
+
+    public function getPackageByName($name)
+    {
+        $q = $this->db->get_where('item_package', array('package_name' => $name), 1);
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+
+        return FALSE;
+    }
+
+
+    public function deletePackage($name)
+    {
+        if($this->db->delete("item_package", array('package_name' => $name))) {
+            return true;
+        }
+        return FALSE;
+    }
+
+    public function getProductByPackageName($name)
+    {
+
+        $q = $this->db->get_where("products", array('package_name' => $name));
+        if($q->num_rows() > 0) {
+            foreach (($q->result()) as $row) {
+                $data[] = $row;
+            }
+            return $data;
+        }
+
+        return FALSE;
+    }
+
+    public function updatePackage($itemList, $oldName, $code,$newName)
+    {
+        foreach ($itemList as $item) {
+            $product_details=$this->getProductById($item);
+            $item_package[]=array(
+                "product_id" => $product_details->id,
+                "product_code"=>$product_details->code,
+                "package_code"=>$code,
+                "product_um"=>$product_details->unit,
+                "package_name"=>$newName,
+                "product_name"=>$product_details->$name,
+                "product_qty"=>1);
+
+        }
+
+        if($this->db->delete("item_package", array('package_name' => $oldName))) {
+            if($this->db->insert_batch("item_package", $item_package)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return FALSE;
+    }
 }

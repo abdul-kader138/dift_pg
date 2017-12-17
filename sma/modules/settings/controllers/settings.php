@@ -581,7 +581,7 @@ class Settings extends MX_Controller {
       $this->load->view('warehouses', $data);
       $this->load->view('commons/footer');
    }
-   
+
    function add_warehouse() {
 	  
 		//validate form input	
@@ -819,5 +819,189 @@ class Settings extends MX_Controller {
 		}
 		
 	}
-   
+
+
+//    abdul Kader
+
+    function package() {
+        $data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
+        $data['success_message'] = $this->session->flashdata('success_message');
+
+        $data['packages'] = $this->settings_model->getAllPackage();
+
+        $meta['page_title'] = $this->lang->line('packages');
+        $data['page_title'] = $this->lang->line('packages');
+        $this->load->view('commons/header', $meta);
+        $this->load->view('package', $data);
+        $this->load->view('commons/footer');
+    }
+
+    function  add_package(){
+
+        if (!$this->ion_auth->in_group('owner'))
+        {
+            $this->session->set_flashdata('message', $this->lang->line("access_denied"));
+            $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
+            redirect('module=settings&view=package', 'refresh');
+        }
+
+        //validate form input
+        $this->form_validation->set_rules('item', "Items", 'required|xss_clean');
+        $this->form_validation->set_rules('code', $this->lang->line("package_code"), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('name', $this->lang->line("package_name"), 'required|min_length[3]|xss_clean');
+
+        if ($this->form_validation->run() == true)
+        {
+            $name = strtolower($this->input->post('name'));
+            $code = $this->input->post('code');
+            $items = array();
+            foreach ($_POST['item'] as $names)
+            {
+                if (empty($names)) {
+                    continue;
+                }
+                $items[]=$names;
+            }
+        }
+
+        if($this->form_validation->run() == true && $this->settings_model->getPackageByName(trim($name))){
+            $this->session->set_flashdata('message', $this->lang->line("package_name_exist"));
+            redirect("module=settings&view=package", 'refresh');
+        }
+
+
+
+        if ( $this->form_validation->run() == true && $this->settings_model->addPackage($items, $name, $code))
+        {
+            $this->session->set_flashdata('success_message', $this->lang->line("package_added"));
+            redirect("module=settings&view=package", 'refresh');
+
+        }
+        else
+        {   //set the flash data error message if there is one
+            $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
+
+            $data['name'] = array('name' => 'name',
+                'id' => 'name',
+                'type' => 'text',
+                'value' => $this->form_validation->set_value('name'),
+            );
+            $data['code'] = array('name' => 'code',
+                'id' => 'code',
+                'type' => 'text',
+                'value' => $this->form_validation->set_value('code'),
+            );
+
+            $data['items'] = $this->settings_model->getAllItems();
+            $meta['page_title'] = $this->lang->line("add_package");
+            $data['page_title'] = $this->lang->line("add_package");
+            $this->load->view('commons/header', $meta);
+            $this->load->view('add_package', $data);
+            $this->load->view('commons/footer');
+
+        }
+    }
+
+
+    function delete_package($name = NULL)
+    {
+
+        if (DEMO) {
+            $this->session->set_flashdata('message', $this->lang->line("disabled_in_demo"));
+            redirect('module=home', 'refresh');
+        }
+
+        if($this->input->get('name')) { $name = $this->input->get('name'); }
+        if (!$this->ion_auth->in_group('owner'))
+        {
+            $this->session->set_flashdata('message', $this->lang->line("access_denied"));
+            $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
+            redirect('module=settings&view=package', 'refresh');
+        }
+
+        if($this->settings_model->getProductByPackageName(trim($name))) {
+            $this->session->set_flashdata('message', $this->lang->line("package_has_product"));
+            redirect("module=settings&view=package", 'refresh');
+        }
+
+        if ( $this->settings_model->deletePackage(trim($name)) )
+        { //check to see if we are deleting the package
+            //redirect them back to the admin page
+            $this->session->set_flashdata('success_message', $this->lang->line("package_deleted"));
+            redirect("module=settings&view=package", 'refresh');
+        }
+
+    }
+
+    function edit_package($oldName = NULL)
+    {
+        if($this->input->get('name')) { $name = $this->input->get('name'); }
+
+        //validate form input
+
+        //validate form input
+        $this->form_validation->set_rules('item', "Items", 'required|xss_clean');
+        $this->form_validation->set_rules('code', $this->lang->line("package_code"), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('name', $this->lang->line("package_name"), 'required|min_length[3]|xss_clean');
+
+        if ($this->form_validation->run() == true)
+        {
+            $newName = strtolower($this->input->post('newName'));
+            $code = $this->input->post('code');
+            $items = array();
+            foreach ($_POST['item'] as $names)
+            {
+                if (empty($names)) {
+                    continue;
+                }
+                $items[]=$names;
+            }
+        }
+
+        if($this->form_validation->run() == true && $this->settings_model->getPackageByName(trim($newName))){
+            $this->session->set_flashdata('message', $this->lang->line("package_name_exist"));
+            redirect("module=settings&view=package", 'refresh');
+        }
+
+
+
+
+
+
+        if ( $this->form_validation->run() == true && $this->shelfs_model->updatePackage($items, $oldName, $code,$newName))
+        { //check to see if we are updateing the customer
+            //redirect them back to the admin page
+            $this->session->set_flashdata('success_message', $this->lang->line("shelf_updated"));
+            redirect("module=settings&view=package", 'refresh');
+        }
+        else
+        { //display the update form
+            //set the flash data error message if there is one
+            $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
+
+            $data['name'] = array('name' => 'name',
+                'id' => 'name',
+                'type' => 'text',
+                'value' => $this->form_validation->set_value('name'),
+            );
+            $data['code'] = array('name' => 'code',
+                'id' => 'code',
+                'type' => 'text',
+                'value' => $this->form_validation->set_value('code'),
+            );
+
+
+//            $data['shelf'] = $this->shelfs_model->getshelfByID($id);
+
+            $meta['page_title'] = $this->lang->line("update_shelf");
+//            $data['id'] = $id;
+            $data['page_title'] = $this->lang->line("update_shelf");
+            $this->load->view('commons/header', $meta);
+            $this->load->view('edit', $data);
+            $this->load->view('commons/footer');
+
+        }
+    }
+
+
 }
