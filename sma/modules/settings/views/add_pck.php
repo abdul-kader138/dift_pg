@@ -425,12 +425,6 @@ echo form_open("module=settings&view=add_pck", $attrib);
         class="controls"> <?php echo form_input($date, (isset($_POST['date']) ? $_POST['date'] : ""), 'class="span4" id="date" readonly="readonly"  required="required" data-error="' . $this->lang->line("date") . ' ' . $this->lang->line("is_required") . '"'); ?></div>
 </div>
 <div class="control-group">
-    <label class="control-label" for="reference_no"><?php echo $this->lang->line("reference_no"); ?></label>
-
-    <div
-        class="controls"> <?php echo form_input('reference_no', (isset($_POST['reference_no']) ? $_POST['reference_no'] : $rnumber), 'class="span4 tip" id="reference_no" readonly="readonly" required="required" data-error="' . $this->lang->line("reference_no") . ' ' . $this->lang->line("is_required") . '"'); ?> </div>
-</div>
-<div class="control-group">
     <label class="control-label" for="reference_no">Package Name</label>
 
     <div

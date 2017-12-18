@@ -833,10 +833,6 @@ class Settings extends MX_Controller {
     function delete_package($name = NULL)
     {
 
-        if (DEMO) {
-            $this->session->set_flashdata('message', $this->lang->line("disabled_in_demo"));
-            redirect('module=home', 'refresh');
-        }
 
         if($this->input->get('name')) { $name = $this->input->get('name'); }
         if (!$this->ion_auth->in_group('owner'))
@@ -852,8 +848,7 @@ class Settings extends MX_Controller {
         }
 
         if ( $this->settings_model->deletePackage(trim($name)) )
-        { //check to see if we are deleting the package
-            //redirect them back to the admin page
+        {
             $this->session->set_flashdata('success_message', $this->lang->line("package_deleted"));
             redirect("module=settings&view=package", 'refresh');
         }
@@ -877,7 +872,6 @@ class Settings extends MX_Controller {
 
         //validate form input
         $this->form_validation->set_message('is_natural_no_zero', $this->lang->line("no_zero_required"));
-        $this->form_validation->set_rules('reference_no', $this->lang->line("ref_no"), 'required|xss_clean');
         $this->form_validation->set_rules('date', $this->lang->line("date"), 'required|xss_clean');
         $this->form_validation->set_rules('package_name', $this->lang->line("package_name"), 'required|xss_clean');
 
@@ -888,7 +882,6 @@ class Settings extends MX_Controller {
 
         $item_list = array();
         if ($this->form_validation->run() == true) {
-            $reference = $this->input->post('reference_no');
             $package_name = $this->input->post('package_name');
             $date = $this->ion_auth->fsd(trim($this->input->post('date')));
 
@@ -1003,11 +996,6 @@ class Settings extends MX_Controller {
         $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
 
         $pck = $this->settings_model->getPackageInfoByName($name);
-//        $data['rows'] = $this->inventories_model->getAllpoInventoryItems($purchase_id);
-//        $supplier_id = $data['rows'][0]->supplier_id;
-//        $data['supplier'] = $this->inventories_model->getSupplierByID($supplier_id);
-
-
         $data['pck'] = $pck;
         $data['page_title'] = "View Package Details";
 
