@@ -237,7 +237,20 @@ $(document).ready(function(){
   <label class="control-label" for="cf5">Custom Barcode</label>
   <div class="controls"> <?php echo form_input('cf4', '', 'class="span4" id="cf4"');?>
   </div>
-</div> 
+</div>
+
+
+
+<div class="control-group">
+    <label class="control-label" for="cf5">Select Package</label>
+    <div class="controls">  <?php
+        $pr[""] = "";
+        foreach($packages as $pac){
+            $pr[$pac->package_name] = $pac->package_name;
+        }
+        echo form_dropdown('package_name', $pr, (isset($_POST['package_name']) ? $_POST['package_name'] : ""), 'id="package_name" data-placeholder="Select Package"'); ?> </div>
+</div>
+</div>
 
 <div class="control-group">
   <label class="control-label" for="cf6">Is Paragon Products</label>

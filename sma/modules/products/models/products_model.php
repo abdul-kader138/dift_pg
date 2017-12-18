@@ -177,7 +177,8 @@ class Products_model extends CI_Model
                 'cf4' => $data['cf4'],
                 'cf5' => $data['cf5'],
                 'cf6' => $data['cf6'],
-                'details' => $data['details']
+                'details' => $data['details'],
+                'package_name' => $data['package_name']
             );
         } else {
             // Product data
@@ -264,6 +265,7 @@ class Products_model extends CI_Model
                 'cf3' => $data['cf3'],
                 'cf4' => $data['cf4'],
                 'cf5' => $data['cf5'],
+                'package_name' => $data['package_name'],
                 'cf6' => $data['cf6'],
                 'details' => $data['details'],
                 'discount_id' => $data['discount_id']
@@ -615,6 +617,20 @@ class Products_model extends CI_Model
             return $data;
         }
         return false;
+    }
+
+    public function getAllPackages()
+    {
+
+        $this->db->select('distinct(package_name)');
+        $q = $this->db->get("item_package");
+        if($q->num_rows() > 0) {
+            foreach (($q->result()) as $row) {
+                $data[] = $row;
+            }
+
+            return $data;
+        }
     }
 
 

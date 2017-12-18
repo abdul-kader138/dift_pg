@@ -198,7 +198,19 @@ $(document).ready(function(){
   <label class="control-label" for="cf4">Custom Barcode</label>
   <div class="controls"> <?php echo form_input('cf4', $product->cf4, 'class="span4" id="cf4"');?>
   </div>
-</div> 
+</div>
+
+<div class="control-group">
+    <label class="control-label" for="cf5">Select Package</label>
+    <div class="controls">  <?php
+        $pr[""] = "";
+        foreach($packages as $pac){
+            $pr[$pac->package_name] = $pac->package_name;
+        }
+    echo form_dropdown('package_name', $pr, $product->package_name, 'class="tip chzn-select span4" id="package_name" data-placeholder="Select Package"  title="Package"'); ?> </div>
+
+</div>
+</div>
 
 <div class="control-group">
   <label class="control-label" for="cf6">Is Paragon Products</label>

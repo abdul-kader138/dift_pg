@@ -515,6 +515,7 @@ class Products extends MX_Controller
         $this->form_validation->set_rules('cost', $this->lang->line("product_cost"), 'xss_clean');
         $this->form_validation->set_rules('price', $this->lang->line("product_price"), 'required|xss_clean');
         $this->form_validation->set_rules('size', $this->lang->line("product_size"), 'xss_clean');
+        $this->form_validation->set_rules('size', $this->lang->line("package_name"), 'xss_clean');
         $this->form_validation->set_rules('note', $this->lang->line("product_details_for_invoice"), 'xss_clean');
         $this->form_validation->set_rules('alert_quantity', $this->lang->line("alert_quantity"), 'required|xss_clean');
         if (TAX1) {
@@ -542,6 +543,7 @@ class Products extends MX_Controller
                 'subcategory_id' => $this->input->post('subcategory'),
                 'unit' => $this->input->post('unit'),
                 'size' => $this->input->post('size'),
+                'package_name' => $this->input->post('package_name'),
                 'cost' => $this->input->post('cost'),
                 'price' => $this->input->post('price'),
                 'alert_quantity' => $this->input->post('alert_quantity'),
@@ -653,6 +655,7 @@ class Products extends MX_Controller
             $data['categories'] = $this->products_model->getAllCategories();
             $data['shelfs'] = $this->products_model->getAllShelfs();
             $data['tax_rates'] = $this->products_model->getAllTaxRates();
+            $data['packages'] = $this->products_model->getAllPackages();
             $meta['page_title'] = $this->lang->line("add_product");
             $data['page_title'] = $this->lang->line("add_product");
             $this->load->view('commons/header', $meta);
@@ -690,6 +693,7 @@ class Products extends MX_Controller
         $this->form_validation->set_rules('cost', $this->lang->line("product_cost"), 'required|xss_clean');
         $this->form_validation->set_rules('price', $this->lang->line("product_price"), 'required|xss_clean');
         $this->form_validation->set_rules('alert_quantity', $this->lang->line("alert_quantity"), 'required|xss_clean');
+        $this->form_validation->set_rules('size', $this->lang->line("package_name"), 'xss_clean');
         if (TAX1) {
             $this->form_validation->set_rules('tax_rate', $this->lang->line("tax_rate"), 'required|xss_clean');
         } else {
@@ -722,6 +726,7 @@ class Products extends MX_Controller
                 'cf4' => $this->input->post('cf4'),
                 'cf5' => $this->input->post('cf5'),
                 'cf6' => $this->input->post('cf6'),
+                'package_name' => $this->input->post('package_name'),
                 'details' => $this->input->post('note'),
                 'discount_id' => $this->input->post('discount_id')
             );
@@ -783,6 +788,7 @@ class Products extends MX_Controller
             $data['categories'] = $this->products_model->getAllCategories();
             $data['shelfs'] = $this->products_model->getAllShelfs();
             $data['tax_rates'] = $this->products_model->getAllTaxRates();
+            $data['packages'] = $this->products_model->getAllPackages();
             $data['subcategories'] = $this->products_model->getSubCategoriesByCategoryID($product_details->category_id);
             $data['racks'] = $this->products_model->getRackByShelfID();
             $data['discounts'] = $this->products_model->getDiscountID();
