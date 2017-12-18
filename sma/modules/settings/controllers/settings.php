@@ -817,6 +817,14 @@ class Settings extends MX_Controller {
 //    abdul Kader
 
     function package() {
+
+        if (!$this->ion_auth->in_group('owner'))
+        {
+            $this->session->set_flashdata('message', $this->lang->line("access_denied"));
+            $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
+            redirect('module=settings', 'refresh');
+        }
+
         $data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
         $data['success_message'] = $this->session->flashdata('success_message');
 
