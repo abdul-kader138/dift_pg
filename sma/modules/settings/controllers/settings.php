@@ -42,6 +42,7 @@ class Settings extends MX_Controller {
 		
 		$this->load->library('form_validation');
 		$this->load->model('settings_model');
+		$this->load->model('inventories/inventories_model');
 
 
 	}
@@ -539,14 +540,6 @@ class Settings extends MX_Controller {
    
    function backup_database()
    {
-
-       var_dump(array(DEMO));
-//	   		if(DEMO) {
-//				$this->session->set_flashdata('message', $this->lang->line('disabled_in_demo'));
-//				redirect("module=home", 'refresh');
-//			}
-       var_dump(array(true));
-	  
 		$this->load->dbutil();
 		
 		$prefs = array(     
@@ -827,79 +820,13 @@ class Settings extends MX_Controller {
         $data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
         $data['success_message'] = $this->session->flashdata('success_message');
 
-        $data['packages'] = $this->settings_model->getAllPackage();
+//        $data['packages'] = $this->settings_model->getPackageDataTableAjax();
 
-        $meta['page_title'] = $this->lang->line('packages');
-        $data['page_title'] = $this->lang->line('packages');
+        $meta['page_title'] = "Packages";
+        $data['page_title'] = "Packages";
         $this->load->view('commons/header', $meta);
         $this->load->view('package', $data);
         $this->load->view('commons/footer');
-    }
-
-    function  add_package(){
-
-        if (!$this->ion_auth->in_group('owner'))
-        {
-            $this->session->set_flashdata('message', $this->lang->line("access_denied"));
-            $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
-            redirect('module=settings&view=package', 'refresh');
-        }
-
-        //validate form input
-        $this->form_validation->set_rules('item', "Items", 'required|xss_clean');
-        $this->form_validation->set_rules('code', $this->lang->line("package_code"), 'trim|required|xss_clean');
-        $this->form_validation->set_rules('name', $this->lang->line("package_name"), 'required|min_length[3]|xss_clean');
-
-        if ($this->form_validation->run() == true)
-        {
-            $name = strtolower($this->input->post('name'));
-            $code = $this->input->post('code');
-            $items = array();
-            foreach ($_POST['item'] as $names)
-            {
-                if (empty($names)) {
-                    continue;
-                }
-                $items[]=$names;
-            }
-        }
-
-        if($this->form_validation->run() == true && $this->settings_model->getPackageByName(trim($name))){
-            $this->session->set_flashdata('message', $this->lang->line("package_name_exist"));
-            redirect("module=settings&view=package", 'refresh');
-        }
-
-
-
-        if ( $this->form_validation->run() == true && $this->settings_model->addPackage($items, $name, $code))
-        {
-            $this->session->set_flashdata('success_message', $this->lang->line("package_added"));
-            redirect("module=settings&view=package", 'refresh');
-
-        }
-        else
-        {   //set the flash data error message if there is one
-            $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
-
-            $data['name'] = array('name' => 'name',
-                'id' => 'name',
-                'type' => 'text',
-                'value' => $this->form_validation->set_value('name'),
-            );
-            $data['code'] = array('name' => 'code',
-                'id' => 'code',
-                'type' => 'text',
-                'value' => $this->form_validation->set_value('code'),
-            );
-
-            $data['items'] = $this->settings_model->getAllItems();
-            $meta['page_title'] = $this->lang->line("add_package");
-            $data['page_title'] = $this->lang->line("add_package");
-            $this->load->view('commons/header', $meta);
-            $this->load->view('add_package', $data);
-            $this->load->view('commons/footer');
-
-        }
     }
 
 
@@ -933,74 +860,159 @@ class Settings extends MX_Controller {
 
     }
 
-    function edit_package($oldName = NULL)
+
+//    -----------------------------------/
+
+//Add new inventory
+
+    function add_pck($alert = NULL)
     {
-        if($this->input->get('name')) { $name = $this->input->get('name'); }
+
+        $groups = array('salesman', 'viewer');
+        if ($this->ion_auth->in_group($groups)) {
+            $this->session->set_flashdata('message', $this->lang->line("access_denied"));
+            $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
+            redirect('module=home', 'refresh');
+        }
 
         //validate form input
+        $this->form_validation->set_message('is_natural_no_zero', $this->lang->line("no_zero_required"));
+        $this->form_validation->set_rules('reference_no', $this->lang->line("ref_no"), 'required|xss_clean');
+        $this->form_validation->set_rules('date', $this->lang->line("date"), 'required|xss_clean');
+        $this->form_validation->set_rules('package_name', $this->lang->line("package_name"), 'required|xss_clean');
 
-        //validate form input
-        $this->form_validation->set_rules('item', "Items", 'required|xss_clean');
-        $this->form_validation->set_rules('code', $this->lang->line("package_code"), 'trim|required|xss_clean');
-        $this->form_validation->set_rules('name', $this->lang->line("package_name"), 'required|min_length[3]|xss_clean');
+        $quantity = "quantity";
+        $product = "product";
+        $item_um = "item_um";
 
-        if ($this->form_validation->run() == true)
-        {
-            $newName = strtolower($this->input->post('newName'));
-            $code = $this->input->post('code');
-            $items = array();
-            foreach ($_POST['item'] as $names)
-            {
-                if (empty($names)) {
-                    continue;
-                }
-                $items[]=$names;
+
+        $item_list = array();
+        if ($this->form_validation->run() == true) {
+            $reference = $this->input->post('reference_no');
+            $package_name = $this->input->post('package_name');
+            $date = $this->ion_auth->fsd(trim($this->input->post('date')));
+
+            if($this->form_validation->run() == true && $this->settings_model->getPackageByName(trim($package_name))){
+                $this->session->set_flashdata('message', $this->lang->line("package_name_exist"));
+                redirect("module=settings&view=package", 'refresh');
             }
+
+            for ($i = 1; $i <= 500; $i++) {
+                if ($this->input->post($quantity . $i) && $this->input->post($product . $i) && $this->input->post($item_um . $i)) {
+
+
+                    $product_details = $this->inventories_model->getProductByCode($this->input->post($product . $i));
+                    $product_id[] = $product_details->id;
+                    $product_name[] = $product_details->name;
+                    $product_code[] = $product_details->code;
+                    $product_um[] = $this->input->post($item_um . $i);
+                    $pck_name[]=$package_name;
+                    $user_name[]=USER_ID;
+                    $inv_quantity[] = $this->input->post($quantity . $i);
+
+
+                }
+            }
+
+
+
+            $keys = array("product_id", "product_code", "product_name", "package_name", "product_qty", "product_um","created_by");
+
+
+            foreach (array_map(null,$product_id, $product_code, $product_name, $pck_name,$inv_quantity, $product_um,$user_name) as $key => $value) {
+                $item_list[] = array_combine($keys, $value);
+            }
+
+
         }
 
-        if($this->form_validation->run() == true && $this->settings_model->getPackageByName(trim($newName))){
-            $this->session->set_flashdata('message', $this->lang->line("package_name_exist"));
+
+        if ($this->form_validation->run() == true && $this->settings_model->addPackage($item_list)) {
+            $this->session->set_flashdata('success_message', $this->lang->line("package_added"));
             redirect("module=settings&view=package", 'refresh');
-        }
 
-
-
-
-
-
-        if ( $this->form_validation->run() == true && $this->shelfs_model->updatePackage($items, $oldName, $code,$newName))
-        { //check to see if we are updateing the customer
-            //redirect them back to the admin page
-            $this->session->set_flashdata('success_message', $this->lang->line("shelf_updated"));
-            redirect("module=settings&view=package", 'refresh');
-        }
-        else
-        { //display the update form
-            //set the flash data error message if there is one
+        } else {
             $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
 
-            $data['name'] = array('name' => 'name',
-                'id' => 'name',
+            $data['reference_no'] = array('name' => 'reference_no',
+                'id' => 'reference_no',
                 'type' => 'text',
-                'value' => $this->form_validation->set_value('name'),
+                'value' => $this->form_validation->set_value('reference_no'),
             );
-            $data['code'] = array('name' => 'code',
-                'id' => 'code',
+            $data['date'] = array('name' => 'date',
+                'id' => 'date',
                 'type' => 'text',
-                'value' => $this->form_validation->set_value('code'),
+                'value' => $this->form_validation->set_value('date'),
+            );
+            $data['note'] = array('name' => 'note',
+                'id' => 'note',
+                'type' => 'textarea',
+                'value' => $this->form_validation->set_value('note'),
             );
 
+            if ($this->input->get('alert')) {
+                $alert = $this->input->get('alert');
+            }
 
-//            $data['shelf'] = $this->shelfs_model->getshelfByID($id);
+            if (isset($alert) && $alert != '') {
 
-            $meta['page_title'] = $this->lang->line("update_shelf");
-//            $data['id'] = $id;
-            $data['page_title'] = $this->lang->line("update_shelf");
+                $data['inv_products'] = $this->inventories_model->getAllInventoryIAlerttems();
+
+            }
+            $data['rnumber'] = $this->inventories_model->getRQNextAI();
+            $meta['page_title'] = $this->lang->line("add_package");
+            $data['page_title'] = $this->lang->line("add_package");
             $this->load->view('commons/header', $meta);
-            $this->load->view('edit', $data);
+            $this->load->view('add_pck', $data);
             $this->load->view('commons/footer');
 
         }
+    }
+
+
+    function getPackageDataTableAjax()
+    {
+
+        if ($this->input->get('search_term')) {
+            $search_term = $this->input->get('search_term');
+        } else {
+            $search_term = false;
+        }
+        $this->load->library('datatables');
+
+        $this->datatables
+            ->select("package_name as name,count(product_qty) as qty", FALSE)
+            ->from('item_package')
+            ->group_by('item_package.package_name');
+
+
+        $this->datatables->add_column("Actions",
+            "<center><a href='#' onClick=\"MyWindow=window.open('index.php?module=settings&amp;view=view_package&amp;name=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=1000,height=600'); return false;\" title='" . $this->lang->line("view_package") . "' class='tip'><i class='icon-fullscreen'></i>
+			  &nbsp;<a href='index.php?module=settings&amp;view=delete_package&amp;name=$1' title='Delete Package' class='tip'><i class='icon-trash'></i></a>&nbsp; </center>", "name");
+
+        echo $this->datatables->generate();
+
+    }
+
+
+    function view_package($name = NULL)
+    {
+        if ($this->input->get('name')) {
+            $name = $this->input->get('name');
+        }
+        $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
+
+        $pck = $this->settings_model->getPackageInfoByName($name);
+//        $data['rows'] = $this->inventories_model->getAllpoInventoryItems($purchase_id);
+//        $supplier_id = $data['rows'][0]->supplier_id;
+//        $data['supplier'] = $this->inventories_model->getSupplierByID($supplier_id);
+
+
+        $data['pck'] = $pck;
+        $data['page_title'] = "View Package Details";
+
+        $this->load->view('view_package', $data);
+
     }
 
 

@@ -5,7 +5,6 @@
     <title><?php echo $page_title . " &middot; " . SITE_NAME; ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="<?php echo base_url(); ?>assets/css/<?php echo THEME; ?>.css" rel="stylesheet">
-    <link href="<?php echo base_url(); ?>assets/css/select2.min.css" rel="stylesheet">
     <script src="<?php echo base_url(); ?>assets/js/jquery.js"></script>
     <script> var JS_DATE = '<?php echo JS_DATE; ?>';
         $(function () {
@@ -397,7 +396,11 @@
                 </li>
                 <li class="divider"></li>
                 <li>
-                    <a href="<?php echo base_url(); ?>index.php?module=settings&amp;view=package"><?php echo $this->lang->line('packages'); ?></a>
+                    <a href="<?php echo base_url(); ?>index.php?module=settings&amp;view=package"><?php echo $this->lang->line('packages_list'); ?></a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                    <a href="<?php echo base_url(); ?>index.php?module=settings&amp;view=add_pck"><?php echo $this->lang->line('add_packages'); ?></a>
                 </li>
                 <li class="divider"></li>
                 <li>

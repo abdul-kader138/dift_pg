@@ -361,22 +361,6 @@ class Settings_model extends CI_Model
 
 //    abdulkader
 
-
-    public function getAllPackage()
-    {
-        $this->db->select('id,package_code,package_name');
-        $this->db->group_by('package_name');
-        $q = $this->db->get('item_package');
-        if($q->num_rows() > 0) {
-            foreach (($q->result()) as $row) {
-                $data[] = $row;
-            }
-
-            return $data;
-        }
-    }
-
-
     public function getAllItems()
     {
         $q = $this->db->get("products");
@@ -390,23 +374,9 @@ class Settings_model extends CI_Model
     }
 
 
-    public function addPackage($itemList, $name, $code)
+    public function addPackage($itemList)
     {
-
-        foreach ($itemList as $item) {
-            $product_details=$this->getProductById($item);
-           $item_package[]=array(
-                "product_id" => $product_details->id,
-                "product_code"=>$product_details->code,
-                "package_code"=>$code,
-                "product_um"=>$product_details->unit,
-                "package_name"=>$name,
-                "product_name"=>$product_details->name,
-                "product_qty"=>1);
-
-        }
-
-        if($this->db->insert_batch("item_package", $item_package)) {
+        if($this->db->insert_batch("item_package", $itemList)) {
             return true;
         } else {
             return false;
@@ -482,5 +452,35 @@ class Settings_model extends CI_Model
             }
         }
         return FALSE;
+    }
+
+
+
+    public function getRQNextAI()
+    {
+        $this->db->select_max('id');
+        $q = $this->db->get('item_package');
+        if ($q->num_rows() > 0) {
+            $row = $q->row();
+            return "RQ" . "-" . sprintf("%04s", $row->id + 1);
+        }
+
+        return FALSE;
+
+    }
+
+    public function getPackageInfoByName($name)
+    {
+
+        $q = $this->db->get_where('item_package', array('package_name' => $name));
+        if ($q->num_rows() > 0) {
+            foreach (($q->result()) as $row) {
+                $value[] = $row;
+            }
+            return $value;
+        }
+
+        return FALSE;
+
     }
 }
