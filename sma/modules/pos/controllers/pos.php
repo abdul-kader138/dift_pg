@@ -299,6 +299,7 @@ class Pos extends MX_Controller
                 }
             }*/
 
+            $warehouse_id=DEFAULT_WAREHOUSE;
             $keys = array("product_id", "product_code", "product_name", "product_unit", "tax_rate_id", "tax", "quantity", "unit_price", "gross_total", "val_tax", "serial_no", "discount_val", "discount", "discount_id", "get_buy_qnt", "get_buy_title");
 
             $items = array();

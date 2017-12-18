@@ -685,6 +685,8 @@ class Pos_model extends CI_Model
     {
 
         // sale data
+
+
         $saleData = array(
             'reference_no' => $saleDetails['reference_no'],
             'warehouse_id' => $warehouse_id,
@@ -718,8 +720,20 @@ class Pos_model extends CI_Model
 
 
             foreach ($items as $idata) {
-                $this->nsQTY($idata['product_id'], $idata['quantity']);
-                $this->updateProductQuantity($idata['product_id'], $warehouse_id, $idata['quantity']);
+                $getProductPackage=$this->getPackageById($idata['product_id']);
+                if($getProductPackage){
+                    $packageDetails=$this->getPackageByName($getProductPackage->package_name);
+                    $this->nsQTY($idata['product_id'], $idata['quantity']);
+                    $this->updateProductQuantity($idata['product_id'], $warehouse_id, $idata['quantity']);
+                    foreach($packageDetails as $package){
+                        $this->nsQTY($package->product_id, $package->product_qty);
+                        $this->updateProductQuantity($package->product_id, $warehouse_id, $package->product_qty);
+                    }
+                }
+                else{
+                    $this->nsQTY($idata['product_id'], $idata['quantity']);
+                    $this->updateProductQuantity($idata['product_id'], $warehouse_id, $idata['quantity']);
+                }
             }
 
             $addOn = array('sale_id' => $sale_id);
@@ -1172,6 +1186,33 @@ class Pos_model extends CI_Model
 
         return FALSE;
 
+    }
+
+    public function getPackageById($id)
+    {
+
+        $q = $this->db->get_where('products', array('id' => $id), 1);
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+
+        return FALSE;
+
+    }
+
+
+    public function getPackageByName($name)
+    {
+
+        $q = $this->db->get_where('item_package', array('package_name' => $name));
+        if ($q->num_rows() > 0) {
+            foreach (($q->result()) as $row) {
+                $value[] = $row;
+            }
+            return $value;
+        }
+
+        return FALSE;
     }
 
 }
