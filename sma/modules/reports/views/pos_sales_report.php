@@ -149,9 +149,8 @@ if($this->input->post('submit')) {
             </select>
         </div>
     </div>
-    <a href="#" onclick="MyWindow=window.open('index.php?module=sales&amp;view=view_invoice_print&amp;id=4', 'MyWindow','toolbar=0,location=0,directories=0,status=0,menubar=yes,scrollbars=yes,resizable=yes,width=1000,height=600'); return false;" title="" class="tip" data-original-title="Small Invoice">Click Here</a>
     <div class="control-group">
-        <div class="controls"> <?php echo form_button('show', $this->lang->line("show"), ' id="show" class="btn btn-primary"');?> </div>
+        <div class="controls"> <?php echo form_button('show', $this->lang->line("view"), ' id="show" class="btn btn-primary"');?> </div>
     </div>
     <?php echo form_close();?>
 
