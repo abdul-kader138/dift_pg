@@ -93,11 +93,6 @@ h3 { margin: 5px 0; }
             <td style="text-align:left;"><?php echo $this->lang->line("invoice_vat"); ?></td><td style="text-align:right;font-weight:bold;"><?php echo $this->ion_auth->formatMoney($inv->total_tax2); ?></td>
         <?php } else { echo '<td></td><td></td>'; } ?>
     </tr>
-    <tr>
-        <td></td>
-        <td></td>
-    <td style="text-align:left; padding-left:1.5%;">Net sales</td><td style="text-align:right;font-weight:bold;"><?php var_dump(array($inv));echo ($this->ion_auth->formatMoney(($inv->inv_total))); ?></td>
-    </tr>
     </tbody>
     </table>
 

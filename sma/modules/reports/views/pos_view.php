@@ -92,6 +92,11 @@
             <td colspan="2" style="text-align:left;"><?php echo $this->lang->line("discount"); ?></td><td colspan="2" style="text-align:right;font-weight:bold;"><?php echo $this->ion_auth->formatMoney($inv->inv_discount); ?></td>
             </tr><?php } ?>
         <tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td style="text-align:left; padding-left:1.5%;">Net sales</td><td style="text-align:right;font-weight:bold;"><?php echo $this->ion_auth->formatMoney($inv[0]->gross_total - $inv[0]->total_tax2); ?></td>
+        </tr>
 
         </tbody>
     </table>
