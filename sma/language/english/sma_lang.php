@@ -658,6 +658,7 @@ $lang['enable'] 						= "Enable";
 $lang['invoice_tax'] 					= "Invoice Tax";
 $lang['paid'] 				        	= "Paid";
 $lang['invoice_vat'] 					= "Vat(Including)";
+$lang['invoice_vat_without_vat'] 		= "Vat";
 $lang['received_qty'] 					= "MRR Qty";
 $lang['product_tax'] 					= "Product Tax";
 $lang['product_vat'] 					= "Product Vat";

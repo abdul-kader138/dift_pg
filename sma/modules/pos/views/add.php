@@ -1327,7 +1327,7 @@ function add_row() {
         current_discount = parseFloat(total_discount).toFixed(2);
         <?php } ?>
 //        var g_total = total + tax_value - tax_value2 - total_discount;
-        var g_total = total + tax_value - total_discount;
+        var g_total = total - total_discount;
         grand_total = parseFloat(g_total).toFixed(2);
 
         $("#total-payable").empty();
@@ -1479,7 +1479,8 @@ function key_pad() {
                 new_pr_discount = new_discount_rate;
             }
             if (new_discount_type == 1) {
-                new_pr_discount = ((product_price + new_tax_value) * new_discount_rate) / 100;
+//                new_pr_discount = ((product_price + new_tax_value) * new_discount_rate) / 100;
+                new_pr_discount = (product_price  * new_discount_rate) / 100;
             }
             <?php } ?>
             total_discount = total_discount - (new_pr_discount * before_qty);
@@ -1518,7 +1519,7 @@ function key_pad() {
             <?php } ?>
 
 //            var g_total = (total + tax_value - tax_value2) - total_discount;
-            var g_total = (total + tax_value ) - total_discount;
+            var g_total = (total) - total_discount;
             grand_total = parseFloat(g_total).toFixed(2);
 
             $("#total-payable").empty();
@@ -1733,7 +1734,7 @@ total_discount += new_discount_value2;
 current_discount = parseFloat(total_discount).toFixed(2);
 <?php } ?>
 //var g_total = total + tax_value + tax_value2 - total_discount;
-var g_total = total + tax_value - total_discount;
+var g_total = total  - total_discount;
 grand_total = parseFloat(g_total).toFixed(2);
 $("#total-payable").empty();
 $("#total-payable").append(grand_total);
@@ -1793,7 +1794,8 @@ $("#cancel").click(function () {
             total_discount = 0;
             current = parseFloat(total).toFixed(2);
             current_tax = parseFloat(tax_value).toFixed(2);
-            var g_total = total + tax_value;
+//            var g_total = total + tax_value;
+            var g_total = total;
             grand_total = parseFloat(g_total).toFixed(2);
             $("#total-payable").empty();
             $("#total").empty();
@@ -1842,7 +1844,7 @@ $("#payment").click(function () {
     var r_amount = parseFloat($('#items_return_val').val());
 
 //    var twt = (total + tax_value + tax_value2) - total_discount - r_amount;
-    var twt = (total + tax_value ) - total_discount - r_amount;
+    var twt = (total ) - total_discount - r_amount;
 //    count = count - 1;
 
     var warehouse = $("#warehouse").val();

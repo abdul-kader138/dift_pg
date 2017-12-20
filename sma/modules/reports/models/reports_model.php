@@ -254,7 +254,7 @@ class Reports_model extends CI_Model
     public function getInvoiceBySaleID($sDate,$eDate)
     {
 
-        $myQuery = "select sales.id as total_count ,sum(sales.total_tax) as val_tax, sum(sales.inv_discount) as discount_val, sum(sales.total) as gross_total FROM sales WHERE sales.date between  '{$sDate}' and  '{$eDate}'";
+        $myQuery = "select sales.id as total_count ,sum(sales.total_tax2) as total_tax2, sum(sales.inv_discount) as discount_val, sum(sales.total) as gross_total FROM sales WHERE sales.date between  '{$sDate}' and  '{$eDate}'";
         $q = $this->db->query($myQuery, false);
         if($q->num_rows() > 0) {
             foreach (($q->result()) as $row) {
@@ -265,4 +265,18 @@ class Reports_model extends CI_Model
         }
     }
 
+
+
+    public function getBillerByID($id)
+    {
+
+        $q = $this->db->get('billers', 1);
+        if( $q->num_rows() > 0 )
+        {
+            return $q->row();
+        }
+
+        return FALSE;
+
+    }
 }

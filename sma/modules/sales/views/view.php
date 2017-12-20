@@ -32,7 +32,7 @@ h3 { margin: 5px 0; }
 <img src="<?php echo $this->config->base_url(); ?>assets/uploads/logos/<?php echo $biller->logo; ?>" alt="Biller Logo">
 	<h3 style="text-transform:uppercase;"><?php echo $biller->company; ?></h3>
 	<?php echo "<p style=\"text-transform:capitalize;\">".$biller->address.", ".$biller->city.", ".$biller->postal_code.", ".$biller->state.", ".$biller->country."</p>"; 
-	echo "<p>Vat registration Number: 18131087457- Mushok-11KHA</p>";
+	echo "<p>Vat registration Number: 18131087457- Mushok-11(KA)</p>";
 	echo "<span class=\"left\">".$this->lang->line("reference_no").": ".$inv->reference_no."</span> 
 	<span class=\"right\">".$this->lang->line("tel").": ".$biller->phone."</span>";
 	if($pos->cf_title1 != "" && $pos->cf_value1 != "") {
@@ -84,68 +84,22 @@ h3 { margin: 5px 0; }
     <tr>
     <?php if($inv->total_tax != 0 && TAX1) { ?>
     <td style="text-align:left;"><?php echo $this->lang->line("product_vat"); ?></td><td style="text-align:right; padding-right:1.5%; border-right: 1px solid #999;font-weight:bold;"><?php echo $this->ion_auth->formatMoney($inv->total_tax); ?></td>
-    <?php } else { echo '<td></td>'; } ?></tr>
-    <tr><td></td><td></td>
+    <?php } else { echo '<td></td>'; } ?>
+    </tr>
+    <tr>
+        <td></td><td></td>
         <?php if($inv->total_tax2 != 0 && TAX2) { ?>
             <td style="text-align:left;"><?php echo $this->lang->line("invoice_vat"); ?></td><td style="text-align:right;font-weight:bold;"><?php echo $this->ion_auth->formatMoney($inv->total_tax2); ?></td>
         <?php } else { echo '<td></td><td></td>'; } ?>
     </tr>
-    <?php if($inv->inv_discount != 0 && DISCOUNT_OPTION) { ?><tr>
-    <td colspan="2" style="text-align:left;"><?php echo $this->lang->line("discount"); ?></td><td colspan="2" style="text-align:right;font-weight:bold;"><?php echo $this->ion_auth->formatMoney($inv->inv_discount); ?></td>
-    </tr><?php } ?>
     <tr>
-	
-	<?php if($getBuy>0) { ?><tr>
-    <td colspan="2" style="text-align:left;">BUY ONE GET ONE</td><td colspan="2" style="text-align:right;font-weight:bold;"><?php echo $getBuy; ?></td>
-    </tr><?php } ?>
-     <tr>    
-    <td colspan="2" style="text-align:left; font-weight:bold; padding-top:5px;">Return Amount: </td><td colspan="2" style="padding-top:5px; text-align:right; font-weight:bold;"><?php echo $inv->return_amount; ?></td>
+        <td></td>
+        <td></td>
+    <td style="text-align:left; padding-left:1.5%;">Net sales</td><td style="text-align:right;font-weight:bold;"><?php var_dump(array($inv));echo ($this->ion_auth->formatMoney(($inv->inv_total))); ?></td>
     </tr>
-	<tr>
-	
-    <td colspan="2" style="text-align:left; font-weight:bold; border-top:1px solid #000; padding-top:10px;"><?php echo $this->lang->line("total_payable"); ?></td><td colspan="2" style="border-top:1px solid #000; padding-top:10px; text-align:right; font-weight:bold;"><?php echo $this->ion_auth->formatMoney($inv->total-$inv->return_amount); ?></td>
-    </tr>
-    <?php if($inv->paid_by == 'cash' && $inv->paid) { ?>
-   
-	<tr>    
-    <td colspan="2" style="text-align:left; font-weight:bold; padding-top:5px;"><?php echo $this->lang->line("paid"); ?></td><td colspan="2" style="padding-top:5px; text-align:right; font-weight:bold;"><?php echo $inv->paid; ?></td>
-    </tr>
-	
-    <tr>
-    <td colspan="2" style="text-align:left; font-weight:bold; padding-top:5px;"><?php echo $this->lang->line("change"); ?></td><td colspan="2" style="padding-top:5px; text-align:right; font-weight:bold;"><?php echo number_format(($inv->paid - $inv->total - $inv->return_amount), 2, '.', ''); ?></td>
-    </tr>
-<?php } if($inv->paid_by == 'CC' && $inv->cc_no) { ?>
-    <tr>      
-    <td colspan="2" style="text-align:left; font-weight:bold; padding-top:5px;"><?php echo $this->lang->line("cc_no"); ?></td><td colspan="2" style="text-align:right; font-weight:bold;"><?php echo 'xxxx xxxx xxxx '.substr($inv->cc_no, -4); ?></td>
-    </tr>
-    <tr>      
-    <td colspan="2" style="text-align:left; font-weight:bold; padding-top:5px;"><?php echo $this->lang->line("cc_holder"); ?></td><td colspan="2" style="padding-top:5px; text-align:right; font-weight:bold;"><?php echo $inv->cc_holder; ?></td>
-    </tr>
-   <?php } if($inv->paid_by == 'CC_cash' && $inv->cc_no) { ?>
-    <tr>    
-    <td colspan="2" style="text-align:left; font-weight:bold; padding-top:5px;">Cash Payment</td><td colspan="2" style="padding-top:5px; text-align:right; font-weight:bold;"><?php echo $inv->paid; ?></td>
-    </tr>
-    <tr>    
-    <td colspan="2" style="text-align:left; font-weight:bold; padding-top:5px;">Card Payment</td><td colspan="2" style="padding-top:5px; text-align:right; font-weight:bold;"><?php echo $inv->paid_card; ?></td>
-    </tr>
-        <tr>
-            <td colspan="2" style="text-align:left; font-weight:bold; padding-top:5px;">Changes</td><td colspan="2" style="padding-top:5px; text-align:right; font-weight:bold;"><?php echo $this->ion_auth->formatMoney((($inv->paid+$inv->paid_card+$inv->return_amount) - $inv->total), 2, '.', ''); ?></td>
-        </tr>
-
-    <tr>      
-    <td colspan="2" style="text-align:left; font-weight:bold; padding-top:5px;"><?php echo $this->lang->line("cc_no"); ?></td><td colspan="2" style="text-align:right; font-weight:bold;"><?php echo 'xxxx xxxx xxxx '.substr($inv->cc_no, -4); ?></td>
-    </tr>
-    <tr>      
-    <td colspan="2" style="text-align:left; font-weight:bold; padding-top:5px;"><?php echo $this->lang->line("cc_holder"); ?></td><td colspan="2" style="padding-top:5px; text-align:right; font-weight:bold;"><?php echo $inv->cc_holder; ?></td>
-    </tr>
-<?php } if($inv->paid_by == 'Cheque' && $inv->cheque_no) { ?>
-    <tr>      
-    <td colspan="2" style="text-align:left; font-weight:bold; padding-top:5px;"><?php echo $this->lang->line("cheque_no"); ?></td><td colspan="2" style="padding-top:5px; text-align:right; font-weight:bold;"><?php echo $inv->cheque_no; ?></td>
-    </tr>
-<?php } ?>  
     </tbody>
     </table>
-        
+
     <div style="border-top:1px solid #000; padding-top:10px;">
     <?php echo html_entity_decode($biller->invoice_footer); ?>
     </div>
@@ -154,13 +108,7 @@ h3 { margin: 5px 0; }
     <span class="left"><a href="#" style="width:90%; display:block; font-size:12px; text-decoration: none; text-align:center; color:#000; background-color:#4FA950; border:2px solid #4FA950; padding: 10px 1px; font-weight:bold;" id="email"><?php echo $this->lang->line("email"); ?></a></span>
     <span class="right"><button type="button" onClick="window.print();return false;" style="width:100%; cursor:pointer; font-size:12px; background-color:#FFA93C; color:#000; text-align: center; border:1px solid #FFA93C; padding: 10px 1px; font-weight:bold;"><?php echo $this->lang->line("print"); ?></button></span>
     <div style="clear:both;"></div>
-    <!-- <a href="<?php echo base_url(); ?>index.php?module=pos" style="width:98%; display:block; font-size:12px; text-decoration: none; text-align:center; color:#FFF; background-color:#007FFF; border:2px solid #007FFF; padding: 10px 1px; margin: 5px auto 10px auto; font-weight:bold;"><?php echo $this->lang->line("back_to_pos"); ?></a>
-    <div style="clear:both;"></div>
-     <div style="background:#F5F5F5; padding:10px;">
-    <p style="font-weight:bold;">Please don't forget to disble the header and footer in browser print settings.</p>
-    <p style="text-transform: capitalize;"><strong>FF:</strong> File > Print Setup > Margin & Header/Footer Make all --blank--</p>
-    <p style="text-transform: capitalize;"><strong>chrome:</strong> Menu > Print > Disable Header/Footer in Option & Set Margins to None</p>	</div>
-    -->
+
 	<div style="clear:both;"></div>
     </div>
 </div>

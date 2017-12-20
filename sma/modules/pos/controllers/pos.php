@@ -325,6 +325,35 @@ class Pos extends MX_Controller
                 $tax_rate2 = 0;
             }
 
+            if (TAX1) {
+                $item_tax=0;
+                $tax_id = $this->input->post($tax_rate . $i);
+                $tax_details = $this->pos_model->getTaxRateByID($tax_id);
+//                $taxRate = $tax_details->rate;
+//                $taxType = $tax_details->type;
+                $tax_rate_id[] = $tax_id;
+
+                if ($taxType == 1 && $taxRate != 0) {
+                    $item_tax = ( (($this->input->post($quantity . $i) * $this->input->post($unit_price . $i))) * $taxRate / 100);
+                    $item_tax_sd = (($this->input->post($quantity . $i)) * ($this->input->post($unit_price . $i)) * $taxRate / 100);
+                    $val_tax[] = $item_tax;
+                } else {
+                    $item_tax = $taxRate;
+                    $val_tax[] = $item_tax;
+                }
+
+                if ($taxType == 1) {
+                    $tax[] = $taxRate . "%";
+                } else {
+                    $tax[] = $taxRate;
+                }
+            } else {
+                $item_tax = 0;
+                $tax_rate_id[] = 0;
+                $val_tax[] = 0;
+                $tax[] = "";
+            }
+
             if (DISCOUNT_METHOD == 1 && DISCOUNT_OPTION == 1) {
 
                 $ds_dts = $this->pos_model->getDiscountByID($inv_discount);
@@ -356,6 +385,7 @@ class Pos extends MX_Controller
 
 //            $gTotal = $inv_total_no_tax + $total_tax + $val_tax2 - $val_discount;
             $gTotal = $inv_total_no_tax + $total_tax - $val_discount;
+
 
             $saleDetails = array('reference_no' => $reference_no,
                 'date' => $date,

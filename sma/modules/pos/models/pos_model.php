@@ -687,6 +687,7 @@ class Pos_model extends CI_Model
         // sale data
 
 
+//        if()
         $saleData = array(
             'reference_no' => $saleDetails['reference_no'],
             'warehouse_id' => $warehouse_id,

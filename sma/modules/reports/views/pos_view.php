@@ -29,10 +29,10 @@
 
 <body>
 <div id="wrapper">
-<!--    <img src="--><?php //echo $this->config->base_url(); ?><!--assets/uploads/logos/--><?php //echo $biller->logo; ?><!--" alt="Biller Logo">-->
+    <img src="<?php echo $this->config->base_url(); ?>assets/uploads/logos/<?php echo $biller->logo; ?>" alt="Biller Logo">
     <h3 style="text-transform:uppercase;"><?php echo $biller->company; ?></h3>
     <?php echo "<p style=\"text-transform:capitalize;\">".$biller->address.", ".$biller->city.", ".$biller->postal_code.", ".$biller->state.", ".$biller->country."</p>";
-    echo "<p>Vat registration Number: 18131087457- Mushok-11Kho</p>";
+    echo "<p>Vat registration Number: 18131087457- Mushok-11(KA)</p>";
     echo "<span class=\"right\">".$this->lang->line("tel").": ".$biller->phone."</span>";
     if($pos->cf_title1 != "" && $pos->cf_value1 != "") {
         echo "<span class=\"left\">".$pos->cf_title1.": ".$pos->cf_value1."</span>";
@@ -57,7 +57,7 @@
         </tr>
         </thead>
         <tbody>
-        <?php $r = 1; $totalCount=0;$getBuy = 0; foreach ($rows as $row):?>
+        <?php $r = 1; $totalCount=0;$getBuy = 0;$totalVat=0; foreach ($rows as $row):?>
             <tr>
                 <td style="text-align:center; width:30px;"><?php echo $r; ?></td>
                 <td style="text-align:left; width:180px;"><?php echo $row->product_name.$row->get_buy_qnt; ?></td>
@@ -78,14 +78,14 @@
         <tbody>
         <tr>
             <td style="text-align:left;"><?php echo $this->lang->line("total_items"); ?></td><td style="text-align:right; padding-right:1.5%; border-right: 1px solid #999;font-weight:bold;"><?php echo $totalCount ?></td>
-            <td style="text-align:left; padding-left:1.5%;">Total</td><td style="text-align:right;font-weight:bold;"><?php echo $this->ion_auth->formatMoney($inv[0]->gross_total); ?></td>
+            <td style="text-align:left; padding-left:1.5%;">Total(With Vat)</td><td style="text-align:right;font-weight:bold;"><?php echo $this->ion_auth->formatMoney($inv[0]->gross_total); ?></td>
         </tr>
-        <tr>
+        <tr><td></td>
             <?php if($inv->total_tax != 0 && TAX1) { ?>
                 <td style="text-align:left;"><?php echo $this->lang->line("product_vat"); ?></td><td style="text-align:right; padding-right:1.5%; border-right: 1px solid #999;font-weight:bold;"><?php echo $this->ion_auth->formatMoney($inv->total_tax); ?></td>
             <?php } else { echo '<td></td>'; } ?>
-            <?php if($inv->total_tax2 != 0 && TAX2) { ?>
-                <td style="text-align:left; padding-left:1.5%;"><?php echo $this->lang->line("invoice_tax"); ?></td><td style="text-align:right;font-weight:bold;"><?php echo $this->ion_auth->formatMoney($inv->total_tax2); ?></td>
+            <?php if($inv[0]->total_tax2) { ?>
+                <td style="text-align:left; padding-left:1.5%;"><?php echo $this->lang->line("invoice_vat_without_vat"); ?></td><td style="text-align:right;font-weight:bold;"><?php echo $this->ion_auth->formatMoney($inv[0]->total_tax2); ?></td>
             <?php } else { echo '<td></td>'; } ?>
         </tr>
         <?php if($inv->inv_discount != 0 && DISCOUNT_OPTION) { ?><tr>
@@ -93,12 +93,6 @@
             </tr><?php } ?>
         <tr>
 
-<!--        --><?php //if($getBuy>0) { ?><!--<tr>-->
-<!--            <td colspan="2" style="text-align:left;">BUY ONE GET ONE</td><td colspan="2" style="text-align:right;font-weight:bold;">--><?php //echo $getBuy; ?><!--</td>-->
-<!--            </tr>--><?php //} ?>
-<!--        <tr>-->
-<!--            <td colspan="2" style="text-align:left; font-weight:bold; padding-top:5px;">Return Amount: </td><td colspan="2" style="padding-top:5px; text-align:right; font-weight:bold;">--><?php //echo $inv->return_amount; ?><!--</td>-->
-<!--        </tr>-->
         </tbody>
     </table>
     <div><?php echo $this->lang->line("print_date").": ".date("d-m-Y h:i:sa"); ?></div>

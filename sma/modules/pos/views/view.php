@@ -32,7 +32,7 @@ h3 { margin: 5px 0; }
 <img src="<?php echo $this->config->base_url(); ?>assets/uploads/logos/<?php echo $biller->logo; ?>" alt="Biller Logo">
 	<h3 style="text-transform:uppercase;"><?php echo $biller->company; ?></h3>
 	<?php echo "<p style=\"text-transform:capitalize;\">".$biller->address.", ".$biller->city.", ".$biller->postal_code.", ".$biller->state.", ".$biller->country."</p>"; 
-	echo "<p>Vat registration Number: 18131087457- Mushok-11KHA</p>";
+	echo "<p>Vat registration Number: 18131087457- Mushok-11(KA)</p>";
 	echo "<span class=\"left\">".$this->lang->line("reference_no").": ".$inv->reference_no."</span> 
 	<span class=\"right\">".$this->lang->line("tel").": ".$biller->phone."</span>";
 	if($pos->cf_title1 != "" && $pos->cf_value1 != "") {

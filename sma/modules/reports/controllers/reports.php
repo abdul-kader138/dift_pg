@@ -901,22 +901,12 @@ class Reports extends MX_Controller
         $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
         $data['rows'] = $this->reports_model->getAllInvoiceItemsWithDetails($startDate, $endDate);
         $inv = $this->reports_model->getInvoiceBySaleID($startDate, $endDate);
-//        $biller_id = $inv[0]->biller_id;
-//        $customer_id = $inv->customer_id;
-//        $invoice_type_id = $inv->invoice_type;
-//        $data['biller'] = $this->sales_model->getBillerByID($biller_id);
-//        $data['customer'] = $this->sales_model->getCustomerByID($customer_id);
-//        $data['invoice_types_details'] = $this->sales_model->getInvoiceTypeByID($invoice_type_id);
+        $data['biller'] = $this->reports_model->getBillerByID();
         $data['inv'] = $inv;
         $data['sale_start_date'] = $sale_start_date;
         $data['sale_end_date'] = $sale_end_date;
         $data['inv'] = $inv;
-
-
         $data['page_title'] = $this->lang->line("invoice");
-//        $data['sid'] = $sale_id;
-
-
         $this->load->view('pos_view', $data);
 
     }
