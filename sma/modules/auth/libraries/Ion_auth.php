@@ -133,6 +133,7 @@ class Ion_auth
 		define("RESTRICT_SALE", $SETTING->restrict_sale);
 		define("RESTRICT_USER", $SETTING->restrict_user);
 		define("TRANSFER_REF", $SETTING->transfer_prefix);
+		define("BOOTH_NO", $SETTING->booth_no);
 		define("ALERT_NO", $this->ion_auth_model->get_total_results());
 		define("CAL_OPT", $SETTING->restrict_calendar);
                 define("BSTATESAVE", 0);

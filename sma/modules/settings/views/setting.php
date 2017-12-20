@@ -212,7 +212,11 @@ $opt_cal = array(1 => $this->lang->line('private'), 0 => $this->lang->line('shar
 echo form_dropdown('restrict_calendar', $opt_cal, $settings->restrict_calendar, 'class="span11 tip chzn-select" data-placeholder="' . $this->lang->line("select") . ' ' . $this->lang->line("restrict_calendar") . '" title="' . $this->lang->line("restrict_calendar_tip") . '" required="required" data-error="' . $this->lang->line("restrict_calendar") . ' ' . $this->lang->line("is_required") . '"');
 ?>
     </div>
-</div>      
+</div>
+        <div class="control-group">
+            <label class="control-label" for="Booth">Booth No.</label>
+            <div class="controls"> <?php echo form_input('booth_no', $settings->booth_no, 'class="span11 tip" id="booth_no" title="Booth No" required="required" data-error="Booth No. is required"'); ?> </div>
+        </div>
         
     </div>
 </div>    

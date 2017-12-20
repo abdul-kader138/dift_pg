@@ -959,7 +959,7 @@ class Pos_model extends CI_Model
     public function getTodayCashFromCardCashSales()
     {
         $date = date('Y-m-d');
-        $myQuery = "SELECT (sum(COALESCE( paid, 0 )) + (SUM( COALESCE( total, 0 ) ) - (SUM(COALESCE( paid, 0 )) + SUM(COALESCE( paid_card, 0 ))))) AS total
+        $myQuery = "SELECT (sum(COALESCE( paid, 0 ))-(((sum(COALESCE( paid, 0 )) + SUM(COALESCE( paid_card, 0 ))) - ((SUM( COALESCE( inv_total, 0 ) )))))) AS total
 			FROM sales
 			WHERE DATE(date) =  '{$date}' AND paid_by = 'CC_cash'
 			GROUP BY date";

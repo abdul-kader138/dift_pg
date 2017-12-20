@@ -84,7 +84,8 @@ class Settings extends MX_Controller {
 		$this->form_validation->set_rules('discount_option', $this->lang->line('discount_option'), 'trim|required|xss_clean');
 		$this->form_validation->set_rules('discount_method', $this->lang->line('discount_method'), 'trim|required|xss_clean');
 		$this->form_validation->set_rules('default_discount', $this->lang->line('default_discount'), 'trim|required|xss_clean');
-		
+		$this->form_validation->set_rules('booth_no', $this->lang->line('booth_no'), 'trim|required|xss_clean');
+
 		
 		if ($this->form_validation->run() == true)
 		{
@@ -123,6 +124,7 @@ class Settings extends MX_Controller {
 				'product_serial' => $this->input->post('product_serial'),
 				'discount_option' => $this->input->post('discount_option'),
 				'discount_method' => $this->input->post('discount_method'),
+				'booth_no' => $this->input->post('booth_no'),
 				'default_discount' => $this->input->post('default_discount'),
 				'tax1' => $tax1,
 				'tax2' => $tax2,

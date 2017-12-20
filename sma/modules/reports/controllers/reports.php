@@ -774,8 +774,8 @@ class Reports extends MX_Controller
             ->from('products p', FALSE)
             ->join($wh_qty, 'p.id = wProducts.product_id', 'inner')
             ->join($sp, 'p.id = PSales.product_id', 'left')
-            ->join($pp, 'p.id = PCosts.purchase_item_id', 'left')
-            ->where('p.quantity > 0', null);
+            ->join($pp, 'p.id = PCosts.purchase_item_id', 'left');
+//            ->where('p.quantity > 0', null);
 
         if ($product) {
             $this->datatables->where('p.id', $product);

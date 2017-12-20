@@ -931,9 +931,9 @@ $(document).ready(function () {
         total_discount -= old_pr_discount;
         total_discount += new_pr_discount;
         current_discount = Math.abs(total_discount).toFixed(2);
-        var g_total = (total + tax_value + tax_value2) - total_discount;
+        var g_total = (total + tax_value - tax_value2) - total_discount;
         <?php } else { ?>
-        var g_total = total + tax_value + tax_value2;
+        var g_total = total + tax_value - tax_value2;
         <?php } ?>
         grand_total = Math.abs(g_total).toFixed(2);
         $("#total-payable").empty();
@@ -1135,7 +1135,7 @@ $("#saletbl").on("click", 'button[class^="del_row"]', function () {
     }
     current_tax2 = Math.abs(tax_value2).toFixed(2);
     <?php } ?>
-    var g_total = (total + tax_value + tax_value2) - total_discount;
+    var g_total = (total + tax_value - tax_value2) - total_discount;
     current_discount = Math.abs(total_discount).toFixed(2);
     grand_total = Math.abs(g_total).toFixed(2);
 
@@ -1326,7 +1326,8 @@ function add_row() {
         total_discount += new_discount_value2;
         current_discount = parseFloat(total_discount).toFixed(2);
         <?php } ?>
-        var g_total = total + tax_value + tax_value2 - total_discount;
+//        var g_total = total + tax_value - tax_value2 - total_discount;
+        var g_total = total + tax_value - total_discount;
         grand_total = parseFloat(g_total).toFixed(2);
 
         $("#total-payable").empty();
@@ -1516,7 +1517,8 @@ function key_pad() {
             current_discount = parseFloat(total_discount).toFixed(2);
             <?php } ?>
 
-            var g_total = (total + tax_value + tax_value2) - total_discount;
+//            var g_total = (total + tax_value - tax_value2) - total_discount;
+            var g_total = (total + tax_value ) - total_discount;
             grand_total = parseFloat(g_total).toFixed(2);
 
             $("#total-payable").empty();
@@ -1730,7 +1732,8 @@ if (discount_type2 == 1) {
 total_discount += new_discount_value2;
 current_discount = parseFloat(total_discount).toFixed(2);
 <?php } ?>
-var g_total = total + tax_value + tax_value2 - total_discount;
+//var g_total = total + tax_value + tax_value2 - total_discount;
+var g_total = total + tax_value - total_discount;
 grand_total = parseFloat(g_total).toFixed(2);
 $("#total-payable").empty();
 $("#total-payable").append(grand_total);
@@ -1838,7 +1841,8 @@ $("#payment").click(function () {
 
     var r_amount = parseFloat($('#items_return_val').val());
 
-    var twt = (total + tax_value + tax_value2) - total_discount - r_amount;
+//    var twt = (total + tax_value + tax_value2) - total_discount - r_amount;
+    var twt = (total + tax_value ) - total_discount - r_amount;
 //    count = count - 1;
 
     var warehouse = $("#warehouse").val();

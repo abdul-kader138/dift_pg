@@ -354,7 +354,8 @@ class Pos extends MX_Controller
                 $inv_discount = 0;
             }
 
-            $gTotal = $inv_total_no_tax + $total_tax + $val_tax2 - $val_discount;
+//            $gTotal = $inv_total_no_tax + $total_tax + $val_tax2 - $val_discount;
+            $gTotal = $inv_total_no_tax + $total_tax - $val_discount;
 
             $saleDetails = array('reference_no' => $reference_no,
                 'date' => $date,

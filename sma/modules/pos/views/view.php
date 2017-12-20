@@ -32,7 +32,7 @@ h3 { margin: 5px 0; }
 <img src="<?php echo $this->config->base_url(); ?>assets/uploads/logos/<?php echo $biller->logo; ?>" alt="Biller Logo">
 	<h3 style="text-transform:uppercase;"><?php echo $biller->company; ?></h3>
 	<?php echo "<p style=\"text-transform:capitalize;\">".$biller->address.", ".$biller->city.", ".$biller->postal_code.", ".$biller->state.", ".$biller->country."</p>"; 
-	echo "<p>Vat registration Number: 18131087457- Mushok-11Kho</p>";
+	echo "<p>Vat registration Number: 18131087457- Mushok-11KHA</p>";
 	echo "<span class=\"left\">".$this->lang->line("reference_no").": ".$inv->reference_no."</span> 
 	<span class=\"right\">".$this->lang->line("tel").": ".$biller->phone."</span>";
 	if($pos->cf_title1 != "" && $pos->cf_value1 != "") {
@@ -43,7 +43,8 @@ h3 { margin: 5px 0; }
 	} 
 	echo '<div style="clear:both;"></div>';
 	echo "<span class=\"left\">".$this->lang->line("customer").": ". $inv->customer_name."</span> 
-	<span class=\"right\">".$this->lang->line("date").": ".date(PHP_DATE, strtotime($inv->date))."</span>"; 
+	<span class=\"right\">".$this->lang->line("date").": ".date(PHP_DATE, strtotime($inv->date))."</span>
+	<span class=\"left\">".$this->lang->line("booth_no").": ". BOOTH_NO."</span>";
 	 ?>
     <div style="clear:both;"></div>
     
@@ -87,9 +88,11 @@ h3 { margin: 5px 0; }
     <?php if($inv->total_tax != 0 && TAX1) { ?>
     <td style="text-align:left;"><?php echo $this->lang->line("product_vat"); ?></td><td style="text-align:right; padding-right:1.5%; border-right: 1px solid #999;font-weight:bold;"><?php echo $this->ion_auth->formatMoney($inv->total_tax); ?></td>
     <?php } else { echo '<td></td>'; } ?>
+    </tr>
+    <tr><td></td><td></td>
     <?php if($inv->total_tax2 != 0 && TAX2) { ?>
-    <td style="text-align:left; padding-left:1.5%;"><?php echo $this->lang->line("invoice_tax"); ?></td><td style="text-align:right;font-weight:bold;"><?php echo $this->ion_auth->formatMoney($inv->total_tax2); ?></td>
-    <?php } else { echo '<td></td>'; } ?>
+    <td style="text-align:left;"><?php echo $this->lang->line("invoice_vat"); ?></td><td style="text-align:right;font-weight:bold;"><?php echo $this->ion_auth->formatMoney($inv->total_tax2); ?></td>
+    <?php } else { echo '<td></td><td></td>'; } ?>
     </tr>
     <?php if($inv->inv_discount != 0 && DISCOUNT_OPTION) { ?><tr>
     <td colspan="2" style="text-align:left;"><?php echo $this->lang->line("discount"); ?></td><td colspan="2" style="text-align:right;font-weight:bold;"><?php echo $this->ion_auth->formatMoney($inv->inv_discount); ?></td>
