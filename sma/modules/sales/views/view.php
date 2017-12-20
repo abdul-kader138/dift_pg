@@ -27,6 +27,7 @@ h3 { margin: 5px 0; }
 </style>
 </head>
 
+
 <body>
 <div id="wrapper">
 <img src="<?php echo $this->config->base_url(); ?>assets/uploads/logos/<?php echo $biller->logo; ?>" alt="Biller Logo">
