@@ -903,8 +903,8 @@ class Reports extends MX_Controller
         $inv = $this->reports_model->getInvoiceBySaleID($startDate, $endDate);
         $data['biller'] = $this->reports_model->getBillerByID();
         $data['inv'] = $inv;
-        $data['sale_start_date'] = $sale_start_date;
-        $data['sale_end_date'] = $sale_end_date;
+        $data['sale_start_date'] = $startDate;
+        $data['sale_end_date'] = $endDate;
         $data['inv'] = $inv;
         $data['page_title'] = $this->lang->line("invoice");
         $this->load->view('pos_view', $data);

@@ -145,6 +145,29 @@ class Pos extends MX_Controller
                         }
                     }
 
+
+//                    Invoice Tax Calculate for product
+
+                    if (TAX2) {
+                        $tax_dts = $this->pos_model->getTaxRateByID($tax_rate2);
+                        $taxRt = $tax_dts->rate;
+                        $taxTp = $tax_dts->type;
+
+                        if ($taxTp == 1 && $taxRt != 0) {
+                            $val_tax2_sd = ((($this->input->post($quantity . $i) * $this->input->post($unit_price . $i))/ ($taxRt+100)) * 100);
+                            $val_tax2=(($this->input->post($quantity . $i) * $this->input->post($unit_price . $i)) -$val_tax2_sd);
+                            $val_tax2_vat[] =$val_tax2;
+                        } else {
+                            $val_tax2_vat = $taxRt;
+                            $val_tax2 = $taxRt;
+                            $val_tax2 = $taxRt;
+                        }
+
+                    } else {
+                        $val_tax2_vat[] = 0;
+                        $val_tax2 = 0;
+                        $tax_rate2 = 0;
+                    }
                     if (TAX1) {
                         $tax_id = $this->input->post($tax_rate . $i);
                         $tax_details = $this->pos_model->getTaxRateByID($tax_id);
@@ -153,12 +176,13 @@ class Pos extends MX_Controller
                         $tax_rate_id[] = $tax_id;
 
                         if ($taxType == 1 && $taxRate != 0) {
-                            $item_tax = (($this->input->post($quantity . $i)) * ($this->input->post($unit_price . $i)) * $taxRate / 100);
+                            $item_tax = (((((($this->input->post($quantity . $i) * $this->input->post($unit_price . $i))) - $val_tax2) / (100+$taxRate)) * $taxRate));
                             $val_tax[] = $item_tax;
                         } else {
                             $item_tax = $taxRate;
                             $val_tax[] = $item_tax;
                         }
+
 
                         if ($taxType == 1) {
                             $tax[] = $taxRate . "%";
@@ -171,7 +195,6 @@ class Pos extends MX_Controller
                         $val_tax[] = 0;
                         $tax[] = "";
                     }
-
 
                     if (DISCOUNT_METHOD == 1 && DISCOUNT_OPTION == 2) {
 
@@ -288,6 +311,11 @@ class Pos extends MX_Controller
                 $total_tax = 0;
             }
 
+            if (TAX2) {
+                $total_tax2 = array_sum($val_tax2_vat);
+            } else {
+                $total_tax2 = 0;
+            }
 
             /*if(!empty($inv_product_code)) {
                 foreach($inv_product_code as $pr_code){
@@ -299,7 +327,7 @@ class Pos extends MX_Controller
                 }
             }*/
 
-            $warehouse_id=DEFAULT_WAREHOUSE;
+            $warehouse_id = DEFAULT_WAREHOUSE;
             $keys = array("product_id", "product_code", "product_name", "product_unit", "tax_rate_id", "tax", "quantity", "unit_price", "gross_total", "val_tax", "serial_no", "discount_val", "discount", "discount_id", "get_buy_qnt", "get_buy_title");
 
             $items = array();
@@ -308,51 +336,6 @@ class Pos extends MX_Controller
                 $items[] = array_combine($keys, $value);
             }
 
-
-            if (TAX2) {
-                $tax_dts = $this->pos_model->getTaxRateByID($tax_rate2);
-                $taxRt = $tax_dts->rate;
-                $taxTp = $tax_dts->type;
-
-                if ($taxTp == 1 && $taxRt != 0) {
-                    $val_tax2 = ($inv_total_no_tax * $taxRt / 100);
-                } else {
-                    $val_tax2 = $taxRt;
-                }
-
-            } else {
-                $val_tax2 = 0;
-                $tax_rate2 = 0;
-            }
-
-            if (TAX1) {
-                $item_tax=0;
-                $tax_id = $this->input->post($tax_rate . $i);
-                $tax_details = $this->pos_model->getTaxRateByID($tax_id);
-//                $taxRate = $tax_details->rate;
-//                $taxType = $tax_details->type;
-                $tax_rate_id[] = $tax_id;
-
-                if ($taxType == 1 && $taxRate != 0) {
-                    $item_tax = ( (($this->input->post($quantity . $i) * $this->input->post($unit_price . $i))) * $taxRate / 100);
-                    $item_tax_sd = (($this->input->post($quantity . $i)) * ($this->input->post($unit_price . $i)) * $taxRate / 100);
-                    $val_tax[] = $item_tax;
-                } else {
-                    $item_tax = $taxRate;
-                    $val_tax[] = $item_tax;
-                }
-
-                if ($taxType == 1) {
-                    $tax[] = $taxRate . "%";
-                } else {
-                    $tax[] = $taxRate;
-                }
-            } else {
-                $item_tax = 0;
-                $tax_rate_id[] = 0;
-                $val_tax[] = 0;
-                $tax[] = "";
-            }
 
             if (DISCOUNT_METHOD == 1 && DISCOUNT_OPTION == 1) {
 
@@ -384,8 +367,7 @@ class Pos extends MX_Controller
             }
 
 //            $gTotal = $inv_total_no_tax + $total_tax + $val_tax2 - $val_discount;
-            $gTotal = $inv_total_no_tax + $total_tax - $val_discount;
-
+            $gTotal = $inv_total_no_tax - $val_discount;
 
             $saleDetails = array('reference_no' => $reference_no,
                 'date' => $date,
@@ -397,7 +379,7 @@ class Pos extends MX_Controller
                 'inv_total' => $inv_total_no_tax,
                 'total_tax' => $total_tax,
                 'total' => $gTotal,
-                'total_tax2' => $val_tax2,
+                'total_tax2' => $total_tax2,
                 'tax_rate2_id' => $tax_rate2,
                 'inv_discount' => $val_discount,
                 'discount_id' => $inv_discount,
@@ -424,7 +406,7 @@ class Pos extends MX_Controller
                 }
             } else {
                 if ($saleID = $this->pos_model->addSale($saleDetails, $items, $warehouse_id, $did)) {
-                    $this->session->set_flashdata('success_message', $this->lang->line("sale_added"));
+                $this->session->set_flashdata('success_message', $this->lang->line("sale_added"));
                     redirect("module=pos&view=view_invoice&id=" . $saleID, 'refresh');
                 }
             }

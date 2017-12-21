@@ -41,7 +41,7 @@
         echo "<span class=\"right\">".$pos->cf_title2.": ".$pos->cf_value2."</span>";
     }
     echo '<div style="clear:both;"></div>';
-    echo "<span class=\"right\">".$this->lang->line("sale_start_date").": ".date(PHP_DATE, strtotime($sale_start_date))." To ".date(PHP_DATE, strtotime($sale_end_date))."</span>";
+    echo "<span class=\"right\">".$this->lang->line("sale_start_date").": ".date('d-m-Y', strtotime($sale_start_date))." To ".date('d-m-Y', strtotime($sale_end_date))."</span>";
 
     ?>
     <div style="clear:both;"></div>
@@ -78,24 +78,24 @@
         <tbody>
         <tr>
             <td style="text-align:left;"><?php echo $this->lang->line("total_items"); ?></td><td style="text-align:right; padding-right:1.5%; border-right: 1px solid #999;font-weight:bold;"><?php echo $totalCount ?></td>
-            <td style="text-align:left; padding-left:1.5%;">Total(With Vat)</td><td style="text-align:right;font-weight:bold;"><?php echo $this->ion_auth->formatMoney($inv[0]->gross_total); ?></td>
+            <td style="text-align:left; padding-left:1.5%;">Total</td><td style="text-align:right;font-weight:bold;"><?php echo $this->ion_auth->formatMoney($inv[0]->gross_total); ?></td>
         </tr>
-        <tr><td></td>
-            <?php if($inv->total_tax != 0 && TAX1) { ?>
-                <td style="text-align:left;"><?php echo $this->lang->line("product_vat"); ?></td><td style="text-align:right; padding-right:1.5%; border-right: 1px solid #999;font-weight:bold;"><?php echo $this->ion_auth->formatMoney($inv->total_tax); ?></td>
-            <?php } else { echo '<td></td>'; } ?>
-            <?php if($inv[0]->total_tax2) { ?>
-                <td style="text-align:left; padding-left:1.5%;"><?php echo $this->lang->line("invoice_vat_without_vat"); ?></td><td style="text-align:right;font-weight:bold;"><?php echo $this->ion_auth->formatMoney($inv[0]->total_tax2); ?></td>
-            <?php } else { echo '<td></td>'; } ?>
-        </tr>
-        <?php if($inv->inv_discount != 0 && DISCOUNT_OPTION) { ?><tr>
-            <td colspan="2" style="text-align:left;"><?php echo $this->lang->line("discount"); ?></td><td colspan="2" style="text-align:right;font-weight:bold;"><?php echo $this->ion_auth->formatMoney($inv->inv_discount); ?></td>
-            </tr><?php } ?>
-        <tr>
+
         <tr>
             <td></td>
             <td></td>
-            <td style="text-align:left; padding-left:1.5%;">Net sales</td><td style="text-align:right;font-weight:bold;"><?php echo $this->ion_auth->formatMoney($inv[0]->gross_total - $inv[0]->total_tax2); ?></td>
+            <td style="text-align:left; padding-left:1.5%;">SD</td><td style="text-align:right;font-weight:bold;"><?php echo $this->ion_auth->formatMoney($inv[0]->total_tax); ?></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td style="text-align:left; padding-left:1.5%;">Vat</td><td style="text-align:right;font-weight:bold;"><?php echo $this->ion_auth->formatMoney($inv[0]->total_tax2); ?></td>
+        </tr>
+
+        <tr>
+            <td></td>
+            <td></td>
+            <td style="text-align:left; padding-left:1.5%;">Net sales</td><td style="text-align:right;font-weight:bold;"><?php echo $this->ion_auth->formatMoney($inv[0]->gross_total - $inv[0]->total_tax2 -$inv[0]->total_tax); ?></td>
         </tr>
 
         </tbody>
