@@ -32,18 +32,10 @@
     <img src="<?php echo $this->config->base_url(); ?>assets/uploads/logos/<?php echo $biller->logo; ?>" alt="Biller Logo">
     <h3 style="text-transform:uppercase;"><?php echo $biller->company; ?></h3>
     <?php echo "<p style=\"text-transform:capitalize;\">".$biller->address.", ".$biller->city.", ".$biller->postal_code.", ".$biller->state.", ".$biller->country."</p>";
-    echo "<p>Vat registration Number: 18131087457- Mushok-11(KA)</p>";
-    echo "<span class=\"right\">".$this->lang->line("tel").": ".$biller->phone."</span>";
-    if($pos->cf_title1 != "" && $pos->cf_value1 != "") {
-        echo "<span class=\"left\">".$pos->cf_title1.": ".$pos->cf_value1."</span>";
-    }
-    if($pos->cf_title2 != "" && $pos->cf_value2 != "") {
-        echo "<span class=\"right\">".$pos->cf_title2.": ".$pos->cf_value2."</span>";
-    }
+    echo "<div><p>Vat registration Number: 18131087457- Mushok-11(KA)</p>";
     echo '<div style="clear:both;"></div>';
-    echo "<span class=\"right\">".$this->lang->line("sale_start_date").": ".date('d-m-Y', strtotime($sale_start_date))." To ".date('d-m-Y', strtotime($sale_end_date))."</span>";
-
-    ?>
+    echo "<span class=\"left\">".$this->lang->line("booth_no").": ". BOOTH_NO."</span>
+    <span class=\"right\">".$this->lang->line("sale_start_date").": ".date('d-m-Y', strtotime($sale_start_date))." To ".date('d-m-Y', strtotime($sale_end_date))."</span></div>";?>
     <div style="clear:both;"></div>
 
     <table class="table" cellspacing="0"  border="0">
