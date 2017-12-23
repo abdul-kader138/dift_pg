@@ -175,6 +175,7 @@ $lang['note'] 							= "Note";
 $lang['purchase_added'] 				= "Purchase Order Successfully Added";
 $lang['item_count_added'] 				= "Item count data Successfully Added";
 $lang['add_purchase'] 					= "Add Purchase Requisition";
+$lang['add_inventory'] 					= "Product Receive";
 $lang['upload_file'] 					= "Upload File";
 $lang['purchase_updated'] 				= "Purchase Order Successfully Updated";
 $lang['update_purchase'] 				= "Update Purchase Order";

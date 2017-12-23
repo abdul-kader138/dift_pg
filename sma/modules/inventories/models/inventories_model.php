@@ -184,7 +184,6 @@ class Inventories_model extends CI_Model
     }
 
 
-
     public function getProductByCodeForScan($code)
     {
 
@@ -225,13 +224,13 @@ class Inventories_model extends CI_Model
     }
 
 
-    public function getProductByNameFromWh($name,$wh_id)
+    public function getProductByNameFromWh($name, $wh_id)
     {
 
         $q = $this->db->get_where('products', array('name' => trim($name)), 1);
         if ($q->num_rows() > 0) {
-            $product= $q->row();
-            $wh_item = $this->db->get_where('warehouses_products', array('product_id' => $product->id,'warehouse_id' => $wh_id), 1);
+            $product = $q->row();
+            $wh_item = $this->db->get_where('warehouses_products', array('product_id' => $product->id, 'warehouse_id' => $wh_id), 1);
             if ($wh_item->num_rows() > 0) {
                 return $wh_item->row();
             }
@@ -244,11 +243,12 @@ class Inventories_model extends CI_Model
     }
 
 
-    public function updateProductQuantity($product_id, $quantity, $warehouse_id, $product_cost)
+    public function updateProductQuantity($product_id, $quantity, $warehouse_id)
     {
 
         // update the product with new details
-        if ($this->updatePrice($product_id, $product_cost) && $this->addQuantity($product_id, $warehouse_id, $quantity)) {
+//        if ($this->updatePrice($product_id, $product_cost) && $this->addQuantity($product_id, $warehouse_id, $quantity)) {
+        if ($this->addQuantity($product_id, $warehouse_id, $quantity)) {
             return true;
         }
 
@@ -340,10 +340,10 @@ class Inventories_model extends CI_Model
     }
 
 
-    public function addCountQuantity($code, $quantity,$warehouseId)
+    public function addCountQuantity($code, $quantity, $warehouseId)
     {
         $data = $this->getProductByCode($code);
-        $warehouse_data=$this->getProductQuantity($data->id,$warehouseId);
+        $warehouse_data = $this->getProductQuantity($data->id, $warehouseId);
         // Product data
         $productData = array(
             'product_id' => $data->id,
@@ -450,7 +450,6 @@ class Inventories_model extends CI_Model
             return $data;
         }
     }
-
 
 
     public function getAllInventoryItemsFromMrr($purchase_id)
@@ -617,7 +616,7 @@ class Inventories_model extends CI_Model
     public function getMakeMrrInfoByPurchasedId($purchase_id)
     {
 
-        $q = $this->db->get_where('make_mrr', array('make_purchase_id' => $purchase_id),1);
+        $q = $this->db->get_where('make_mrr', array('make_purchase_id' => $purchase_id), 1);
         if ($q->num_rows() > 0) {
             return $q->row();
         }
@@ -696,11 +695,22 @@ class Inventories_model extends CI_Model
 
         if ($this->db->insert('purchases', $purchseData)) {
             $purchase_id = $this->db->insert_id();
-
-//            foreach ($items as $data) {
-//                $this->npQTY($data['product_id'], $data['quantity']);
-//                $this->updateProductQuantity($data['product_id'], $data['quantity'], $warehouse_id, $data['unit_price']);
-//            }
+//
+            foreach ($items as $idata) {
+                $getProductPackage = $this->getPackageById($idata['product_id']);
+                if ($getProductPackage) {
+                    $packageDetails = $this->getPackageByName($getProductPackage->package_name);
+                    $this->nsQTY($idata['product_id'], $idata['quantity']);
+                    $this->updateProductQuantity($idata['product_id'], $idata['quantity'], $warehouse_id);
+                    foreach ($packageDetails as $package) {
+                        $this->nsQTY($package->product_id, $package->product_qty);
+                        $this->updateProductQuantity($package->product_id, $package->product_qty, $warehouse_id);
+                    }
+                } else {
+                    $this->nsQTY($idata['product_id'], $idata['quantity']);
+                    $this->updateProductQuantity($idata['product_id'], $idata['quantity'], $warehouse_id);
+                }
+            }
 
             $addOn = array('purchase_id' => $purchase_id);
             end($addOn);
@@ -776,12 +786,12 @@ class Inventories_model extends CI_Model
 
                     $make_purchase_id = $this->db->insert_id();
 
-                    $this->db->update('purchases', array('checked' => 1, 'checked_by' => USER_ID, 'checked_at' => date('Y-m-d H:i:s'),'warehouse_id'=>$warehouse_id), array('id' => $id));
+                    $this->db->update('purchases', array('checked' => 1, 'checked_by' => USER_ID, 'checked_at' => date('Y-m-d H:i:s'), 'warehouse_id' => $warehouse_id), array('id' => $id));
 
 
                     foreach ($value as $data) {
 
-                        $this->db->update('purchase_items', array('make_purchase_id' => $make_purchase_id, 'supplier_id' => $key,'unit_price'=>$data['unit_price'],'quantity'=>$data['quantity'],'gross_total'=>($data['quantity']*$data['unit_price'])), array('id' => $data['p_item_id']));
+                        $this->db->update('purchase_items', array('make_purchase_id' => $make_purchase_id, 'supplier_id' => $key, 'unit_price' => $data['unit_price'], 'quantity' => $data['quantity'], 'gross_total' => ($data['quantity'] * $data['unit_price'])), array('id' => $data['p_item_id']));
 //                        $this->db->update('purchase_items', $items, array('id' => $data['p_item_id']));
                     }
 
@@ -854,7 +864,7 @@ class Inventories_model extends CI_Model
 
 //            foreach ($items as $data) {
 //                $this->npQTY($data['product_id'], $data['quantity']);
-                //$this->updateProductQuantity($data['product_id'], $data['quantity'], $warehouse_id, $data['unit_price']);
+            //$this->updateProductQuantity($data['product_id'], $data['quantity'], $warehouse_id, $data['unit_price']);
 //            }
 
             $addOn = array('purchase_id' => $id);
@@ -1042,16 +1052,16 @@ class Inventories_model extends CI_Model
         $this->db->where('id', $purchase_id);
         if ($this->db->update('make_purchases', $data)) {
 
-            $mrrData=$this->db->getMakeMrrInfo($purchase_id);
-                $obj=array(
-                    "approved_by"=>USER_ID,
-                    "approved_date"=>date('Y-m-d H:i:s')
-                );
-                $condition=array(
-                    "make_purchase_id"=>$purchase_id,
-                );
-                $condition=array("make_purchase_id"=>$purchase_id);
-                $this->db->update('make_mrr', $obj,$condition);
+            $mrrData = $this->db->getMakeMrrInfo($purchase_id);
+            $obj = array(
+                "approved_by" => USER_ID,
+                "approved_date" => date('Y-m-d H:i:s')
+            );
+            $condition = array(
+                "make_purchase_id" => $purchase_id,
+            );
+            $condition = array("make_purchase_id" => $purchase_id);
+            $this->db->update('make_mrr', $obj, $condition);
             return true;
         } else {
             return false;
@@ -1145,7 +1155,7 @@ class Inventories_model extends CI_Model
 //            $this->upQTY($product_id, $item->quantity);
         }
 
-        if ($this->db->delete('purchase_items', array('purchase_id' => $id,'make_purchase_id'=>0)) && $this->db->delete('purchases', array('id' => $id, "checked"=>0))) {
+        if ($this->db->delete('purchase_items', array('purchase_id' => $id, 'make_purchase_id' => 0)) && $this->db->delete('purchases', array('id' => $id, "checked" => 0))) {
             return true;
         }
         return FALSE;
@@ -1178,4 +1188,36 @@ class Inventories_model extends CI_Model
     }
 
 
+    public function getPackageById($id)
+    {
+
+        $q = $this->db->get_where('products', array('id' => $id, 'package_name !=' => ""), 1);
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+
+        return FALSE;
+
+    }
+
+    public function getPackageByName($name)
+    {
+
+        $q = $this->db->get_where('item_package', array('package_name' => $name));
+        if ($q->num_rows() > 0) {
+            foreach (($q->result()) as $row) {
+                $value[] = $row;
+            }
+            return $value;
+        }
+
+        return FALSE;
+    }
+
+    public function nsQTY($product_id, $quantity)
+    {
+        $prD = $this->getProductByID($product_id);
+        $nQTY = $prD->quantity + $quantity;
+        $this->db->update('products', array('quantity' => $nQTY), array('id' => $product_id));
+    }
 }

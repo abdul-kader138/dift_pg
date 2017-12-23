@@ -57,8 +57,8 @@ class Inventories extends MX_Controller
         $data['success_message'] = $this->session->flashdata('success_message');
 
         $data['warehouses'] = $this->inventories_model->getAllWarehouses();
-        $meta['page_title'] = 'Purchases Requisition';
-        $data['page_title'] = 'Purchases Requisition';
+        $meta['page_title'] = 'Challan List';
+        $data['page_title'] = 'Challan List';
         $this->load->view('commons/header', $meta);
         $this->load->view('content', $data);
         $this->load->view('commons/footer');
@@ -135,20 +135,16 @@ class Inventories extends MX_Controller
             ->select("purchases.id as id, date, reference_no, supplier_name, COALESCE(inv_total, 0), COALESCE(total_tax, 0), total,  CASE WHEN approved = '1' THEN 'Approved' WHEN verify_status = '1' THEN 'Verified'  WHEN checked = '1' THEN 'Checked' END AS approved", FALSE)
             ->from('purchases')
             ->where("checked", '0');
-//
-//        $this->datatables->add_column("Actions",
-//            "<center><a href='#' onClick=\"MyWindow=window.open('index.php?module=inventories&view=view_inventory_po&id=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=1000,height=600'); return false;\" title='" . $this->lang->line("view_inventory") . "' class='tip'><i class='icon-fullscreen'></i></a>&nbsp;<a href='index.php?module=inventories&amp;view=edit&amp;id=$1' title='Process' class='tip'><i class='icon-list'></i></a>
-//			 &nbsp;<a href='index.php?module=inventories&amp;view=delete&amp;id=$1' onClick=\"return confirm('" . $this->lang->line('alert_x_inventory') . "')\" title='" . $this->lang->line("delete_inventory") . "' class='tip'><i class='icon-trash'></i></a>&nbsp; </center>", "id")
-//            ->unset_column('id');
-
 
         if ($userHasAuthority) {
             $this->datatables->add_column("Actions",
-                "<center><a href='index.php?module=inventories&amp;view=edit&amp;id=$1' title='Process' class='tip'><i class='icon-list'></i></a>
+                "<center><a href='#' onClick=\"MyWindow=window.open('index.php?module=inventories&view=view_inventory&id=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=1000,height=600'); return false;\" title='" . $this->lang->line("view_inventory") . "' class='tip'><i class='icon-fullscreen'></i></a>&nbsp;
 			 &nbsp;<a href='index.php?module=inventories&amp;view=delete&amp;id=$1' onClick=\"return confirm('" . $this->lang->line('alert_x_inventory') . "')\" title='" . $this->lang->line("delete_inventory") . "' class='tip'><i class='icon-trash'></i></a>&nbsp; </center>", "id")
                 ->unset_column('id');
         }else{
-            $this->datatables->add_column("Actions","")->unset_column('id');
+            $this->datatables->add_column("Actions",
+                "<center><a href='#' onClick=\"MyWindow=window.open('index.php?module=inventories&view=view_inventory&id=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=1000,height=600'); return false;\" title='" . $this->lang->line("view_inventory") . "' class='tip'><i class='icon-fullscreen'></i></a>&nbsp;", "id")
+                ->unset_column('id');
         }
 
         echo $this->datatables->generate();
@@ -448,11 +444,8 @@ class Inventories extends MX_Controller
         $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
 
 
-        $inv = $this->inventories_model->getInventoryFromPOByPurchaseID($purchase_id);
-        $data['rows'] = $this->inventories_model->getMakeMrrInfo($purchase_id);
-        $supplier_id = $data['rows'][0]->supplier_id;
-        $data['supplier'] = $this->inventories_model->getSupplierByID($supplier_id);
-
+        $inv = $this->inventories_model->getInventoryByPurchaseID($purchase_id);
+        $data['rows'] = $this->inventories_model->getAllInventoryItems($purchase_id);
         $data['inv'] = $inv;
         $data['pid'] = $purchase_id;
         $data['page_title'] = $this->lang->line("inventory");
@@ -840,7 +833,7 @@ class Inventories extends MX_Controller
         //print_r($this->input->post);
 
 
-        $groups = array('salesman', 'viewer');
+        $groups = array( 'viewer');
         if ($this->ion_auth->in_group($groups)) {
             $this->session->set_flashdata('message', $this->lang->line("access_denied"));
             $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
@@ -905,6 +898,7 @@ class Inventories extends MX_Controller
                     $product_id[] = $product_details->id;
                     $product_name[] = $product_details->name;
                     $product_code[] = $product_details->code;
+                    $product_um[] = $product_details->unit;
 
                     $inv_quantity[] = $this->input->post($quantity . $i);
                     //$inv_product_code[] = $this->input->post($product.$i);
@@ -929,10 +923,10 @@ class Inventories extends MX_Controller
                     $product_code[] = $product_details->code;
                 } */
 
-            $keys = array("product_id", "product_code", "product_name", "tax_rate_id", "tax", "quantity", "unit_price", "gross_total", "val_tax");
+            $keys = array("product_id", "product_code", "um", "product_name", "tax_rate_id", "tax", "quantity", "unit_price", "gross_total", "val_tax");
 
             $items = array();
-            foreach (array_map(null, $product_id, $product_code, $product_name, $tax_rate_id, $tax, $inv_quantity, $inv_unit_cost, $inv_gross_total, $val_tax) as $key => $value) {
+            foreach (array_map(null, $product_id, $product_code, $product_um,$product_name, $tax_rate_id, $tax, $inv_quantity, $inv_unit_cost, $inv_gross_total, $val_tax) as $key => $value) {
                 $items[] = array_combine($keys, $value);
             }
 
@@ -964,7 +958,7 @@ class Inventories extends MX_Controller
 
         if ($this->form_validation->run() == true && $this->inventories_model->addPurchase($invDetails, $items, $warehouse_id)) {
 
-            $this->session->set_flashdata('success_message', "Purchase requisition successfully created");
+            $this->session->set_flashdata('success_message', "Product received successfully");
             redirect("module=inventories", 'refresh');
 
         } else {
@@ -1002,8 +996,8 @@ class Inventories extends MX_Controller
             $data['tax_rates'] = $this->inventories_model->getAllTaxRates();
             $data['warehouses'] = $this->inventories_model->getAllWarehouses();
             $data['rnumber'] = $this->inventories_model->getRQNextAI();
-            $meta['page_title'] = $this->lang->line("add_purchase");
-            $data['page_title'] = $this->lang->line("add_purchase");
+            $meta['page_title'] = $this->lang->line("add_inventory");
+            $data['page_title'] = $this->lang->line("add_inventory");
             $this->load->view('commons/header', $meta);
             $this->load->view('add', $data);
             $this->load->view('commons/footer');

@@ -108,7 +108,7 @@
         <tr>
           
             <th><?php echo $this->lang->line("date"); ?></th>
-			<th><?php echo $this->lang->line("ref_no"); ?></th>
+			<th>Challan No</th>
             <th><?php echo $this->lang->line("supplier"); ?></th>
             <th><?php echo $this->lang->line("total"); ?></th>
             <th><?php echo $this->lang->line("product_tax"); ?></th>
@@ -136,15 +136,15 @@
 		</tr>
         </tfoot>
 	</table>
-	<a href="<?php echo site_url('module=inventories&view=add');?>" class="btn btn-primary"><?php echo $this->lang->line("add_purchase"); ?></a> <div class="btn-group dropup" style="margin-left: 25px;">
-<a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><?php echo $this->lang->line("all_warehouses"); ?>
-<span class="caret"></span>
-</a>
-<ul class="dropdown-menu">
-    <?php
-	foreach($warehouses as $warehouse) {
-		echo "<li><a href='index.php?module=inventories&view=warehouse&warehouse_id=".$warehouse->id."'>".$warehouse->name."</a></li>";	
-	}
-	?>
-    </ul>
+	<a href="<?php echo site_url('module=inventories&view=add');?>" class="btn btn-primary">Product Receive</a> <div class="btn-group dropup" style="margin-left: 25px;">
+<!--<a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">--><?php //echo $this->lang->line("all_warehouses"); ?>
+<!--<span class="caret"></span>-->
+<!--</a>-->
+<!--<ul class="dropdown-menu">-->
+<!--    --><?php
+//	foreach($warehouses as $warehouse) {
+//		echo "<li><a href='index.php?module=inventories&view=warehouse&warehouse_id=".$warehouse->id."'>".$warehouse->name."</a></li>";
+//	}
+//	?>
+<!--    </ul>-->
     </div>

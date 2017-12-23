@@ -1189,10 +1189,11 @@ class Pos_model extends CI_Model
 
     }
 
+
     public function getPackageById($id)
     {
 
-        $q = $this->db->get_where('products', array('id' => $id), 1);
+        $q = $this->db->get_where('products', array('id' => $id, 'package_name !=' => ""), 1);
         if ($q->num_rows() > 0) {
             return $q->row();
         }
@@ -1200,6 +1201,7 @@ class Pos_model extends CI_Model
         return FALSE;
 
     }
+
 
 
     public function getPackageByName($name)
