@@ -585,6 +585,13 @@ class Sales_model extends CI_Model
         return false;
     }
 
+    public function usQTYForEditInvoice($product_id, $quantity)
+    {
+        $prD = $this->getProductByID($product_id);
+//        $nQTY = $prD->quantity + $quantity;
+        $this->db->update('products', array('quantity' => $quantity), array('id' => $product_id));
+    }
+
     public function usQTY($product_id, $quantity)
     {
         $prD = $this->getProductByID($product_id);
@@ -597,24 +604,7 @@ class Sales_model extends CI_Model
 
         if ($old_items = $this->getAllInvoiceItems($id)) {
 
-//                foreach ($items as $idata) {
-//                    $getProductPackage=$this->getPackageById($idata['product_id']);
-//                    if($getProductPackage){
-//                        $packageDetails=$this->getPackageByName($getProductPackage->package_name);
-////                    $this->nsQTY($idata['product_id'], $idata['quantity']);
-////                    $this->updateProductQuantity($idata['product_id'], $warehouse_id, $idata['quantity']);
-//                        foreach($packageDetails as $package){
-//                            $this->nsQTY($package->product_id, ($package->product_qty*$idata['quantity']));
-//                            $this->updateProductQuantity($package->product_id, $warehouse_id, ($package->product_qty*$idata['quantity']));
-//                        }
-//                    }
-//                    else{
-//                        $this->nsQTY($idata['product_id'], $idata['quantity']);
-//                        $this->updateProductQuantity($idata['product_id'], $warehouse_id, $idata['quantity']);
-//                    }
-//                }
-//
-
+//            return the previous item to warehouse
             foreach ($old_items as $data) {
                 $item_id = $data->id;
                 $item_qiantity = $data->quantity;
@@ -623,15 +613,19 @@ class Sales_model extends CI_Model
                 if ($getProductPackage) {
                     $packageDetails = $this->getPackageByName($getProductPackage->package_name);
                     foreach ($packageDetails as $package) {
-                        $this->updateQuantity($product_id, $warehouse_id, ($package->product_qty * $data->quantity));
-                        $this->usQTY($product_id, ($package->product_qty *  $data->quantity));
+                        $pkg_qty = $package->product_qty;
+                        $pr_qty_details = $this->getProductQuantity($package->product_id, $warehouse_id);
+                        $pr_qty = $pr_qty_details['quantity'];
+                        $qty = ($pr_qty + ($item_qiantity * $pkg_qty));
+                        $this->updateQuantity($package->product_id, $warehouse_id, $qty);
+                        $this->usQTYForEditInvoice($package->product_id, $qty);
                     }
                 } else {
                     $pr_qty_details = $this->getProductQuantity($product_id, $warehouse_id);
                     $pr_qty = $pr_qty_details['quantity'];
                     $qty = $pr_qty + $item_qiantity;
                     $this->updateQuantity($product_id, $warehouse_id, $qty);
-                    $this->usQTY($product_id, $item_qiantity);
+                    $this->usQTYForEditInvoice($product_id, $qty);
                 }
             }
         }
@@ -659,22 +653,41 @@ class Sales_model extends CI_Model
         );
 
         $this->db->where('id', $id);
-        if ($this->db->update('sales', $saleData) && $this->db->delete('sale_items', array('sale_id' => $id))) {
-//            foreach ($items as $idata) {
-//                $this->nsQTY($idata['product_id'], $idata['quantity']);
-//                $this->updateProductQuantity($idata['product_id'], $warehouse_id, $idata['quantity']);
-//            }
 
-            $addOn = array('sale_id' => $id);
-            end($addOn);
-            foreach ($items as &$var) {
-                $var = array_merge($addOn, $var);
+        if ($this->db->update('sales', $saleData) && $this->db->delete('sale_items', array('sale_id' => $id))) {
+
+
+//             dispatch product from warehouse
+        foreach ($items as $ndata) {
+            $p_id=$ndata['product_id'];
+            $getProductPackage = $this->getPackageById($data->product_id);
+            $getProductPackage = $this->getNewPackageById($p_id);
+            if ($getProductPackage) {
+                $packageDetailsNew = $this->getPackageByNameNew($getProductPackage->package_name);
+//                    $this->nsQTY($ndata['product_id'], $ndata['quantity']);
+//                    $this->updateProductQuantity($ndata['product_id'], $warehouse_id, $ndata['quantity']);
+                foreach ($packageDetailsNew as $packageNew) {
+                    $new_pkg_qty=($packageNew->product_qty*$ndata['quantity']);
+                      $this->nsQTY($packageNew->product_id, ($packageNew->product_qty*$ndata['quantity']));
+                      $this->updateProductQuantity($packageNew->product_id, $warehouse_id, ($packageNew->product_qty*$ndata['quantity']));
+                }
+            } else {
+
+                  $this->nsQTY($ndata['product_id'], $ndata['quantity']);
+                  $this->updateProductQuantity($ndata['product_id'], $warehouse_id, $ndata['quantity']);
             }
+        }
+
+        $addOn = array('sale_id' => $id);
+        end($addOn);
+        foreach ($items as &$var) {
+            $var = array_merge($addOn, $var);
+        }
 
             if ($this->db->insert_batch('sale_items', $items)) {
                 return true;
             }
-
+//
         }
 
         return false;
@@ -822,12 +835,24 @@ class Sales_model extends CI_Model
     public function getPackageById($id)
     {
 
+        $q = $this->db->get_where('products', array('id' => $id, 'package_name !=' => " "), 1);
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        } else return FALSE;
+
+
+    }
+
+
+
+    public function getNewPackageById($id)
+    {
+
         $q = $this->db->get_where('products', array('id' => $id, 'package_name !=' => ""), 1);
         if ($q->num_rows() > 0) {
             return $q->row();
-        }
+        } else return FALSE;
 
-        return FALSE;
 
     }
 
@@ -844,5 +869,20 @@ class Sales_model extends CI_Model
 
         return FALSE;
     }
+
+    public function getPackageByNameNew($name)
+    {
+
+        $q = $this->db->get_where('item_package', array('package_name' => $name));
+        if ($q->num_rows() > 0) {
+            foreach (($q->result()) as $row) {
+                $value[] = $row;
+            }
+            return $value;
+        }
+
+        return FALSE;
+    }
+
 
 }
