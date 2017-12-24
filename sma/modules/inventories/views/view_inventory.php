@@ -68,8 +68,7 @@
             </tr>
             <?php
             $r++;
-            $grandTotal = ($grandTotal + ($row->quantity * $row->unit_price));
-            $taxTotal = ($taxTotal + $row->val_tax);
+            $grandTotal = ($grandTotal + ($row->quantity));
         endforeach;
         ?>
         <?php $col = 5;
@@ -86,7 +85,7 @@
             <td colspan="3" style="text-align:right; padding-right:10px; font-weight:bold; vertical-align:middle;">Grand
                 Total
             </td>
-            <td style="text-align:right; padding-right:10px; font-weight:bold; vertical-align:middle;"><?php echo($grandTotal + $taxTotal); ?></td>
+            <td style="text-align:right; padding-right:10px; font-weight:bold; vertical-align:middle;"><?php echo($grandTotal); ?></td>
         </tr>
 
         </tbody>

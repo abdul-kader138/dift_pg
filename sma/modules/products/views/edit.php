@@ -218,8 +218,15 @@ $(document).ready(function(){
     Yes &nbsp;<input type="radio" name="cf6" value="1" <?php if($product->cf6==1){ echo "checked"; } ?> />&nbsp; No:&nbsp; <input type="radio" name="cf6" value="0" <?php if($product->cf6==0){ echo "checked"; } ?> />
   	
   </div>
-</div> 
+</div>
 
+<div class="control-group">
+    <label class="control-label" for="cf6">Is Vat Exempt</label>
+    <div class="controls">
+        Yes &nbsp;<input type="radio" name="vat_exempt" value="1" <?php if($product->vat_exempt==1){ echo "checked"; } ?> />&nbsp; No:&nbsp; <input type="radio" name="vat_exempt" value="0" <?php if($product->vat_exempt==0){ echo "checked"; } ?> />
+
+    </div>
+</div>
 
 
 

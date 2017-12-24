@@ -724,8 +724,8 @@ class Pos_model extends CI_Model
                 $getProductPackage=$this->getPackageById($idata['product_id']);
                 if($getProductPackage){
                     $packageDetails=$this->getPackageByName($getProductPackage->package_name);
-                    $this->nsQTY($idata['product_id'], $idata['quantity']);
-                    $this->updateProductQuantity($idata['product_id'], $warehouse_id, $idata['quantity']);
+//                    $this->nsQTY($idata['product_id'], $idata['quantity']);
+//                    $this->updateProductQuantity($idata['product_id'], $warehouse_id, $idata['quantity']);
                     foreach($packageDetails as $package){
                         $this->nsQTY($package->product_id, ($package->product_qty*$idata['quantity']));
                         $this->updateProductQuantity($package->product_id, $warehouse_id, ($package->product_qty*$idata['quantity']));

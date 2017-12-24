@@ -188,7 +188,7 @@ class Inventories_model extends CI_Model
     {
 
         //$q = $this->db->get_where('products', array('code' => $code), 1);
-        $q = $this->db->query("SELECT * FROM products LEFT JOIN promotion ON products.discount_id=promotion.promo_id  WHERE code LIKE '%{$code}%' OR cf4 LIKE  '%{$code}%' OR name LIKE  '%{$code}%' Limit 1");
+        $q = $this->db->query("SELECT * FROM products LEFT JOIN promotion ON products.discount_id=promotion.promo_id  WHERE code LIKE '%{$code}%' OR cf4 LIKE  '%{$code}%' OR name LIKE  '%{$code}%' and package_name ='' Limit 1");
         if ($q->num_rows() > 0) {
             return $q->row();
         }
@@ -700,8 +700,8 @@ class Inventories_model extends CI_Model
                 $getProductPackage = $this->getPackageById($idata['product_id']);
                 if ($getProductPackage) {
                     $packageDetails = $this->getPackageByName($getProductPackage->package_name);
-                    $this->nsQTY($idata['product_id'], $idata['quantity']);
-                    $this->updateProductQuantity($idata['product_id'], $idata['quantity'], $warehouse_id);
+//                    $this->nsQTY($idata['product_id'], $idata['quantity']);
+//                    $this->updateProductQuantity($idata['product_id'], $idata['quantity'], $warehouse_id);
                     foreach ($packageDetails as $package) {
                         $this->nsQTY($package->product_id, ($package->product_qty*$idata['quantity']));
                         $this->updateProductQuantity($package->product_id, ($package->product_qty*$idata['quantity']), $warehouse_id);

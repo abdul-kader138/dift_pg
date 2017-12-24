@@ -266,6 +266,21 @@ class Reports_model extends CI_Model
     }
 
 
+    public function getAllInvoiceWithDetails($sDate,$eDate)
+    {
+
+        $myQuery = "select sales.id, sales.reference_no, sum(sale_items.quantity) as quantity, sale_items.tax, sale_items.unit_price, sum(sale_items.val_tax) as val_tax, sum(sale_items.discount_val) as discount_val, sum(sale_items.gross_total) as gross_total FROM sales left join sale_items on sales.id=sale_items.sale_id WHERE sales.date between  '{$sDate}' and  '{$eDate}' GROUP BY sales.reference_no ORDER BY sales.reference_no ASC";
+        $q = $this->db->query($myQuery, false);
+        if($q->num_rows() > 0) {
+            foreach (($q->result()) as $row) {
+                $data[] = $row;
+            }
+
+            return $data;
+        }
+    }
+
+
 
     public function getBillerByID($id)
     {

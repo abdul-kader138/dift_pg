@@ -447,7 +447,10 @@
                 <a href="<?php echo base_url(); ?>index.php?module=reports&view=customer_sales">Sales Report (Customer Wise)</a>
             </li>
             <li>
-                <a href="<?php echo base_url(); ?>index.php?module=reports&view=pos_sales_report">Sales Report (POS)</a>
+                <a href="<?php echo base_url(); ?>index.php?module=reports&view=pos_sales_report_product">Sales Report-Product(POS)</a>
+            </li>
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=reports&view=pos_sales_report_invoice">Sales Report-Invoice(POS)</a>
             </li>
         </ul>
     </li>

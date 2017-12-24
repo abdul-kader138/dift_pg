@@ -154,9 +154,10 @@ class Pos extends MX_Controller
                         $taxTp = $tax_dts->type;
 
                         if ($taxTp == 1 && $taxRt != 0) {
-                            $val_tax2_sd = ((($this->input->post($quantity . $i) * $this->input->post($unit_price . $i))/ ($taxRt+100)) * 100);
-                            $val_tax2=(($this->input->post($quantity . $i) * $this->input->post($unit_price . $i)) -$val_tax2_sd);
-                            $val_tax2_vat[] =$val_tax2;
+                            $val_tax2_sd = ((($this->input->post($quantity . $i) * $this->input->post($unit_price . $i)) / ($taxRt + 100)) * 100);
+                            $val_tax2 = (($this->input->post($quantity . $i) * $this->input->post($unit_price . $i)) - $val_tax2_sd);
+                            if ($product_details->vat_exempt == '1') $val_tax2 = 0;
+                            $val_tax2_vat[] = $val_tax2;
                         } else {
                             $val_tax2_vat = $taxRt;
                             $val_tax2 = $taxRt;
@@ -176,7 +177,7 @@ class Pos extends MX_Controller
                         $tax_rate_id[] = $tax_id;
 
                         if ($taxType == 1 && $taxRate != 0) {
-                            $item_tax = (((((($this->input->post($quantity . $i) * $this->input->post($unit_price . $i))) - $val_tax2) / (100+$taxRate)) * $taxRate));
+                            $item_tax = (((((($this->input->post($quantity . $i) * $this->input->post($unit_price . $i))) - $val_tax2) / (100 + $taxRate)) * $taxRate));
                             $val_tax[] = $item_tax;
                         } else {
                             $item_tax = $taxRate;

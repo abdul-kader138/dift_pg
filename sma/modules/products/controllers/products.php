@@ -530,6 +530,7 @@ class Products extends MX_Controller
         $this->form_validation->set_rules('cf4', $this->lang->line("pcf4"), 'xss_clean');
         $this->form_validation->set_rules('cf5', $this->lang->line("pcf5"), 'xss_clean');
         $this->form_validation->set_rules('cf6', $this->lang->line("pcf6"), 'xss_clean');
+        $this->form_validation->set_rules('vat_exempt', $this->lang->line("vat_exempt"), 'xss_clean');
 
 
         if ($this->form_validation->run() == true) {
@@ -555,6 +556,7 @@ class Products extends MX_Controller
                 'cf4' => $this->input->post('cf4'),
                 'cf5' => $this->input->post('cf5'),
                 'cf6' => $this->input->post('cf6'),
+                'vat_exempt' => $this->input->post('vat_exempt'),
                 'details' => $this->input->post('note')
             );
 
@@ -707,6 +709,7 @@ class Products extends MX_Controller
         $this->form_validation->set_rules('cf4', $this->lang->line("pcf4"), 'xss_clean');
         $this->form_validation->set_rules('cf5', $this->lang->line("pcf5"), 'xss_clean');
         $this->form_validation->set_rules('cf6', $this->lang->line("pcf6"), 'xss_clean');
+        $this->form_validation->set_rules('vat_exempt', $this->lang->line("vat_exempt"), 'xss_clean');
 
         if ($this->form_validation->run() == true) {
             $data = array('code' => $this->input->post('code'),
@@ -726,6 +729,7 @@ class Products extends MX_Controller
                 'cf4' => $this->input->post('cf4'),
                 'cf5' => $this->input->post('cf5'),
                 'cf6' => $this->input->post('cf6'),
+                'vat_exempt' => $this->input->post('vat_exempt'),
                 'package_name' => $this->input->post('package_name'),
                 'details' => $this->input->post('note'),
                 'discount_id' => $this->input->post('discount_id')

@@ -48,7 +48,7 @@ if($this->input->post('submit')) {
             var sDate=$("#start_date").val();
             var eDate=$("#end_date").val();
             console.log(sDate);
-            window.open("index.php?module=reports&view=pos_view&sDate=" +sDate+'&eDate='+eDate, 'MyWindow','toolbar=0,location=0,directories=0,status=0,menubar=yes,scrollbars=yes,resizable=yes,width=1000,height=600');
+            window.open("index.php?module=reports&view=pos_view_invoice&sDate=" +sDate+'&eDate='+eDate, 'MyWindow','toolbar=0,location=0,directories=0,status=0,menubar=yes,scrollbars=yes,resizable=yes,width=1000,height=600');
         })
     });
 

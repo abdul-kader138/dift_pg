@@ -788,7 +788,9 @@ function pdf()
 			$shipping = $this->input->post('shipping');
 			
 			$inv_total_no_tax = 0;
-
+            if (TAX2) {
+                $tax_rate2 = DEFAULT_TAX2;
+            }
 				for($i=1; $i<=500; $i++){
 					if( $this->input->post($quantity.$i) && $this->input->post($product.$i) && $this->input->post($unit_price.$i) ) {
 					
@@ -801,30 +803,79 @@ function pdf()
                                                     }
                                             }*/
 					
-						if(TAX1) { 
-							$tax_id = $this->input->post($tax_rate.$i);
-							$tax_details = $this->sales_model->getTaxRateByID($tax_id);
-							$taxRate = $tax_details->rate;
-							$taxType = $tax_details->type;	
-							$tax_rate_id[] = $tax_id;	
-							
-							if($taxType == 1 && $taxRate != 0) {
-							$item_tax = (($this->input->post($quantity.$i)) * ($this->input->post($unit_price.$i)) * $taxRate / 100);
-							$val_tax[] = $item_tax;
-							} else {
-							$item_tax = $taxRate;	
-							$val_tax[] = $item_tax;
-							}
-							
-							if($taxType == 1) { $tax[] = $taxRate."%"; } else { $tax[] = $taxRate;  }			
-						} else {
-							$item_tax = 0;
-							$tax_rate_id[] = 0;
-							$val_tax[] = 0;
-							$tax[] = "";
-						}
-						
-						if(DISCOUNT_METHOD == 1 && DISCOUNT_OPTION == 2) {
+//						if(TAX1) {
+//							$tax_id = $this->input->post($tax_rate.$i);
+//							$tax_details = $this->sales_model->getTaxRateByID($tax_id);
+//							$taxRate = $tax_details->rate;
+//							$taxType = $tax_details->type;
+//							$tax_rate_id[] = $tax_id;
+//
+//							if($taxType == 1 && $taxRate != 0) {
+//							$item_tax = (($this->input->post($quantity.$i)) * ($this->input->post($unit_price.$i)) * $taxRate / 100);
+//							$val_tax[] = $item_tax;
+//							} else {
+//							$item_tax = $taxRate;
+//							$val_tax[] = $item_tax;
+//							}
+//
+//							if($taxType == 1) { $tax[] = $taxRate."%"; } else { $tax[] = $taxRate;  }
+//						} else {
+//							$item_tax = 0;
+//							$tax_rate_id[] = 0;
+//							$val_tax[] = 0;
+//							$tax[] = "";
+//						}
+                        if (TAX2) {
+
+                            $tax_dts = $this->sales_model->getTaxRateByID($tax_rate2);
+                            $taxRt = $tax_dts->rate;
+                            $taxTp = $tax_dts->type;
+                            if ($taxTp == 1 && $taxRt != 0) {
+                                $val_tax2_sd = ((($this->input->post($quantity . $i) * $this->input->post($unit_price . $i)) / ($taxRt + 100)) * 100);
+                                $val_tax2 = (($this->input->post($quantity . $i) * $this->input->post($unit_price . $i)) - $val_tax2_sd);
+                                if ($product_details->vat_exempt == '1') $val_tax2 = 0;
+                                $val_tax2_vat[] = $val_tax2;
+                            } else {
+                                $val_tax2_vat = $taxRt;
+                                $val_tax2 = $taxRt;
+                                $val_tax2 = $taxRt;
+                            }
+
+                        } else {
+                            $val_tax2_vat[] = 0;
+                            $val_tax2 = 0;
+                            $tax_rate2 = 0;
+                        }
+                        if (TAX1) {
+                            $tax_id = $this->input->post($tax_rate . $i);
+                            $tax_details = $this->sales_model->getTaxRateByID($tax_id);
+                            $taxRate = $tax_details->rate;
+                            $taxType = $tax_details->type;
+                            $tax_rate_id[] = $tax_id;
+
+                            if ($taxType == 1 && $taxRate != 0) {
+                                $item_tax = (((((($this->input->post($quantity . $i) * $this->input->post($unit_price . $i))) - $val_tax2) / (100 + $taxRate)) * $taxRate));
+                                $val_tax[] = $item_tax;
+                            } else {
+                                $item_tax = $taxRate;
+                                $val_tax[] = $item_tax;
+                            }
+
+
+                            if ($taxType == 1) {
+                                $tax[] = $taxRate . "%";
+                            } else {
+                                $tax[] = $taxRate;
+                            }
+                        } else {
+                            $item_tax = 0;
+                            $tax_rate_id[] = 0;
+                            $val_tax[] = 0;
+                            $tax[] = "";
+                        }
+
+
+                        if(DISCOUNT_METHOD == 1 && DISCOUNT_OPTION == 2) {
 						
 							$discount_id = $this->input->post($dis.$i);
 							$ds_details = $this->sales_model->getDiscountByID($discount_id);
@@ -885,22 +936,36 @@ function pdf()
 			}
 			
 			
-			if(TAX1) {
-				$total_tax = array_sum($val_tax);
-			} else {
-				$total_tax = 0;
-			}
-			
-			
-			/*if(!empty($inv_product_code)) {	 
-				foreach($inv_product_code as $pr_code){
-					$product_details = $this->sales_model->getProductByCode($pr_code);
-					$product_id[] = $product_details->id;
-					$product_name[] = $product_details->name;
-					$product_code[] = $product_details->code;
-					$product_unit[] = $product_details->unit;
-				}
-			}*/
+//			if(TAX1) {
+//				$total_tax = array_sum($val_tax);
+//			} else {
+//				$total_tax = 0;
+//			}
+
+
+            if (TAX1) {
+                $total_tax = array_sum($val_tax);
+            } else {
+                $total_tax = 0;
+            }
+
+            if (TAX2) {
+                $total_tax2 = array_sum($val_tax2_vat);
+            } else {
+                $total_tax2 = 0;
+            }
+
+
+
+            /*if(!empty($inv_product_code)) {
+                foreach($inv_product_code as $pr_code){
+                    $product_details = $this->sales_model->getProductByCode($pr_code);
+                    $product_id[] = $product_details->id;
+                    $product_name[] = $product_details->name;
+                    $product_code[] = $product_details->code;
+                    $product_unit[] = $product_details->unit;
+                }
+            }*/
 		
 			$keys = array("product_id","product_code","product_name","product_unit", "tax_rate_id", "tax","quantity","unit_price", "gross_total", "val_tax", "serial_no", "discount_val", "discount", "discount_id");
 		
@@ -908,23 +973,7 @@ function pdf()
 			foreach ( array_map(null, $product_id, $product_code, $product_name, $product_unit, $tax_rate_id, $tax, $inv_quantity, $inv_unit_price, $inv_gross_total, $val_tax, $serial, $val_ds, $discount, $dsID) as $key => $value ) {
 				$items[] = array_combine($keys, $value);
 			}
-			
-			if(TAX2) {
-				$tax_dts = $this->sales_model->getTaxRateByID($tax_rate2);
-				$taxRt = $tax_dts->rate;
-				$taxTp = $tax_dts->type;	
-					
-				if($taxTp == 1 && $taxRt != 0) {
-					$val_tax2 = ($inv_total_no_tax * $taxRt / 100);
-				} else {
-					$val_tax2 = $taxRt;
-				}
-				
-			} else {
-				$val_tax2 = 0;
-				$tax_rate2 = 0;
-			}
-			
+
 			if(DISCOUNT_METHOD == 1 && DISCOUNT_OPTION == 1) {
 				
 				$ds_dts = $this->sales_model->getDiscountByID($inv_discount);
@@ -954,8 +1003,9 @@ function pdf()
 				$inv_discount = 0;
 			}
 			
-			$gTotal = $inv_total_no_tax + $total_tax + $val_tax2 - $val_discount;
-			
+//			$gTotal = $inv_total_no_tax + $total_tax + $val_tax2 - $val_discount;
+			$gTotal = $inv_total_no_tax - $val_discount;
+
 			$saleDetails = array('reference_no' => $reference_no,
 					'date' => $date,
 					'biller_id' => $biller_id,
@@ -967,7 +1017,7 @@ function pdf()
 					'inv_total' => $inv_total_no_tax,
 					'total_tax' => $total_tax,
 					'total' => $gTotal,
-					'total_tax2' => $val_tax2,
+					'total_tax2' => $total_tax2,
 					'tax_rate2_id' => $tax_rate2,
 					'inv_discount' => $val_discount,
 					'discount_id' => $inv_discount,
@@ -975,15 +1025,15 @@ function pdf()
 					'shipping' => $shipping
 				);
 		}
-		
-		
+
+
 		if ( $this->form_validation->run() == true && !empty($items)  )
-		{ 
-			if($this->sales_model->updateSale($id, $saleDetails, $items, $warehouse_id)) {		
+		{
+			if($this->sales_model->updateSale($id, $saleDetails, $items, $warehouse_id)) {
 				$this->session->set_flashdata('success_message', $this->lang->line("sale_updated"));
 				redirect("module=sales", 'refresh');
 			}
-			
+//
 		}
 		else
 		{ //display the create biller form

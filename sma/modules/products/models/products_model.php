@@ -177,6 +177,7 @@ class Products_model extends CI_Model
                 'cf4' => $data['cf4'],
                 'cf5' => $data['cf5'],
                 'cf6' => $data['cf6'],
+                'vat_exempt' => $data['vat_exempt'],
                 'details' => $data['details'],
                 'package_name' => $data['package_name']
             );
@@ -200,6 +201,7 @@ class Products_model extends CI_Model
                 'cf4' => $data['cf4'],
                 'cf5' => $data['cf5'],
                 'cf6' => $data['cf6'],
+                'vat_exempt' => $data['vat_exempt'],
                 'details' => $data['details'],
                 'image' => $photo
             );
@@ -245,7 +247,6 @@ class Products_model extends CI_Model
     public function updateProduct($id, $photo, $data = array())
     {
 
-
         if ($photo == NULL) {
             // Product data
             $productData = array(
@@ -268,6 +269,7 @@ class Products_model extends CI_Model
                 'package_name' => $data['package_name'],
                 'cf6' => $data['cf6'],
                 'details' => $data['details'],
+                'vat_exempt' => $data['vat_exempt'],
                 'discount_id' => $data['discount_id']
 
             );
@@ -292,6 +294,7 @@ class Products_model extends CI_Model
                 'cf5' => $data['cf5'],
                 'cf6' => $data['cf6'],
                 'details' => $data['details'],
+                'vat_exempt' => $data['vat_exempt'],
                 'discount_id' => $data['discount_id'],
 
                 'image' => $photo

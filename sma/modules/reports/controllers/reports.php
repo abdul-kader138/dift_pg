@@ -761,18 +761,18 @@ class Reports extends MX_Controller
             $sp = "( SELECT si.product_id, SUM( si.quantity ) soldQty, SUM( si.gross_total ) totalSale from sale_items si inner join sales s on s.id = si.sale_id where s.warehouse_id='{$warehouse_id}' group by si.product_id ) PSales";
         }
 
-        $wh_qty = "(SELECT wp.quantity, wp.warehouse_id,wp.product_id from warehouses_products wp where wp.warehouse_id='{$warehouse_id}') wProducts";
+//        $wh_qty = "(SELECT wp.quantity, wp.warehouse_id,wp.product_id from warehouses_products wp where wp.warehouse_id='{$warehouse_id}') wProducts";
 
         $this->load->library('datatables');
         $this->datatables
             ->select("p.code, p.name,p.unit,
                 COALESCE( PCosts.purchasedQty, 0 ) as PurchasedQty,
                 COALESCE( PSales.soldQty, 0 ) as SoldQty,
-                  wProducts.quantity as quantity,
+                  p.quantity as quantity,
                   p.cost,
-                COALESCE( wProducts.quantity*p.cost, 0 ) as TotalSales", FALSE)
+                COALESCE( p.quantity*p.cost, 0 ) as TotalSales", FALSE)
             ->from('products p', FALSE)
-            ->join($wh_qty, 'p.id = wProducts.product_id', 'inner')
+//            ->join($wh_qty, 'p.id = wProducts.product_id', 'inner')
             ->join($sp, 'p.id = PSales.product_id', 'left')
             ->join($pp, 'p.id = PCosts.purchase_item_id', 'left');
 //            ->where('p.quantity > 0', null);
@@ -780,7 +780,7 @@ class Reports extends MX_Controller
         if ($product) {
             $this->datatables->where('p.id', $product);
         }
-
+        $this->datatables->where('p.package_name =', "");
         echo $this->datatables->generate();
 
     }
@@ -860,26 +860,21 @@ class Reports extends MX_Controller
     }
 
 
-    function pos_sales_report()
+    function pos_sales_report_product()
     {
 
 
         $data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
-        $data['users'] = $this->reports_model->getAllUsers();
-        $data['warehouses'] = $this->reports_model->getAllWarehouses();
-        $data['customers'] = $this->reports_model->getAllCustomers();
-        $data['billers'] = $this->reports_model->getAllBillers();
-
-        $meta['page_title'] = $this->lang->line("sale_reports");
-        $data['page_title'] = $this->lang->line("sale_reports");
+        $meta['page_title'] = $this->lang->line("sale_reports_product");
+        $data['page_title'] = $this->lang->line("sale_reports_product");
         $this->load->view('commons/header', $meta);
-        $this->load->view('pos_sales_report', $data);
+        $this->load->view('pos_sales_report_product', $data);
         $this->load->view('commons/footer');
 
     }
 
 
-    function pos_view()
+    function pos_view_product()
     {
 
 
@@ -907,10 +902,56 @@ class Reports extends MX_Controller
         $data['sale_end_date'] = $endDate;
         $data['inv'] = $inv;
         $data['page_title'] = $this->lang->line("invoice");
-        $this->load->view('pos_view', $data);
+        $this->load->view('pos_view_product', $data);
 
     }
 
+
+    function pos_sales_report_invoice()
+    {
+
+
+        $data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
+        $meta['page_title'] = $this->lang->line("sale_reports_invoice");
+        $data['page_title'] = $this->lang->line("sale_reports_invoice");
+        $this->load->view('commons/header', $meta);
+        $this->load->view('pos_sales_report_invoice', $data);
+        $this->load->view('commons/footer');
+
+    }
+
+
+    function pos_view_invoice()
+    {
+
+
+        if ($this->input->get('sDate')) {
+            $startDate = $this->input->get('sDate');
+            $sale_start_date = $this->input->get('sDate');
+            $startDate = $this->ion_auth->fsd($startDate);
+        } else {
+            $startDate = NULL;
+        }
+        if ($this->input->get('eDate')) {
+            $endDate = $this->input->get('eDate');
+            $sale_end_date = $this->input->get('eDate');
+            $endDate = $this->ion_auth->fsd($endDate);
+        } else {
+            $endDate = NULL;
+        }
+
+        $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
+        $data['rows'] = $this->reports_model->getAllInvoiceWithDetails($startDate, $endDate);
+        $inv = $this->reports_model->getInvoiceBySaleID($startDate, $endDate);
+        $data['biller'] = $this->reports_model->getBillerByID();
+        $data['inv'] = $inv;
+        $data['sale_start_date'] = $startDate;
+        $data['sale_end_date'] = $endDate;
+        $data['inv'] = $inv;
+        $data['page_title'] = $this->lang->line("invoice");
+        $this->load->view('pos_view_invoice', $data);
+
+    }
 
 }
 

@@ -258,7 +258,16 @@ $(document).ready(function(){
     Yes &nbsp;<input type="radio" name="cf6" value="1" />&nbsp; No:&nbsp; <input type="radio" name="cf6" value="0" />
   	
   </div>
-</div> 
+</div>
+
+
+<div class="control-group">
+    <label class="control-label" for="cf6">Is Vat Exempt</label>
+    <div class="controls">
+        Yes &nbsp;<input type="radio" name="vat_exempt" value="1"  />&nbsp; No:&nbsp; <input type="radio" name="vat_exempt" value="0"  checked="checked"/>
+
+    </div>
+</div>
 
 
 <div class="control-group" style="display:none">
