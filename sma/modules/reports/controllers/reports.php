@@ -885,14 +885,14 @@ class Reports extends MX_Controller
 
         if ($this->input->get('sDate')) {
             $startDate = $this->input->get('sDate');
-            $sale_start_date=$this->input->get('sDate');
+            $sale_start_date = $this->input->get('sDate');
             $startDate = $this->ion_auth->fsd($startDate);
         } else {
             $startDate = NULL;
         }
         if ($this->input->get('eDate')) {
             $endDate = $this->input->get('eDate');
-            $sale_end_date=$this->input->get('eDate');
+            $sale_end_date = $this->input->get('eDate');
             $endDate = $this->ion_auth->fsd($endDate);
         } else {
             $endDate = NULL;

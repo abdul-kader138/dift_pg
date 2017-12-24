@@ -703,8 +703,8 @@ class Inventories_model extends CI_Model
                     $this->nsQTY($idata['product_id'], $idata['quantity']);
                     $this->updateProductQuantity($idata['product_id'], $idata['quantity'], $warehouse_id);
                     foreach ($packageDetails as $package) {
-                        $this->nsQTY($package->product_id, $package->product_qty);
-                        $this->updateProductQuantity($package->product_id, $package->product_qty, $warehouse_id);
+                        $this->nsQTY($package->product_id, ($package->product_qty*$idata['quantity']));
+                        $this->updateProductQuantity($package->product_id, ($package->product_qty*$idata['quantity']), $warehouse_id);
                     }
                 } else {
                     $this->nsQTY($idata['product_id'], $idata['quantity']);
