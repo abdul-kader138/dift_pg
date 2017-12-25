@@ -2392,23 +2392,24 @@ window.onload = sivamtime;
     }
 
 
+    // need to comment out after fair
     function getOrderDetails() {
 
-        var str = $("#return_ordeer_id").val();
-        if (str.length == 0) {
-            document.getElementById("show_items").innerHTML = "";
-            return;
-        } else {
-            var xmlhttp = new XMLHttpRequest();
-            xmlhttp.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200) {
-
-                    document.getElementById("show_items").innerHTML = this.responseText;
-                }
-            };
-            xmlhttp.open("GET", "index.php?module=pos&view=getOrderdetails&id=" + str, true);
-            xmlhttp.send();
-        }
+//        var str = $("#return_ordeer_id").val();
+//        if (str.length == 0) {
+//            document.getElementById("show_items").innerHTML = "";
+//            return;
+//        } else {
+//            var xmlhttp = new XMLHttpRequest();
+//            xmlhttp.onreadystatechange = function () {
+//                if (this.readyState == 4 && this.status == 200) {
+//
+//                    document.getElementById("show_items").innerHTML = this.responseText;
+//                }
+//            };
+//            xmlhttp.open("GET", "index.php?module=pos&view=getOrderdetails&id=" + str, true);
+//            xmlhttp.send();
+//        }
 
 
     }
