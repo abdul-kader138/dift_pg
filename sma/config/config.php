@@ -14,7 +14,7 @@
 | path to your installation.
 |
 */
-$config['base_url']	= 'http://localhost/dift_new/dift_pg/';
+$config['base_url']	= 'http://localhost:8088/dift_pg';
 
 /*
 |--------------------------------------------------------------------------

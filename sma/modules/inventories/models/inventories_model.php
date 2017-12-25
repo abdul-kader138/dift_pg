@@ -1153,6 +1153,12 @@ class Inventories_model extends CI_Model
             $this->updateQuantity($product_id, $warehouse_id, $new_quantity);
             $this->upQTY($product_id, $item->quantity);
         }
+//        data auditing info
+            foreach ($items as $obj) {
+                $obj->id = null;
+                $obj->updated_by = USER_NAME;
+                $this->db->insert('delete_purchase_items', $obj);
+            }
 
         if ($this->db->delete('purchase_items', array('purchase_id' => $id, 'make_purchase_id' => 0)) && $this->db->delete('purchases', array('id' => $id, "checked" => 0))) {
             return true;
