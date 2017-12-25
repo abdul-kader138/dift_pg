@@ -32,41 +32,44 @@
 	
 	echo "</p>";
 	?>
-    
+
+    <p style="font-weight:bold;"><?php echo $this->lang->line("reference_no"); ?>: <?php echo $inv->reference_no; ?></p>
+
+    <p style="font-weight:bold;"><?php echo $this->lang->line("date"); ?>: <?php echo date(PHP_DATE, strtotime($inv->date)); ?></p>
 	</div>
   
-    <div class="span6">
-    
-   <?php echo $this->lang->line("billed_to"); ?>:
-   <h3><?php if($customer->company != "-") { echo $customer->company; } else { echo $customer->name; } ?></h3>
-   <?php if($customer->company != "-") { echo "<p>Attn: ".$customer->name."</p>"; } ?>
-   <p>
-   <?php if($customer->address != "-") { echo  $this->lang->line("address").": ".$customer->address.", ".$customer->city.", ".$customer->postal_code.", ".$customer->state.", ".$customer->country; } ?>
-   <br> <?php echo $this->lang->line("tel").": ".$customer->phone; ?>
- 	<br><?php echo $this->lang->line("email").": ".$customer->email; ?></p>
-   <?php
-    if($customer->cf1 != "-" && $customer->cf1 != "") { echo "<br />".$this->lang->line("ccf1").": ".$customer->cf1; }
-	if($customer->cf2 != "-" && $customer->cf2 != "") { echo "<br />".$this->lang->line("ccf2").": ".$customer->cf2; }
-	if($customer->cf3 != "-" && $customer->cf3 != "") { echo "<br />".$this->lang->line("ccf3").": ".$customer->cf3; }
-	if($customer->cf4 != "-" && $customer->cf4 != "") { echo "<br />".$this->lang->line("ccf4").": ".$customer->cf4; }
-	if($customer->cf5 != "-" && $customer->cf5 != "") { echo "<br />".$this->lang->line("ccf5").": ".$customer->cf5; }
-	if($customer->cf6 != "-" && $customer->cf6 != "") { echo "<br />".$this->lang->line("ccf6").": ".$customer->cf6; }
-   ?>
-
-	</div> 
+<!--    <div class="span6">-->
+<!---->
+<!--   --><?php //echo $this->lang->line("billed_to"); ?><!--:-->
+<!--   <h3>--><?php //if($customer->company != "-") { echo $customer->company; } else { echo $customer->name; } ?><!--</h3>-->
+<!--   --><?php //if($customer->company != "-") { echo "<p>Attn: ".$customer->name."</p>"; } ?>
+<!--   <p>-->
+<!--   --><?php //if($customer->address != "-") { echo  $this->lang->line("address").": ".$customer->address.", ".$customer->city.", ".$customer->postal_code.", ".$customer->state.", ".$customer->country; } ?>
+<!--   <br> --><?php //echo $this->lang->line("tel").": ".$customer->phone; ?>
+<!-- 	<br>--><?php //echo $this->lang->line("email").": ".$customer->email; ?><!--</p>-->
+<!--   --><?php
+//    if($customer->cf1 != "-" && $customer->cf1 != "") { echo "<br />".$this->lang->line("ccf1").": ".$customer->cf1; }
+//	if($customer->cf2 != "-" && $customer->cf2 != "") { echo "<br />".$this->lang->line("ccf2").": ".$customer->cf2; }
+//	if($customer->cf3 != "-" && $customer->cf3 != "") { echo "<br />".$this->lang->line("ccf3").": ".$customer->cf3; }
+//	if($customer->cf4 != "-" && $customer->cf4 != "") { echo "<br />".$this->lang->line("ccf4").": ".$customer->cf4; }
+//	if($customer->cf5 != "-" && $customer->cf5 != "") { echo "<br />".$this->lang->line("ccf5").": ".$customer->cf5; }
+//	if($customer->cf6 != "-" && $customer->cf6 != "") { echo "<br />".$this->lang->line("ccf6").": ".$customer->cf6; }
+//   ?>
+<!---->
+<!--	</div>-->
 </div>
 <div style="clear: both;"></div>
 <p>&nbsp;</p>
 <div class="row-fluid"> 
 <div class="span6">    	
-<h3 class="inv"><?php echo $this->lang->line("invoice")." ". $this->lang->line("no") ." ".$inv->id; ?></h3>
+<!--<h3 class="inv">--><?php //echo $this->lang->line("invoice")." ". $this->lang->line("no") ." ".$inv->id; ?><!--</h3>-->
 </div>
 <div class="span6">
 
-<p style="font-weight:bold;"><?php echo $this->lang->line("reference_no"); ?>: <?php echo $inv->reference_no; ?></p>
-
-<p style="font-weight:bold;"><?php echo $this->lang->line("date"); ?>: <?php echo date(PHP_DATE, strtotime($inv->date)); ?></p>
-<p>&nbsp;</p>    
+<!--<p style="font-weight:bold;">--><?php //echo $this->lang->line("reference_no"); ?><!--: --><?php //echo $inv->reference_no; ?><!--</p>-->
+<!---->
+<!--<p style="font-weight:bold;">--><?php //echo $this->lang->line("date"); ?><!--: --><?php //echo date(PHP_DATE, strtotime($inv->date)); ?><!--</p>-->
+<!--<p>&nbsp;</p>    -->
 </div>
 <div style="clear: both;"></div>	
 </div>

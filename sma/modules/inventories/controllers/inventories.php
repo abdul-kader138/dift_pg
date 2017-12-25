@@ -127,7 +127,7 @@ class Inventories extends MX_Controller
         }
 
 
-        $userHasAuthority = $this->ion_auth->in_group(array('admin', 'owner','checker','salesman'));
+        $userHasAuthority = $this->ion_auth->in_group(array('admin', 'owner','checker'));
         $this->load->library('datatables');
 
 
@@ -141,7 +141,9 @@ class Inventories extends MX_Controller
                 "<center><a href='#' onClick=\"MyWindow=window.open('index.php?module=inventories&view=view_inventory&id=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=1000,height=600'); return false;\" title='" . $this->lang->line("view_inventory") . "' class='tip'><i class='icon-fullscreen'></i></a>&nbsp;
 			 &nbsp;<a href='index.php?module=inventories&amp;view=delete&amp;id=$1' onClick=\"return confirm('" . $this->lang->line('alert_x_inventory') . "')\" title='" . $this->lang->line("delete_inventory") . "' class='tip'><i class='icon-trash'></i></a>&nbsp; </center>", "id")
                 ->unset_column('id');
-        }else{
+        }
+
+        else{
             $this->datatables->add_column("Actions",
                 "<center><a href='#' onClick=\"MyWindow=window.open('index.php?module=inventories&view=view_inventory&id=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=1000,height=600'); return false;\" title='" . $this->lang->line("view_inventory") . "' class='tip'><i class='icon-fullscreen'></i></a>&nbsp;", "id")
                 ->unset_column('id');
@@ -1833,14 +1835,15 @@ class Inventories extends MX_Controller
             $id = $this->input->get('id');
         }
 
-        if (!$this->ion_auth->in_group('owner')) {
+//        if (!$this->ion_auth->in_group('owner')) {
+        if (!$this->ion_auth->in_group('owner','checker')) {
             $this->session->set_flashdata('message', $this->lang->line("access_denied"));
             $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
             redirect('module=home', 'refresh');
         }
 
         if ($this->inventories_model->deleteInventory($id)) {
-            $this->session->set_flashdata('success_message', "Purchase requisition deleted successfully.");
+            $this->session->set_flashdata('success_message', "Item deleted successfully.");
             redirect('module=inventories', 'refresh');
         }
 

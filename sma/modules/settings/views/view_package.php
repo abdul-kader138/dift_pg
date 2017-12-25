@@ -59,7 +59,7 @@
         endforeach;
         ?>
 
-            <tr><td colspan="4" style="text-align:right; padding-right:10px;"><?php echo $this->lang->line("total_qty"); ?></td><td style="text-align:right; padding-right:10px;"><?php echo $grandTotal; ?></td></tr>
+        <tr><td colspan="4" style="text-align:right; padding-right:10px;"><?php echo $this->lang->line("total_qty"); ?></td><td style="text-align:right; padding-right:10px;"><?php echo $grandTotal; ?></td></tr>
         <tr><td colspan="4" style="text-align:right; padding-right:10px; font-weight:bold;"><?php echo $this->lang->line("grand_total_qty"); ?> </td><td style="text-align:right; padding-right:10px; font-weight:bold;"><?php echo ($grandTotal+$taxTotal); ?></td></tr>
 
         </tbody>
