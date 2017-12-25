@@ -749,9 +749,9 @@ class Reports extends MX_Controller
             $start_date = $this->ion_auth->fsd($start_date);
             $end_date = $this->ion_auth->fsd($end_date);
 
-            $pp = "(SELECT mm.purchase_item_id, SUM( mm.received_qty ) purchasedQty from purchases p JOIN make_mrr mm on p.id = mm.purchase_id where
-                         mm.mrr_date  between '{$start_date}' and '{$end_date}' and mm.wh_id='{$warehouse_id}'
-                         group by mm.purchase_item_id ) PCosts";
+            $pp = "(SELECT pi.product_id, SUM( pi.quantity ) purchasedQty from purchase_items pi JOIN purchases p on pi.purchase_id = p.id where
+                         p.date  between '{$start_date}' and '{$end_date}'
+                         group by pi.product_id ) PCosts";
 
             $sp = "( SELECT si.product_id, SUM( si.quantity ) soldQty, SUM( si.gross_total ) totalSale from sales s JOIN sale_items si on s.id = si.sale_id where
                        s.date between '{$start_date}' and '{$end_date}' and s.warehouse_id='{$warehouse_id}'
@@ -774,7 +774,7 @@ class Reports extends MX_Controller
             ->from('products p', FALSE)
 //            ->join($wh_qty, 'p.id = wProducts.product_id', 'inner')
             ->join($sp, 'p.id = PSales.product_id', 'left')
-            ->join($pp, 'p.id = PCosts.purchase_item_id', 'left');
+            ->join($pp, 'p.id = PCosts.product_id', 'left');
 //            ->where('p.quantity > 0', null);
 
         if ($product) {
