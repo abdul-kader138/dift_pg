@@ -91,7 +91,7 @@ h3 { margin: 5px 0; }
     <tr><td></td><td></td>
     <?php if($inv->total_tax2 != 0 && TAX2) { ?>
 <!--    <td style="text-align:left;">Including(Vat & SD)</td><td style="text-align:right;font-weight:bold;">--><?php //echo $this->ion_auth->formatMoney($inv->total_tax2+$inv->total_tax); ?><!--</td>-->
-    <td style="text-align:left;">Including all taxes</td><td style="text-align:right;font-weight:bold;"></td>
+    <td style="text-align:left;">(Including all taxes.)</td><td style="text-align:right;font-weight:bold;"></td>
     <?php } else { echo '<td></td><td></td>'; } ?>
     </tr>
     <?php if($inv->inv_discount != 0 && DISCOUNT_OPTION) { ?><tr>
