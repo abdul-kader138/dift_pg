@@ -37,7 +37,7 @@
             <th><?php echo $this->lang->line("no"); ?></th>
             <th><?php echo $this->lang->line("package_name"); ?></th>
             <th><?php echo $this->lang->line("product_name"); ?> (<?php echo $this->lang->line("product_code"); ?>)</th>
-            <th style="padding-right:20px;"><?php echo $this->lang->line("unit_price"); ?></th>
+            <th style="padding-right:20px;">UM</th>
             <th><?php echo $this->lang->line("quantity"); ?></th>
         </tr>
 
