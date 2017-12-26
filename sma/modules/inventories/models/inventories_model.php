@@ -201,7 +201,7 @@ class Inventories_model extends CI_Model
     {
         $this->db->select('name')->limit('10');
         $this->db->like('name', $term, 'both');
-        $q = $this->db->get('products');
+        $q = $this->db->get_where('products',array('package_name'=>''));
         if ($q->num_rows() > 0) {
             foreach (($q->result()) as $row) {
                 $data[] = $row;
@@ -1182,7 +1182,7 @@ class Inventories_model extends CI_Model
     {
         $this->db->select('code');
         $this->db->like('code', $term, 'both')->limit('10');
-        $q = $this->db->get('products');
+        $q = $this->db->get_where('products',array('package_name'=>''));
         if ($q->num_rows() > 0) {
             foreach (($q->result()) as $row) {
                 $data[] = $row;
