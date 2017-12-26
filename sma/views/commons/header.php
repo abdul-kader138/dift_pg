@@ -503,7 +503,7 @@
                         <a href="<?php echo base_url(); ?>index.php?module=inventories">Challan List</a>
                     </li>
                     <li>
-                        <a href="<?php echo base_url(); ?>index.php?module=settings&amp;view=backup_database"><?php echo $this->lang->line('backup_database'); ?></a>
+                        <a href="<?php echo base_url(); ?>index.php?module=settings&amp;view=package"><?php echo $this->lang->line('packages_list'); ?></a>
                     </li>
                     <li>
                         <a href="<?php echo base_url(); ?>index.php?module=inventories&amp;view=add">Product Receive</a>
@@ -558,7 +558,9 @@
                         <a href="<?php echo base_url(); ?>index.php?module=reports&view=pos_sales_report_invoice">Sales
                             Report-Invoice(POS)</a>
                     </li>
-
+                    <li>
+                        <a href="<?php echo base_url(); ?>index.php?module=settings&amp;view=backup_database"><?php echo $this->lang->line('backup_database'); ?></a>
+                    </li>
 
                 <?php } ?>
 
@@ -575,8 +577,9 @@
                         <a href="<?php echo base_url(); ?>index.php?module=inventories">Challan List</a>
                     </li>
                     <li>
-                        <a href="<?php echo base_url(); ?>index.php?module=settings&amp;view=backup_database"><?php echo $this->lang->line('backup_database'); ?></a>
+                        <a href="<?php echo base_url(); ?>index.php?module=settings&amp;view=package"><?php echo $this->lang->line('packages_list'); ?></a>
                     </li>
+                    <li class="divider"></li>
                     <li>
                         <a href="<?php echo base_url(); ?>index.php?module=inventories&amp;view=add">Product Receive</a>
                     </li>
@@ -623,6 +626,9 @@
                     <li>
                         <a href="<?php echo base_url(); ?>index.php?module=reports&view=pos_sales_report_invoice">Sales
                             Report-Invoice(POS)</a>
+                    </li>
+                    <li>
+                        <a href="<?php echo base_url(); ?>index.php?module=settings&amp;view=backup_database"><?php echo $this->lang->line('backup_database'); ?></a>
                     </li>
                 <?php } ?>
             </ul>
