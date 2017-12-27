@@ -384,39 +384,16 @@ class Reports extends MX_Controller
         }
 
 
-        $pp = "(SELECT mm.purchase_id,mm.make_purchase_id, mm.mrr_date,mm.id, mm.received_qty purchasedQty, mm.inv_val  purchasedVal from purchase_items p JOIN make_mrr mm on mm.purchase_id=p.purchase_id and mm.make_purchase_id=p.make_purchase_id where mm.mrr_date between
-        '{$start_date}' and '{$end_date}' and mm.wh_id='{$warehouse_id}'
-                      group by mm.make_purchase_id,mm.mrr_date) PCosts";
-
-        $mp = "(select mp.id,mp.supplier_name,mp.reference_no,pi.product_name,mp.purchase_id,pi.quantity,mp.warehouse_id,mp.supplier_id,mp.inv_total from make_purchases mp inner join purchase_items pi on pi.make_purchase_id=mp.id  WHERE date BETWEEN
-         '{$start_date}' and '{$end_date}' and mp.warehouse_id='{$warehouse_id}'
-                         group by pi.make_purchase_id) mPurchase";
-
-
         $this->load->library('datatables');
         $this->datatables
-            ->select("make_purchases.id as id,mPurchase.reference_no, date,  warehouses.name as wname, mPurchase.supplier_name, GROUP_CONCAT(CONCAT(mPurchase.product_name, ' (', mPurchase.quantity, ')') SEPARATOR ', <br>') as iname, COALESCE(mPurchase.inv_total, 0),PCosts.mrr_date, COALESCE(PCosts.purchasedQty, 0), COALESCE(PCosts.purchasedVal, 0)", FALSE)
-            ->from('make_purchases')
-            ->join($pp, 'PCosts.make_purchase_id=make_purchases.id', 'inner')
-            ->join($mp, 'mPurchase.id=make_purchases.id', 'inner')
-            ->join('warehouses', 'warehouses.id=make_purchases.warehouse_id', 'inner')
-            ->group_by('make_purchases.supplier_id')
-            ->group_by('make_purchases.date');
+            ->select("purchases.reference_no, purchases.date,purchase_items.product_name, sum(COALESCE(purchase_items.quantity, 0)), COALESCE(purchase_items.gross_total, 0)", FALSE)
+            ->from('purchase_items')
+            ->join('purchases', 'purchase_items.purchase_id=purchases.id', 'inner')
+            ->group_by('purchase_items.product_name');
 
-        if ($supplier) {
-            $this->datatables->like('make_purchases.supplier_id', $supplier);
+        if ($start_date) {
+            $this->datatables->where('purchases.date BETWEEN "' . $start_date . '" and "' . $end_date . '"');
         }
-        if ($warehouse_id) {
-            $this->datatables->like('make_purchases.warehouse_id', $warehouse_id);
-        }
-        if ($reference_no) {
-            $this->datatables->like('make_purchases.reference_no', $reference_no, 'both');
-        }
-
-
-        $this->datatables->add_column("Actions",
-            "<center><a href='#' onClick=\"MyWindow=window.open('index.php?module=inventories&view=view_inventory&id=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=1000,height=600'); return false;\" title='" . $this->lang->line("view_inventory") . "' class='tip'><i class='icon-fullscreen'></i></a> <a href='index.php?module=inventories&view=pdf&id=$1' title='" . $this->lang->line("download_pdf") . "' class='tip'><i class='icon-file'></i></a> <a href='index.php?module=inventories&view=email_inventory&id=$1' title='" . $this->lang->line("email_inventory") . "' class='tip'><i class='icon-envelope'></i></a> <a href='index.php?module=inventories&amp;view=edit&amp;id=$1' title='" . $this->lang->line("edit_inventory") . "' class='tip'><i class='icon-edit'></i></a> <a href='index.php?module=inventories&amp;view=delete&amp;id=$1' onClick=\"return confirm('" . $this->lang->line('alert_x_inventory') . "')\" title='" . $this->lang->line("delete_inventory") . "' class='tip'><i class='icon-trash'></i></a></center>", "id")
-            ->unset_column('id');
 
         echo $this->datatables->generate();
     }

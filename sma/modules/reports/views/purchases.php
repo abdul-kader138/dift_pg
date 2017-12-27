@@ -80,55 +80,43 @@ if($this->input->post('submit')) {
 						'data'    : aoData,
 						'success' : fnCallback
 					  });
-					},	
-					"oTableTools": {
-						"sSwfPath": "assets/media/swf/copy_csv_xls_pdf.swf",
-						"aButtons": [
-								{
-									"sExtends": "csv",
-									"sFileName": "<?php echo $this->lang->line("purchases"); ?>.csv",
-                   		 			"mColumns": [ 0, 1, 2, 3, 4, 5,6,7,8 ]
-								},
-								{
-									"sExtends": "pdf",
-									"sFileName": "<?php echo $this->lang->line("purchases"); ?>.pdf",
-									"sPdfOrientation": "landscape",
-                   		 			"mColumns": [ 0, 1, 2, 3, 4, 5,6,7,8 ]
-								},
-								"print"
-						]
 					},
+                    "oTableTools": {
+                        "sSwfPath": "assets/media/swf/copy_csv_xls_pdf.swf",
+                        "aButtons": [
+                            "csv",
+                            "xls",
+                            {
+                                "sExtends": "pdf",
+                                "sPdfOrientation": "landscape",
+                                "sPdfMessage": ""
+                            },
+                            "print"
+                        ]
+                    },
 					"aoColumns": [
                         { "bSearchable": true },
                         { "mRender": format_date },
-					  null,
-					  null,
-					  { "bSearchable": false },
+                        { "bSearchable": true },
 					  { "mRender": currencyFormate },
-                        { "mRender": format_date },
-					  { "mRender": currencyFormate },
-                                          { "mRender": currencyFormate }
+                      { "mRender": currencyFormate }
 					],
 					"fnFooterCallback": function ( nRow, aaData, iStart, iEnd, aiDisplay ) {
-						var total = 0; tax_total =0; gtotal = 0;
-						for ( var i=0 ; i<aaData.length ; i++ )
-						{
-							total += parseFloat(aaData[ aiDisplay[i] ][5]);
-                                                        tax_total += parseFloat(aaData[ aiDisplay[i] ][6]);
-                                                        gtotal += parseFloat(aaData[ aiDisplay[i] ][7]);
-						}
-						
-						var nCells = nRow.getElementsByTagName('th');
-						nCells[5].innerHTML = currencyFormate(parseFloat(total).toFixed(2));
-                                                nCells[6].innerHTML = currencyFormate(parseFloat(tax_total).toFixed(2));
-                                                nCells[7].innerHTML = currencyFormate(parseFloat(gtotal).toFixed(2));
+//						var total = 0; tax_total =0; gtotal = 0;
+//						for ( var i=0 ; i<aaData.length ; i++ )
+//						{
+//							total += parseFloat(aaData[ aiDisplay[i] ][5]);
+//                                                        tax_total += parseFloat(aaData[ aiDisplay[i] ][6]);
+//                                                        gtotal += parseFloat(aaData[ aiDisplay[i] ][7]);
+//						}
+//
+//						var nCells = nRow.getElementsByTagName('th');
+//						nCells[5].innerHTML = currencyFormate(parseFloat(total).toFixed(2));
+//                                                nCells[6].innerHTML = currencyFormate(parseFloat(tax_total).toFixed(2));
+//                                                nCells[7].innerHTML = currencyFormate(parseFloat(gtotal).toFixed(2));
 					}
                     }).columnFilter({ aoColumns: [
-						{ type: "text", bRegex:true },
-						{ type: "text", bRegex:true },
-						{ type: "text", bRegex:true },
-						{ type: "text", bRegex:true },
-						null, null, null, null
+                    { type: "text", bRegex:true }
                      ]});
 				
             });
@@ -201,33 +189,34 @@ if($this->input->post('submit')) {
  
 	<thead>
         <tr>
-            <th><?php echo $this->lang->line("ref_no"); ?></th>
+            <th>Challan No</th>
             <th><?php echo $this->lang->line("date"); ?></th>
-            <th><?php echo $this->lang->line("warehouse"); ?></th>
-            <th><?php echo $this->lang->line("supplier"); ?></th>
+<!--            <th>--><?php //echo $this->lang->line("warehouse"); ?><!--</th>-->
+            <th>Product Name</th>
             <th><?php echo $this->lang->line("product_qty"); ?></th>
             <th><?php echo $this->lang->line("total"); ?></th>
-            <th><?php echo $this->lang->line("mrr_date"); ?></th>
-            <th><?php echo $this->lang->line("received_qty"); ?></th>
-            <th><?php echo $this->lang->line("mrr_total"); ?></th>
+<!--            <th>--><?php //echo $this->lang->line("mrr_date"); ?><!--</th>-->
+<!--            <th>--><?php //echo $this->lang->line("received_qty"); ?><!--</th>-->
+<!--            <th>--><?php //echo $this->lang->line("mrr_total"); ?><!--</th>-->
 	</tr>
         </thead>
 		<tbody>
 			<tr>
-            	<td colspan="8" class="dataTables_empty">Loading data from server</td>
+            	<td colspan="5" class="dataTables_empty">Loading data from server</td>
 			</tr>
         </tbody>
         <tfoot>
         <tr>
-            <th>[<?php echo $this->lang->line("ref_no"); ?>]</th>
+            <th>Challan No</th>
             <th>[<?php echo $this->lang->line("date"); ?>]</th>
-            <th>[<?php echo $this->lang->line("warehouse"); ?>]</th>
-            <th>[<?php echo $this->lang->line("supplier"); ?>]</th>
+            <th>Product Name</th>
+<!--            <th>[--><?php //echo $this->lang->line("warehouse"); ?><!--]</th>-->
+<!--            <th>[--><?php //echo $this->lang->line("supplier"); ?><!--]</th>-->
             <th><?php echo $this->lang->line("product_qty"); ?></th>
             <th><?php echo $this->lang->line("total"); ?></th>
-            <th><?php echo $this->lang->line("mrr_date"); ?></th>
-            <th><?php echo $this->lang->line("product_tax"); ?></th>
-            <th><?php echo $this->lang->line("grand_total"); ?></th>
+<!--            <th>--><?php //echo $this->lang->line("mrr_date"); ?><!--</th>-->
+<!--            <th>--><?php //echo $this->lang->line("product_tax"); ?><!--</th>-->
+<!--            <th>--><?php //echo $this->lang->line("grand_total"); ?><!--</th>-->
 	</tr>
         </tfoot>
 	</table>
