@@ -536,6 +536,9 @@
                     <?php //echo base_url(); ?><!--index.php?module=reports&amp;view=quantity_variance">Count-->
                     <!--                            Variance Quantity Report</a></li>-->
                     <li>
+                        <a href="<?php echo base_url(); ?>index.php?module=reports&view=purchases"><?php echo $this->lang->line('purchase_report'); ?></a>
+                    </li>
+                    <li>
                         <a href="<?php echo base_url(); ?>index.php?module=reports&view=sales"><?php echo $this->lang->line('sales_report'); ?></a>
                     </li>
                     <!--                    <li>-->
@@ -604,6 +607,9 @@
                     <!--                            & Closing Stock Report</a></li>-->
                     <!--                    <li><a href="--><?php //echo base_url(); ?><!--index.php?module=reports&amp;view=quantity_variance">Count-->
                     <!--                            Variance Quantity Report</a></li>-->
+                    <li>
+                        <a href="<?php echo base_url(); ?>index.php?module=reports&view=purchases"><?php echo $this->lang->line('purchase_report'); ?></a>
+                    </li>
                     <li>
                         <a href="<?php echo base_url(); ?>index.php?module=reports&view=sales"><?php echo $this->lang->line('sales_report'); ?></a>
                     </li>
