@@ -2000,6 +2000,7 @@ $("#payment").click(function () {
 
             var return_amount=0;
             if($("#twt_return").val()) return_amount=$("#twt_return").val();
+            var total_payable=$('#twt').text();
             if (selectedVal == 'CC_cash') {
                 var cardVal = $('#cc_amount').val();
                 var cashVal = $('#paid-amount').val();
@@ -2012,14 +2013,16 @@ $("#payment").click(function () {
                 if (cashVal == undefined || cashVal == '') cashVal = 0;
                 paid = parseFloat(cashVal);
             }
-            if (paid < twt) {
+//            if (paid < twt) {
+            if (paid < total_payable) {
                 bootbox.alert('<?php echo $this->lang->line('paid_l_t_payable'); ?>');
                 $(this).val('');
                 return false;
             }
             $("#balance").empty();
 
-            var balance = (paid - twt);
+//            var balance = (paid - twt);
+            var balance = (paid - total_payable);
             balance = parseFloat(balance).toFixed(2);
             if (balance != "NaN") {
                 $("#balance").append(balance);
