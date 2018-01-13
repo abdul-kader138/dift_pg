@@ -1573,6 +1573,7 @@ class Sales extends MX_Controller
 
     }
 
+
     function get_due()
     {
         if ($this->input->get('cus_id')) {

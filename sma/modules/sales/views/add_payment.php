@@ -57,6 +57,7 @@ $(document).ready(function() {
     var tax_type2 = <?php echo $tax_type2; ?>;
     <?php } ?>
 
+
     $('#customer_s').change(function(e) {
             e.preventDefault();
             var cus_id = $(this).val();
