@@ -820,12 +820,12 @@ class Settings extends MX_Controller {
 
     function package() {
 
-        if (!$this->ion_auth->in_group('owner'))
-        {
-            $this->session->set_flashdata('message', $this->lang->line("access_denied"));
-            $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
-            redirect('module=settings', 'refresh');
-        }
+//        if (!$this->ion_auth->in_group('owner'))
+//        {
+//            $this->session->set_flashdata('message', $this->lang->line("access_denied"));
+//            $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
+//            redirect('module=settings', 'refresh');
+//        }
 
         $data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
         $data['success_message'] = $this->session->flashdata('success_message');
@@ -981,6 +981,8 @@ class Settings extends MX_Controller {
         } else {
             $search_term = false;
         }
+
+        $userHasAuthority = $this->ion_auth->in_group(array('admin', 'owner'));
         $this->load->library('datatables');
 
         $this->datatables
@@ -988,11 +990,14 @@ class Settings extends MX_Controller {
             ->from('item_package')
             ->group_by('item_package.package_name');
 
-
-        $this->datatables->add_column("Actions",
-            "<center><a href='#' onClick=\"MyWindow=window.open('index.php?module=settings&amp;view=view_package&amp;name=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=1000,height=600'); return false;\" title='" . $this->lang->line("view_package") . "' class='tip'><i class='icon-fullscreen'></i>
+        if ($userHasAuthority) {
+            $this->datatables->add_column("Actions",
+                "<center><a href='#' onClick=\"MyWindow=window.open('index.php?module=settings&amp;view=view_package&amp;name=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=1000,height=600'); return false;\" title='" . $this->lang->line("view_package") . "' class='tip'><i class='icon-fullscreen'></i>
 			  &nbsp;<a href='index.php?module=settings&amp;view=delete_package&amp;name=$1' title='Delete Package' class='tip'><i class='icon-trash'></i></a>&nbsp; </center>", "name");
-
+        }else{
+            $this->datatables->add_column("Actions",
+                "<center><a href='#' onClick=\"MyWindow=window.open('index.php?module=settings&amp;view=view_package&amp;name=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=1000,height=600'); return false;\" title='" . $this->lang->line("view_package") . "' class='tip'><i class='icon-fullscreen'></i>&nbsp; </center>", "name");
+        }
         echo $this->datatables->generate();
 
     }

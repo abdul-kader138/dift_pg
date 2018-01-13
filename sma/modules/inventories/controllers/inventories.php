@@ -1834,16 +1834,14 @@ class Inventories extends MX_Controller
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
         }
-
-//        if (!$this->ion_auth->in_group('owner')) {
-        if (!$this->ion_auth->in_group('owner','checker')) {
+        if ($this->ion_auth->in_group('salesman','viewer','purchaser')) {
             $this->session->set_flashdata('message', $this->lang->line("access_denied"));
             $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
             redirect('module=home', 'refresh');
         }
 
         if ($this->inventories_model->deleteInventory($id)) {
-            $this->session->set_flashdata('success_message', "Purchase requisition deleted successfully.");
+            $this->session->set_flashdata('success_message', "Item deleted successfully.");
             redirect('module=inventories', 'refresh');
         }
 

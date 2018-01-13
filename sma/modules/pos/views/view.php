@@ -30,22 +30,21 @@ h3 { margin: 5px 0; }
 <body>
 <div id="wrapper">
 <img src="<?php echo $this->config->base_url(); ?>assets/uploads/logos/<?php echo $biller->logo; ?>" alt="Biller Logo">
-	<h3 style="text-transform:uppercase;"><?php echo $biller->company; ?></h3>
-	<?php echo "<p style=\"text-transform:capitalize;\">".$biller->address.", ".$biller->city.", ".$biller->postal_code.", ".$biller->state.", ".$biller->country."</p>"; 
-	echo "<p>Vat registration Number: 18131087457- Mushok-11(KA)</p>";
-	echo "<span class=\"left\">".$this->lang->line("reference_no").": ".$inv->reference_no."</span> 
-	<span class=\"right\">".$this->lang->line("tel").": ".$biller->phone."</span>";
-	if($pos->cf_title1 != "" && $pos->cf_value1 != "") {
-		echo "<span class=\"left\">".$pos->cf_title1.": ".$pos->cf_value1."</span>";
-	} 
-	if($pos->cf_title2 != "" && $pos->cf_value2 != "") {	
-		echo "<span class=\"right\">".$pos->cf_title2.": ".$pos->cf_value2."</span>";
-	} 
-	echo '<div style="clear:both;"></div>';
-	echo "<span class=\"left\">".$this->lang->line("customer").": ". $inv->customer_name."</span> 
-	<span class=\"right\">".$this->lang->line("date").": ".date(PHP_DATE, strtotime($inv->date))."</span>
-	<span class=\"left\">".$this->lang->line("booth_no").": ". BOOTH_NO."</span>";
-	 ?>
+    <h3 style="text-transform:uppercase;"><?php echo $biller->company; ?></h3>
+    <?php echo "<p style=\"text-transform:capitalize;\">".$biller->address.", ".$biller->city.", ".$biller->postal_code.", ".$biller->state.", ".$biller->country."</p>";
+    echo "<p>".$biller->cf1."</p>";
+    echo "<span class=\"left\">".$this->lang->line("reference_no").": ".$inv->reference_no."</span>
+	<span class=\"right\">".$this->lang->line("date").": ".date(PHP_DATE, strtotime($inv->date))."</span>";
+    if($pos->cf_title1 != "" && $pos->cf_value1 != "") {
+        echo "<span class=\"left\">".$pos->cf_title1.": ".$pos->cf_value1."</span>";
+    }
+    if($pos->cf_title2 != "" && $pos->cf_value2 != "") {
+        echo "<span class=\"right\">".$pos->cf_title2.": ".$pos->cf_value2."</span>";
+    }
+    echo '<div style="clear:both;"></div>';
+    echo "<span class=\"left\"> DITF  Pavilion No.- ". $biller->cf2."</span>
+	<span class=\"right\">".$this->lang->line("booth_no").": ". BOOTH_NO."</span>";
+    ?>
     <div style="clear:both;"></div>
     
 	<table class="table" cellspacing="0"  border="0"> 
@@ -92,7 +91,7 @@ h3 { margin: 5px 0; }
     <tr><td></td><td></td>
     <?php if($inv->total_tax2 != 0 && TAX2) { ?>
 <!--    <td style="text-align:left;">Including(Vat & SD)</td><td style="text-align:right;font-weight:bold;">--><?php //echo $this->ion_auth->formatMoney($inv->total_tax2+$inv->total_tax); ?><!--</td>-->
-    <td style="text-align:left;">Including all taxes</td><td style="text-align:right;font-weight:bold;"></td>
+    <td style="text-align:left;">(Including all taxes.)</td><td style="text-align:right;font-weight:bold;"></td>
     <?php } else { echo '<td></td><td></td>'; } ?>
     </tr>
     <?php if($inv->inv_discount != 0 && DISCOUNT_OPTION) { ?><tr>
@@ -150,7 +149,7 @@ h3 { margin: 5px 0; }
 <?php } ?>  
     </tbody>
     </table>
-        
+    <div><?php echo $this->lang->line("print_date").": ".date("d-m-Y h:i:sa"); ?></div>
     <div style="border-top:1px solid #000; padding-top:10px;">
     <?php echo html_entity_decode($biller->invoice_footer); ?>
     </div>

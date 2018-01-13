@@ -201,7 +201,7 @@ class Inventories_model extends CI_Model
     {
         $this->db->select('name')->limit('10');
         $this->db->like('name', $term, 'both');
-        $q = $this->db->get('products');
+        $q = $this->db->get_where('products',array('package_name'=>''));
         if ($q->num_rows() > 0) {
             foreach (($q->result()) as $row) {
                 $data[] = $row;
@@ -1153,6 +1153,12 @@ class Inventories_model extends CI_Model
             $this->updateQuantity($product_id, $warehouse_id, $new_quantity);
             $this->upQTY($product_id, $item->quantity);
         }
+//        data auditing info
+            foreach ($items as $obj) {
+                $obj->id = null;
+                $obj->updated_by = USER_NAME;
+                $this->db->insert('delete_purchase_items', $obj);
+            }
 
         if ($this->db->delete('purchase_items', array('purchase_id' => $id, 'make_purchase_id' => 0)) && $this->db->delete('purchases', array('id' => $id, "checked" => 0))) {
             return true;
@@ -1176,7 +1182,7 @@ class Inventories_model extends CI_Model
     {
         $this->db->select('code');
         $this->db->like('code', $term, 'both')->limit('10');
-        $q = $this->db->get('products');
+        $q = $this->db->get_where('products',array('package_name'=>''));
         if ($q->num_rows() > 0) {
             foreach (($q->result()) as $row) {
                 $data[] = $row;

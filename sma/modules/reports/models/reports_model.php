@@ -294,4 +294,18 @@ class Reports_model extends CI_Model
         return FALSE;
 
     }
+
+    public function getBiller()
+    {
+
+        $q = $this->db->get('billers', 1);
+        if($q->num_rows() > 0) {
+            foreach (($q->result()) as $row) {
+                $data[] = $row;
+            }
+
+            return $data;
+        }
+
+    }
 }

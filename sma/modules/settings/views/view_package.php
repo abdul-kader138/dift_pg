@@ -37,7 +37,7 @@
             <th><?php echo $this->lang->line("no"); ?></th>
             <th><?php echo $this->lang->line("package_name"); ?></th>
             <th><?php echo $this->lang->line("product_name"); ?> (<?php echo $this->lang->line("product_code"); ?>)</th>
-            <th style="padding-right:20px;"><?php echo $this->lang->line("unit_price"); ?></th>
+            <th style="padding-right:20px;">UM</th>
             <th><?php echo $this->lang->line("quantity"); ?></th>
         </tr>
 
@@ -59,7 +59,7 @@
         endforeach;
         ?>
 
-            <tr><td colspan="4" style="text-align:right; padding-right:10px;"><?php echo $this->lang->line("total_qty"); ?></td><td style="text-align:right; padding-right:10px;"><?php echo $grandTotal; ?></td></tr>
+        <tr><td colspan="4" style="text-align:right; padding-right:10px;"><?php echo $this->lang->line("total_qty"); ?></td><td style="text-align:right; padding-right:10px;"><?php echo $grandTotal; ?></td></tr>
         <tr><td colspan="4" style="text-align:right; padding-right:10px; font-weight:bold;"><?php echo $this->lang->line("grand_total_qty"); ?> </td><td style="text-align:right; padding-right:10px; font-weight:bold;"><?php echo ($grandTotal+$taxTotal); ?></td></tr>
 
         </tbody>
