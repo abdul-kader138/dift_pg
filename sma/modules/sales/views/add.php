@@ -1614,7 +1614,7 @@ if (TAX1) {
             if ($customer->company == "-" || !$customer->company) {
                 $cu[$customer->id] = $customer->name . " (P)";
             } else {
-                $cu[$customer->id] = $customer->company . " (C)";
+                $cu[$customer->id] = $customer->name . " (C)";
             }
         }
         echo form_dropdown('customer', $cu, (isset($_POST['customer']) ? $_POST['customer'] : ""), 'id="customer_s" data-placeholder="' . $this->lang->line("select") . ' ' . $this->lang->line("customer") . '" required="required" data-error="' . $this->lang->line("customer") . ' ' . $this->lang->line("is_required") . '"');

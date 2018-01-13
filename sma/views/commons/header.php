@@ -267,27 +267,30 @@
             <li>
                 <a href="<?php echo base_url(); ?>index.php?module=sales"><?php echo $this->lang->line('list_invoices'); ?></a>
             </li>
-<!--            <li>-->
-<!--                <a href="--><?php //echo base_url(); ?><!--index.php?module=sales&amp;view=add">--><?php //echo $this->lang->line('add_invoice'); ?><!--</a>-->
-<!--            </li>-->
-<!--            <li>-->
-<!--                <a href="--><?php //echo base_url(); ?><!--index.php?module=sales&amp;view=deliveries">--><?php //echo $this->lang->line('list_deliveries'); ?><!--</a>-->
-<!--            </li>-->
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=sales&amp;view=add"><?php echo $this->lang->line('add_invoice'); ?></a>
+            </li>
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=sales&amp;view=deliveries"><?php echo $this->lang->line('list_deliveries'); ?></a>
+            </li>
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=sales&amp;view=add_payment"><?php echo $this->lang->line('add_payment'); ?></a>
+            </li>
         </ul>
     </li>
 
-<!--    <li class="dropdown"><a class="showSubMenus" href="#quotesMenu"><i-->
-<!--                class="icon-exclamation-sign icon-white"></i> --><?php //echo $this->lang->line('quotes'); ?><!-- <b-->
-<!--                class="caret"></b></a>-->
-<!--        <ul class="nav nav-tabs nav-stacked sub-menu" id="quotesMenu">-->
-<!--            <li>-->
-<!--                <a href="--><?php //echo base_url(); ?><!--index.php?module=quotes">--><?php //echo $this->lang->line('list_quotes'); ?><!--</a>-->
-<!--            </li>-->
-<!--            <li>-->
-<!--                <a href="--><?php //echo base_url(); ?><!--index.php?module=quotes&amp;view=add">--><?php //echo $this->lang->line('add_quote'); ?><!--</a>-->
-<!--            </li>-->
-<!--        </ul>-->
-<!--    </li>-->
+    <li class="dropdown"><a class="showSubMenus" href="#quotesMenu"><i
+                class="icon-exclamation-sign icon-white"></i> <?php echo $this->lang->line('quotes'); ?> <b
+                class="caret"></b></a>
+        <ul class="nav nav-tabs nav-stacked sub-menu" id="quotesMenu">
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=quotes"><?php echo $this->lang->line('list_quotes'); ?></a>
+            </li>
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=quotes&amp;view=add"><?php echo $this->lang->line('add_quote'); ?></a>
+            </li>
+        </ul>
+    </li>
     <li class="dropdown"><a class="showSubMenus" href="#peopleMenu"><i
                 class="icon-user  icon-white"></i> <?php echo $this->lang->line('people'); ?> <b
                 class="caret"></b></a>
